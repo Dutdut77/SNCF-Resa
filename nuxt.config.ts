@@ -1,9 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: false },
-  modules: [
-    '@nuxtjs/tailwindcss'
-  ],
+  modules: ['@nuxtjs/tailwindcss', "@nuxtjs/supabase"],
   supabase: {
     redirect : false
   },
@@ -16,9 +14,9 @@ export default defineNuxtConfig({
         ],
         link: [
           { rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css'}, 
-          { rel : "manifest", href : "/manifest.json"},
-          { rel : "icon", href : "/favicon.png"
-        }],
+          // { rel : "manifest", href : "/manifest.json"},
+          // { rel : "icon", href : "/favicon.png" }
+        ],
         style: [],
         script: []
     },

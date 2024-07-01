@@ -11,6 +11,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxtjs/supabase": "^1.2.2",
     "nuxt": "^3.12.2",
     "vue": "latest"
   },

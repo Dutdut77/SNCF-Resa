@@ -6,7 +6,7 @@
     <!-- END : NAVBAR -->
 
     <!-- START : PAGE -->
-    <div class="w-full h-full print:pt-0 pt-4 lg:pt-0">
+    <div class="w-full h-full">
       <slot />
     </div>
     <!-- END : PAGE -->
