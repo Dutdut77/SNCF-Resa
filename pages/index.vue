@@ -26,8 +26,8 @@ const goToHome = async () => {
         <div class="ml-auto text-sm bg-white px-3 text-sky-700 rounded w-fit -mt-2">pro</div>
       </div>
     </div>
-    <div class="lg:hidden font-bold bg-gradient-to-br from-sky-700 to-sky-400 text-transparent text-2xl bg-clip-text animate-bounce">Toucher pour commencer !</div>
-    <div class="hidden lg:block font-bold bg-gradient-to-br from-sky-700 to-sky-400 text-transparent text-2xl bg-clip-text animate-bounce">Cliquer pour commencer !</div>
+    <div class="lg:hidden font-bold bg-sky-500 text-transparent text-2xl bg-clip-text animate-bounce">Toucher pour commencer !</div>
+    <div class="hidden lg:block font-bold bg-sky-500 text-transparent text-2xl bg-clip-text animate-bounce">Cliquer pour commencer !</div>
   </div>
 </template>
 <style></style>
