@@ -27,7 +27,7 @@ const goToHome = async () => {
       </div>
     </div>
     <div class="lg:hidden font-bold bg-gradient-to-br from-sky-700 to-sky-400 text-transparent text-2xl bg-clip-text animate-bounce">Taper pour commencer !</div>
-    <div class="hidden lg:block font-bold bg-gradient-to-br from-sky-700 to-sky-400 text-transparent text-2xl bg-clip-text animate-bounce">Cliquer pour commencer !</div>
+    <div class="hidden lg:block font-bold bg-gradient-to-br from-sky-700 to-sky-500 text-transparent text-2xl bg-clip-text animate-bounce">Cliquer pour commencer !</div>
   </div>
 </template>
 <style></style>
