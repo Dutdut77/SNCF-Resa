@@ -1,7 +1,7 @@
 <template>
   <NuxtLayout>
-    <!-- <AppToastList />
-    <AppLoader /> -->
+    <AppToastList />
+    <AppLoader />
     <NuxtPage />
   </NuxtLayout>
 </template>
