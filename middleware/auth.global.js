@@ -2,6 +2,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
     const auth = useSupabaseUser();
     const client = useSupabaseClient();
+    const session = useSupabaseSession();
 
 if ( ! to.matched[0] ) {
     return navigateTo({ path: '/404' })
@@ -9,14 +10,15 @@ if ( ! to.matched[0] ) {
 
 if (to.meta.requiresAuth) {
 
-        if (!auth.value) {           
+        if (!session.value) {           
             return navigateTo({ path: '/login', query : { redirect : to.fullPath } })
         }  
  }
 
- if (auth.value) {
+ if (session.value) {
+
     const userProfil = useState('userProfil', () => "") 
-    const { data: user } = await client.from("users").select("*").eq("id", auth.value.id).single();
+    const { data: user } = await client.from("profiles").select("*").eq("id", session.value.user.id).single();
     userProfil.value = user
 
     // if (to.meta.isAdmin) {

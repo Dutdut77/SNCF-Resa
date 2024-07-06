@@ -3,7 +3,7 @@ export const useAuth = () => {
     const { addToast } = useToast();
     const supabase = useSupabaseClient();
   
-    // const categories = useState('categories', () => [])
+ 
   
 
     const signup = async (form) => {
@@ -16,20 +16,34 @@ export const useAuth = () => {
                   data: {
                     nom: form.nom,
                     prenom: form.prenom,
-                    id_secteur: form.secteur,
                   },
                 },
               });
            if (error) throw error;
           addToast({ type: "Success", title: "Félicitation", message: "Enregistrement réussit." });
         } catch (err) {
-          console.log(err);
+          // console.log(err);
           addToast({ type: "Error", title: "Problème lors de votre enregistrement.",  message: err.message  });
         }
       }
   
+      const login = async (form) => {
+
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: form.email,
+                password: form.password,
+              });
+           if (error) throw error;
+         
+        } catch (err) {
+          // console.log(err);
+          addToast({ type: "Error", title: "Authentification refusée !", message: "Email ou mot de passe incorrect " });
+        }
+      }
   
-  
-      return { signup}
+
+
+      return { signup, login}
       
   }

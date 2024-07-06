@@ -2,7 +2,7 @@
 <template>
   <div class="h-dvh w-full overflow-hidden print:overflow-visible flex flex-col">
     <!-- START : NAVBAR -->
-    <!-- <navbar class="fixed top-0 z-40" /> -->
+    <navbar class="fixed bottom-0 z-50" />
     <!-- END : NAVBAR -->
 
     <!-- START : PAGE -->

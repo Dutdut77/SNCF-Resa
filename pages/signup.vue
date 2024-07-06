@@ -10,20 +10,17 @@ useHead({
 });
 
 const { signup } = useAuth();
-const { getAll, secteurs } = useSecteurs();
+const { setLoader } = useLoader();
 
 const formValue = ref({
-  secteur: "",
   nom: "",
   prenom: "",
   email: "",
   password: "",
 });
 
-await getAll();
-
 const validated = computed(() => {
-  return formValue.value.secteur != "" && formValue.value.nom != "" && formValue.value.prenom != "" && formValue.value.email != "" && formValue.value.password != "" ? true : false;
+  return formValue.value.nom != "" && formValue.value.prenom != "" && formValue.value.email != "" && formValue.value.password != "" ? true : false;
 });
 
 const goToLogin = async () => {
@@ -31,7 +28,10 @@ const goToLogin = async () => {
 };
 
 const register = async () => {
+  setLoader(true);
   await signup(formValue.value);
+  await navigateTo("/home");
+  setLoader(false);
 };
 </script>
 
@@ -40,18 +40,11 @@ const register = async () => {
     <img class="absolute top-12 right-8 w-14" src="../assets/img/logo_sncf.png" alt="" />
     <p class="font-bold text-2xl text-gray-100 px-8">Enregistrement</p>
     <div class="flex flex-col gap-4 pt-10 px-8">
-      <AppSelect name="ligne" title="Ligne : " v-model="formValue.secteur">
-        <template #options>
-          <option class="text-gray-400" value="" disabled hidden>Choisissez votre secteur</option>
-          <option v-for="(secteur, index) in secteurs" :key="index" :value="secteur.id" :data="secteur.name">{{ secteur.name }}</option>
-        </template>
-      </AppSelect>
-      <!-- <AppInput name="secteur" type="text" title="Secteur : " placeholder="Entrez votre secteur" v-model="formValue.secteur" /> -->
       <AppInput name="nom" type="text" title="Nom : " placeholder="Entrez votre nom" v-model="formValue.nom" />
       <AppInput name="prenom" type="text" title="Prénom : " placeholder="Entrez votre prénom" v-model="formValue.prenom" />
       <AppInput name="email" type="email" title="Email : " placeholder="Entrez votre email pro" v-model="formValue.email" />
       <div class="flex flex-col">
-        <AppInput name="password" type="password" title="Mot de passe : " placeholder="*****" v-model="formValue.password" />
+        <AppInput name="password" type="password" title="Mot de passe : " placeholder="" v-model="formValue.password" />
         <p class="text-xs ml-auto pt-2.5 text-gray-300">Minimun 8 charactères</p>
       </div>
 

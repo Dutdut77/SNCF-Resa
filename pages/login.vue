@@ -9,6 +9,9 @@ useHead({
   description: "Page d'authentification",
 });
 
+const { login } = useAuth();
+const { setLoader } = useLoader();
+
 const formValue = ref({
   email: "",
   password: "",
@@ -21,6 +24,13 @@ const validated = computed(() => {
 const goToSignup = async () => {
   await navigateTo("/signup");
 };
+
+const singIn = async () => {
+  setLoader(true);
+  await login(formValue.value);
+  await navigateTo("/home");
+  setLoader(false);
+};
 </script>
 
 <template>
@@ -31,10 +41,10 @@ const goToSignup = async () => {
     <div class="flex flex-col gap-4 pt-10 px-8">
       <AppInput name="email" type="email" title="Email : " placeholder="Entrez votre email professionel" v-model="formValue.email" />
       <div class="flex flex-col">
-        <AppInput name="password" type="password" title="Mot de passe : " placeholder="*****" v-model="formValue.password" />
+        <AppInput name="password" type="password" title="Mot de passe : " placeholder="" v-model="formValue.password" />
         <p class="text-xs ml-auto pt-2.5 text-gray-300">Mot de passe oublié ?</p>
       </div>
-      <AppButtonCarre class="ml-auto my-4" direction="" :validated="validated"> <template #default> Se connecter </template> </AppButtonCarre>
+      <AppButtonCarre class="ml-auto my-4" direction="" :validated="validated" @click="singIn()"> <template #default> Se connecter </template> </AppButtonCarre>
     </div>
     <div class="relative mt-auto">
       <svg class="absolute bottom-14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
