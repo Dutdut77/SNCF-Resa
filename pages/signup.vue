@@ -61,7 +61,7 @@ const register = async () => {
         <path fill="#0284c7" fill-opacity="1" d="M0,128L48,138.7C96,149,192,171,288,154.7C384,139,480,85,576,80C672,75,768,117,864,117.3C960,117,1056,75,1152,85.3C1248,96,1344,160,1392,192L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
       </svg>
       <div class="h-16 w-full bg-[#0284c7] px-4"></div>
-      <p class="absolute bottom-0 left-0 right-0 text-center text-gray-50 text-sm p-4 cursor-pointer" @click="goToLogin()">Déjà un compte ? Par ici</p>
+      <p class="absolute bottom-0 left-0 right-0 text-center text-gray-50 text-sm p-4 cursor-pointer pb-8" @click="goToLogin()">Déjà un compte ? Par ici</p>
     </div>
   </section>
 </template>

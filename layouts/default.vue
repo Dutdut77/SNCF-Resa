@@ -9,6 +9,7 @@
     <div class="w-full h-full">
       <slot />
     </div>
+
     <!-- END : PAGE -->
     <!-- START : FOOTER -->
     <!-- <div class="fixed bottom-0 z-30 w-full h-10 print:hidden">
