@@ -15,7 +15,7 @@ const client = useSupabaseClient();
 </script>
 
 <template>
-  <section class="bg-gradient-to-br from-slate-900 to-slate-700 w-full h-full text-gray-200">
+  <section class="bg-slate-900 w-full h-full text-gray-200">
     <div class="p-4 flex w-full items-center">
       <div class="">
         <p class="text-gray-100 text-xl">{{ userProfil.nom }} {{ userProfil.prenom }}</p>

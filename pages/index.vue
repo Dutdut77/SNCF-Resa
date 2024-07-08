@@ -14,7 +14,7 @@ const goToHome = async () => {
 };
 </script>
 <template>
-  <div class="flex flex-col justify-center items-center gap-16 h-dvh w-full bg-gradient-to-br from-slate-900 to-slate-700 cursor-pointer" @click="goToHome()">
+  <div class="flex flex-col justify-center items-center gap-16 h-dvh w-full bg-slate-900 cursor-pointer" @click="goToHome()">
     <div class="relative w-[250px] h-[250px] flex justify-center items-center">
       <span class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-sky-700 to-sky-500 rotate-45 rounded-[38%_62%_63%_37%_/_41%_44%_56%_59%]"></span>
       <span class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-sky-700 to-sky-500 opacity-25 scale-110 rotate-[60deg] rounded-[38%_62%_63%_37%_/_41%_44%_56%_59%]"></span>
