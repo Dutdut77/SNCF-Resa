@@ -17,7 +17,7 @@ const client = useSupabaseClient();
 <template>
   <section class="bg-gradient-to-br from-slate-900 to-slate-700 w-full h-full text-gray-200">
     <div class="p-4 flex w-full items-center">
-      <div>
+      <div class="">
         <p class="text-gray-100 text-xl">{{ userProfil.nom }} {{ userProfil.prenom }}</p>
         <p class="text-xs italic text-gray-300">{{ userProfil.email }}</p>
       </div>

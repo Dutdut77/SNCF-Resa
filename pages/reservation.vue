@@ -33,22 +33,22 @@ const validatedType = computed(() => {
 <template>
   <section class="bg-gradient-to-br from-slate-900 to-slate-700 w-full h-full text-gray-200 pb-20 flex flex-col">
     <div class="p-4 flex w-full items-center">
-      <div class="font-traverse font-medium text-2xl">Réservation</div>
-      {{ formValue }}
+      <div class="font-traverse font-medium text-3xl pt-1">Réservation</div>
+
       <img class="ml-auto w-12" src="../assets/img/logo_sncf.png" alt="" />
     </div>
 
-    <div class="h-full flex flex-col" v-if="etape == 0">
-      <div class="h-full px-4 pt-8 flex flex-wrap">
+    <div class="h-full flex flex-col overflow-auto" v-if="etape == 0">
+      <div class="h-fit px-4">
         <ResaRadioSecteur :data="secteurs" v-model="formValue.secteur" />
       </div>
-      <div class="mt-auto px-4">
+      <div class="mt-auto px-4 flex justify-between items-center">
         <AppButtonCarre class="ml-auto my-4" direction="right" :validated="validatedSecteur" @click="etape++"> </AppButtonCarre>
       </div>
     </div>
 
     <div class="h-full flex flex-col" v-if="etape == 1">
-      <div class="h-full">
+      <div class="relative h-full">
         <ResaType v-model="formValue.type" />
       </div>
 
