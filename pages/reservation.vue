@@ -39,22 +39,21 @@ const validatedType = computed(() => {
     </div>
 
     <div class="h-full flex flex-col overflow-auto" v-if="etape == 0">
+      <div class="px-4 flex justify-between items-center">
+        <AppButtonCarre class="ml-auto mb-4" direction="right" :validated="validatedSecteur" @click="etape++"> </AppButtonCarre>
+      </div>
       <div class="h-fit px-4">
         <ResaRadioSecteur :data="secteurs" v-model="formValue.secteur" />
-      </div>
-      <div class="mt-auto px-4 flex justify-between items-center">
-        <AppButtonCarre class="ml-auto my-4" direction="right" :validated="validatedSecteur" @click="etape++"> </AppButtonCarre>
       </div>
     </div>
 
     <div class="h-full flex flex-col" v-if="etape == 1">
+      <div class="px-4 flex justify-between items-center">
+        <AppButtonCarre class="mb-4" direction="left" @click="etape--"> </AppButtonCarre>
+        <AppButtonCarre class="mb-4" direction="right" :validated="validatedType" @click="etape++"> </AppButtonCarre>
+      </div>
       <div class="relative h-full">
         <ResaType v-model="formValue.type" />
-      </div>
-
-      <div class="mt-auto px-4 flex justify-between items-center">
-        <AppButtonCarre class="my-4" direction="left" @click="etape--"> </AppButtonCarre>
-        <AppButtonCarre class="my-4" direction="right" :validated="validatedType" @click="etape++"> </AppButtonCarre>
       </div>
     </div>
   </section>
