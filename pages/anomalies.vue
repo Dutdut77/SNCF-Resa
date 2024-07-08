@@ -10,5 +10,5 @@ useHead({
 </script>
 
 <template>
-  <section class="bg-gradient-to-br from-slate-900 to-slate-700 w-full h-full text-gray-200">Anomalies</section>
+  <section class="bg-gradient-to-b from-slate-900 to-slate-700 w-full h-full text-gray-200">Anomalies</section>
 </template>

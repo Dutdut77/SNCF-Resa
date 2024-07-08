@@ -28,7 +28,7 @@ const formRadio = computed({
           <img src="/assets/img/bureau.png" class="w-auto h-auto mx-auto" alt="" />
         </div>
 
-        <div class="w-1/2 h-full flex justify-center items-center">
+        <div class="w-1/2 h-full flex justify-center items-center saturate-100">
           <div class="relative w-2/3 h-1/3 flex justify-center items-center">
             <span class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-sky-700 to-sky-500 scale-110 rounded-[38%_62%_63%_37%_/_41%_44%_56%_59%]"></span>
             <span class="absolute top-0 left-0 w-full h-full border rounded-[38%_62%_63%_37%_/_41%_44%_56%_59%]"></span>

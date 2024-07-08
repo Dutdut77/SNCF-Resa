@@ -31,7 +31,7 @@ const validatedType = computed(() => {
 </script>
 
 <template>
-  <section class="bg-slate-900 w-full h-full text-gray-200 pb-20 flex flex-col">
+  <section class="bg-gradient-to-b from-slate-900 to-slate-700 w-full h-full text-gray-200 pb-20 flex flex-col">
     <div class="p-4 flex w-full items-center">
       <div class="font-traverse font-medium text-3xl pt-1">Réservation</div>
 

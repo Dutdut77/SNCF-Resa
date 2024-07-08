@@ -34,7 +34,7 @@ const singIn = async () => {
 </script>
 
 <template>
-  <section class="relative h-dvh w-full text-gray-50 flex flex-col bg-gradient-to-br from-slate-900 to-slate-700 pt-12 overflow-auto">
+  <section class="relative h-dvh w-full text-gray-50 flex flex-col bg-gradient-to-b from-slate-900 to-slate-700 pt-12 overflow-auto">
     <img class="absolute top-12 right-8 w-14" src="../assets/img/logo_sncf.png" alt="" />
 
     <p class="font-bold text-2xl text-gray-100 px-8">Authentification</p>
