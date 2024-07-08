@@ -23,10 +23,10 @@ const formRadio = computed({
     <div class="relative w-full h-full">
       <input id="0" type="radio" v-model="formRadio" value="0" class="hidden peer" />
       <label for="0" class="h-full w-full flex items-center justify-around gap-2 bg-gradient-to-br from-slate-700 to-slate-700 border-t border-slate-600 hover:bg-opacity-75 saturate-50 peer-checked:saturate-100 peer-checked:shadow-xl peer-checked:from-sky-700 peer-checked:to-sky-500 peer-checked:border-sky-700 peer-checked:text-white cursor-pointer transition delay-100">
-        <div class="w-1/2 h-full flex">
-          <img src="/assets/img/bureau.png" class="w-auto h-auto" alt="" />
+        <div class="w-1/2 h-1/2 flex">
+          <img src="/assets/img/bureau.png" class="w-auto h-auto mx-auto" alt="" />
         </div>
-        <div class="uppercase w-1/2 h-full flex items-center justify-end text-3xl pb-14"><p class="pr-16">Salles</p></div>
+        <div class="uppercase w-1/2 h-full flex items-center justify-center text-2xl pb-14"><p class="">Salles</p></div>
       </label>
 
       <!-- <div class="flex absolute top-2 right-2 bottom-0 w-5 h-5 rounded-full border-2 scale-0 peer-checked:scale-100 transition delay-100">
@@ -36,16 +36,16 @@ const formRadio = computed({
       </div> -->
     </div>
 
-    <div class="absolute top-1/2 h-16 w-full bg-slate-900 z-20 -mt-8 -skew-y-6 md:-skew-y-6 flex items-center justify-center text-slate-300 italic text-lg uppercase">--- Toucher pour réserver ---</div>
+    <div class="absolute top-1/2 h-16 w-full bg-slate-200 z-20 -mt-8 -skew-y-6 md:-skew-y-6 flex items-center justify-center text-slate-800 italic text-lg uppercase">--- Toucher pour réserver ---</div>
 
     <!-- VEHICULES -->
     <div class="relative w-full h-full">
       <input id="1" type="radio" v-model="formRadio" value="1" class="hidden peer" />
       <label for="1" class="h-full w-full flex items-center justify-center gap-2 bg-gradient-to-br from-slate-700 to-slate-700 border-b border-slate-600 hover:bg-opacity-75 saturate-50 peer-checked:saturate-100 marker:peer-checked:shadow-xl peer-checked:from-sky-700 peer-checked:to-sky-500 peer-checked:border-sky-700 peer-checked:text-white cursor-pointer transition delay-100">
-        <div class="uppercase w-1/2 h-full flex items-center justify-start text-3xl pt-14"><p class="pl-16">Véhicules</p></div>
+        <div class="uppercase w-1/2 h-full flex items-center justify-center text-2xl pt-14"><p class="">Véhicules</p></div>
 
-        <div class="w-1/2 h-full flex px-4 pt-12">
-          <img src="/assets/img/vehicule.png" class="w-auto h-auto ml-auto" alt="" />
+        <div class="w-1/2 h-3/4 flex pt-12">
+          <img src="/assets/img/vehicule.png" class="w-auto h-auto mx-auto pl-8" alt="" />
         </div>
       </label>
 
