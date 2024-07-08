@@ -3,12 +3,13 @@ import Home from "@/assets/svg/Home.vue";
 import Calendar from "@/assets/svg/Calendar.vue";
 import User from "@/assets/svg/User.vue";
 import Bandage from "@/assets/svg/Bandage.vue";
+import Resa from "@/assets/svg/Resa.vue";
 import Add from "@/assets/svg/Add.vue";
 </script>
 
 <template>
   <section class="w-full h-20 bg-gray-700">
-    <div class="h-14 flex justify-around items-center text-gray-400 border-t border-gray-600 px-4">
+    <div class="h-14 flex justify-around items-center text-gray-400 border-t border-gray-600 px-">
       <NuxtLink to="/home" class="relative group flex flex-col items-center flex-1 h-full justify-center">
         <div class="h-[3px] bg-sky-500 absolute -top-0.5 left-0 right-0 group-hover:w-full group-hover:duration-500 duration-200 rounded-full" :class="'/home' === $route.path ? 'w-full' : 'w-0'"></div>
         <Home class="h-6 w-6 group-hover:text-gray-200 duration-200" />
@@ -18,12 +19,18 @@ import Add from "@/assets/svg/Add.vue";
       <NuxtLink to="/calendar" class="relative group flex flex-col items-center flex-1 h-full justify-center">
         <div class="h-[3px] bg-sky-500 absolute -top-0.5 left-0 right-0 group-hover:w-full group-hover:duration-500 duration-200 rounded-full" :class="'/calendar' === $route.path ? 'w-full' : 'w-0'"></div>
         <Calendar class="h-6 w-6 group-hover:text-gray-200 duration-200" />
-        <p class="text-xs pt-0.5 group-hover:text-gray-200 duration-200">Calendrier</p>
+        <p class="text-xs pt-0.5 group-hover:text-gray-200 duration-200">Agenda</p>
       </NuxtLink>
 
-      <NuxtLink to="/reservation" class="w-14 h-14 flex justify-center items-center rounded-full bg-gradient-to-br from-sky-700 to-sky-500 -mt-14 mx-2 hover:shadow-xl shadow-black duration-200">
-        <Add class="h-8 w-8 text-white" />
+      <NuxtLink to="/reservation" class="relative group flex flex-col items-center flex-1 h-full justify-center">
+        <div class="h-[3px] bg-sky-500 absolute -top-0.5 left-0 right-0 group-hover:w-full group-hover:duration-500 duration-200 rounded-full" :class="'/reservation' === $route.path ? 'w-full' : 'w-0'"></div>
+        <Resa class="h-6 w-6 group-hover:text-gray-200 duration-200" />
+        <p class="text-xs pt-0.5 group-hover:text-gray-200 duration-200">Réservation</p>
       </NuxtLink>
+
+      <!-- <NuxtLink to="/reservation" class="w-10 h-10 flex justify-center items-center rounded-full bg-gradient-to-br from-sky-700 to-sky-500 mx-2 hover:shadow-xl shadow-black duration-200">
+        <Add class="h-6 w-6 text-white" />
+      </NuxtLink> -->
 
       <NuxtLink to="/profil" class="relative group flex flex-col items-center flex-1 h-full justify-center">
         <div class="h-[3px] bg-sky-500 absolute -top-0.5 left-0 right-0 group-hover:w-full group-hover:duration-500 duration-200 rounded-full" :class="'/profil' === $route.path ? 'w-full' : 'w-0'"></div>
