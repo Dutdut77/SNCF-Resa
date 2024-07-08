@@ -22,7 +22,7 @@ const formRadio = computed({
     <!-- SALLES -->
     <div class="relative w-full h-full">
       <input id="0" type="radio" v-model="formRadio" value="0" class="hidden peer" />
-      <label for="0" class="h-full w-full flex items-center justify-around gap-2 bg-gradient-to-br from-slate-700 to-slate-700 border-t border-slate-600 hover:bg-opacity-75 saturate-50 peer-checked:saturate-100 peer-checked:shadow-xl peer-checked:from-sky-700 peer-checked:to-sky-500 peer-checked:border-sky-700 peer-checked:text-white cursor-pointer transition delay-100">
+      <label for="0" class="h-full w-full flex items-center justify-around gap-2 bg-gradient-to-br from-transparent to-transparent border-slate-600 hover:bg-opacity-75 saturate-0 peer-checked:saturate-100 peer-checked:shadow-xl peer-checked:from-sky-700 peer-checked:to-sky-500 peer-checked:border-sky-700 peer-checked:text-white cursor-pointer transition delay-100">
         <div class="w-1/2 h-1/2 flex">
           <img src="/assets/img/bureau.png" class="w-auto h-auto mx-auto" alt="" />
         </div>
@@ -41,7 +41,7 @@ const formRadio = computed({
     <!-- VEHICULES -->
     <div class="relative w-full h-full">
       <input id="1" type="radio" v-model="formRadio" value="1" class="hidden peer" />
-      <label for="1" class="h-full w-full flex items-center justify-center gap-2 bg-gradient-to-br from-slate-700 to-slate-700 border-b border-slate-600 hover:bg-opacity-75 saturate-50 peer-checked:saturate-100 marker:peer-checked:shadow-xl peer-checked:from-sky-700 peer-checked:to-sky-500 peer-checked:border-sky-700 peer-checked:text-white cursor-pointer transition delay-100">
+      <label for="1" class="h-full w-full flex items-center justify-center gap-2 bg-gradient-to-br from-transparent to-transparent border-slate-600 hover:bg-opacity-75 saturate-0 peer-checked:saturate-100 marker:peer-checked:shadow-xl peer-checked:from-sky-700 peer-checked:to-sky-500 peer-checked:border-sky-700 peer-checked:text-white cursor-pointer transition delay-100">
         <div class="uppercase w-1/2 h-full flex items-center justify-center text-2xl pt-14"><p class="">Véhicules</p></div>
 
         <div class="w-1/2 h-3/4 flex pt-12">
