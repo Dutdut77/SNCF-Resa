@@ -28,7 +28,7 @@ setLoader(true);
 await getAll();
 setLoader(false);
 
-const etape = ref(2);
+const etape = ref(0);
 
 const formValue = ref({
   secteur: "",
@@ -127,7 +127,7 @@ const formatedDate = (timestamp) => {
     </div>
 
     <div class="h-full flex flex-col px-4 gap-4" v-if="etape == 2">
-      <VueDatePicker v-model="formValue.dateDebut" ref="dateDebut" week-numbers="iso" week-num-name="S" locale="fr" model-type="timestamp">
+      <VueDatePicker v-model="formValue.dateDebut" ref="dateDebut" locale="fr" model-type="timestamp" :month-change-on-scroll="false" teleport-center time-picker-inline>
         <template #top-extra="{ value }">
           <div v-if="formValue.dateDebut" class="h-20 bg-gradient-to-br from-sky-700 to-sky-500 text-white mb-2 rounded flex flex-col justify-center">
             <p class="text-center first-letter:uppercase">{{ formatedDate(value).jourName }} {{ formatedDate(value).jour }} {{ formatedDate(value).mois }} {{ formatedDate(value).annee }}</p>
@@ -147,21 +147,21 @@ const formatedDate = (timestamp) => {
           </div>
           <div v-else class="border w-full h-32 rounded-lg overflow-hidden border-slate-500 mt-2 flex justify-center items-center">Choisissez une date...</div>
         </template>
-        <template #action-row="{ internalModelValue, selectDate }">
-          <div class="action-row w-full flex justify-center">
-            <!-- <p class="current-selection">{{ internalModelValue }}</p> -->
+        <template #action-row="{ selectDate }">
+          <div class="action-row w-full flex justify-center py-2">
             <button class="py-2 px-4 bg-gradient-to-br from-sky-700 to-sky-500 rounded-lg text-white mx-auto" @click="selectDate">Valider</button>
           </div>
         </template>
       </VueDatePicker>
 
-      <VueDatePicker v-model="formValue.dateFin" ref="dateFin" week-numbers="iso" week-num-name="S" locale="fr" model-type="timestamp">
+      <VueDatePicker v-model="formValue.dateFin" ref="dateFin" locale="fr" model-type="timestamp" :month-change-on-scroll="false" teleport-center time-picker-inline>
         <template #top-extra="{ value }">
           <div v-if="formValue.dateFin" class="h-20 bg-gradient-to-br from-sky-700 to-sky-500 text-white mb-2 rounded flex flex-col justify-center">
             <p class="text-center first-letter:uppercase">{{ formatedDate(value).jourName }} {{ formatedDate(value).jour }} {{ formatedDate(value).mois }} {{ formatedDate(value).annee }}</p>
             <p class="text-center">{{ formatedDate(value).heure }} H {{ formatedDate(value).minute }}</p>
           </div>
         </template>
+
         <template #trigger>
           <p class="font-medium text-lg">Fin :</p>
           <div v-if="formValue.dateFin" class="border w-full h-32 rounded-lg flex overflow-hidden border-slate-500 mt-2">
@@ -175,9 +175,9 @@ const formatedDate = (timestamp) => {
           </div>
           <div v-else class="border w-full h-32 rounded-lg overflow-hidden border-slate-500 mt-2 flex justify-center items-center">Choisissez une date...</div>
         </template>
-        <template #action-row="{ internalModelValue, selectDate }">
-          <div class="action-row w-full flex justify-center">
-            <!-- <p class="current-selection">{{ internalModelValue }}</p> -->
+
+        <template #action-row="{ selectDate }">
+          <div class="action-row w-full flex justify-center py-2">
             <button class="py-2 px-4 bg-gradient-to-br from-sky-700 to-sky-500 rounded-lg text-white" @click="selectDate">Valider</button>
           </div>
         </template>
