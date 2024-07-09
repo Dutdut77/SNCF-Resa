@@ -5,6 +5,9 @@ export default defineNuxtConfig({
   supabase: {
     redirect : false
   },
+      build: {
+        transpile: ['@vuepic/vue-datepicker']
+    },
   app: {
     head: {
         title: 'Réservation - Infrapôle Paris-Est',

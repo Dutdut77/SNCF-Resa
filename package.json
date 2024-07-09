@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@nuxtjs/supabase": "^1.2.2",
+    "@vuepic/vue-datepicker": "^8.8.1",
     "nuxt": "^3.12.2",
     "vue": "latest"
   },
