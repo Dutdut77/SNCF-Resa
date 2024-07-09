@@ -28,7 +28,7 @@ setLoader(true);
 await getAll();
 setLoader(false);
 
-const etape = ref(2);
+const etape = ref(0);
 
 const formValue = ref({
   secteur: "",
