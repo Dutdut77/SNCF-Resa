@@ -28,7 +28,7 @@ setLoader(true);
 await getAll();
 setLoader(false);
 
-const etape = ref(0);
+const etape = ref(2);
 
 const formValue = ref({
   secteur: "",
@@ -127,7 +127,7 @@ const formatedDate = (timestamp) => {
     </div>
 
     <div class="h-full flex flex-col px-4 gap-4" v-if="etape == 2">
-      <VueDatePicker v-model="formValue.dateDebut" ref="dateDebut" locale="fr" model-type="timestamp" :month-change-on-scroll="false" teleport-center time-picker-inline>
+      <VueDatePicker v-model="formValue.dateDebut" ref="dateDebut" locale="fr" model-type="timestamp" :month-change-on-scroll="false" teleport-center time-picker-inline menu-class-name="dp-custom-menu" calendar-cell-class-name="dp-custom-cell">
         <template #top-extra="{ value }">
           <div v-if="formValue.dateDebut" class="h-20 bg-gradient-to-br from-sky-700 to-sky-500 text-white mb-2 rounded flex flex-col justify-center">
             <p class="text-center first-letter:uppercase">{{ formatedDate(value).jourName }} {{ formatedDate(value).jour }} {{ formatedDate(value).mois }} {{ formatedDate(value).annee }}</p>
@@ -154,7 +154,7 @@ const formatedDate = (timestamp) => {
         </template>
       </VueDatePicker>
 
-      <VueDatePicker v-model="formValue.dateFin" ref="dateFin" locale="fr" model-type="timestamp" :month-change-on-scroll="false" teleport-center time-picker-inline>
+      <VueDatePicker v-model="formValue.dateFin" ref="dateFin" locale="fr" model-type="timestamp" :month-change-on-scroll="false" teleport-center time-picker-inline menu-class-name="dp-custom-menu" calendar-cell-class-name="dp-custom-cell">
         <template #top-extra="{ value }">
           <div v-if="formValue.dateFin" class="h-20 bg-gradient-to-br from-sky-700 to-sky-500 text-white mb-2 rounded flex flex-col justify-center">
             <p class="text-center first-letter:uppercase">{{ formatedDate(value).jourName }} {{ formatedDate(value).jour }} {{ formatedDate(value).mois }} {{ formatedDate(value).annee }}</p>
@@ -192,3 +192,13 @@ const formatedDate = (timestamp) => {
     </div>
   </section>
 </template>
+
+<style>
+.dp-custom-menu {
+  border-radius: 10px;
+  padding: 10px 30px 10px 30px;
+}
+.dp-custom-cell {
+  border-radius: 50%;
+}
+</style>
