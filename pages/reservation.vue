@@ -1,9 +1,7 @@
 <script setup>
-import ArrowRight from "@/assets/svg/ArrowRight.vue";
+import Arrow from "@/assets/svg/Arrow.vue";
 import Left from "@/assets/svg/Left.vue";
 import Right from "@/assets/svg/Right.vue";
-import VueDatePicker from "@vuepic/vue-datepicker";
-import "@vuepic/vue-datepicker/dist/main.css";
 
 definePageMeta({
   requiresAuth: true,
@@ -19,29 +17,27 @@ const { getAll, secteurs } = useSecteurs();
 const dateFin = ref("");
 const dateDebut = ref("");
 
-const selectDate = () => {
-  dateDebut.value.selectDate();
-  dateFin.value.selectDate();
-};
-
 setLoader(true);
 await getAll();
 setLoader(false);
 
-const etape = ref(0);
+const etape = ref(2);
 const formValue = ref({
   secteur: "",
   type: "",
   dateDebut: "",
   dateFin: "",
+  year: new Date().getFullYear(),
+  month: new Date().getMonth(),
 });
+
 const minutes = ["00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"];
 const heures = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
 const selectedMinute = ref("");
 const selectedHeure = ref("");
-
+const selectedDay = ref("");
 const activeIndexHeure = ref(new Date().getHours());
-
+const activeIndexDay = ref(ref(new Date().getDate() - 1));
 const activeIndexMinute = computed(() => {
   const date = new Date();
   let currentMinutes = date.getMinutes();
@@ -55,8 +51,42 @@ const activeIndexMinute = computed(() => {
   return index;
 });
 
+const dayOfMonth = computed(() => {
+  // Initialise le premier jour du mois
+  const date = new Date(formValue.value.year, formValue.value.month, 1);
+  const days = [];
+  while (date.getMonth() === formValue.value.month) {
+    const options = { weekday: "short", day: "2-digit" };
+
+    days.push(date.toLocaleDateString("fr-FR", options));
+    date.setDate(date.getDate() + 1);
+  }
+  return days;
+});
+
+const monthLetter = computed(() => {
+  if (formValue.value.month == 0) return "Janvier";
+  if (formValue.value.month == 1) return "Février";
+  if (formValue.value.month == 2) return "Mars";
+  if (formValue.value.month == 3) return "Avril";
+  if (formValue.value.month == 4) return "Mai";
+  if (formValue.value.month == 5) return "Juin";
+  if (formValue.value.month == 6) return "Juillet";
+  if (formValue.value.month == 7) return "Aout";
+  if (formValue.value.month == 8) return "Septembre";
+  if (formValue.value.month == 9) return "Octobre";
+  if (formValue.value.month == 10) return "Novembre";
+  if (formValue.value.month == 11) return "Décembre";
+});
+
 const progress = computed(() => {
   return Math.floor((100 * etape.value) / 6);
+});
+
+const valideDate = computed(() => {
+  if (formValue.value.dateFin < formValue.value.dateDebut) {
+    return false;
+  } else return true;
 });
 
 const validatedSecteur = computed(() => {
@@ -68,8 +98,20 @@ const validatedType = computed(() => {
 });
 
 const validatedDate = computed(() => {
-  return formValue.value.dateDebut != "" && formValue.value.dateFin != "" ? true : false;
+  return formValue.value.dateDebut != "" && formValue.value.dateFin != "" && valideDate.value != false ? true : false;
 });
+
+const updateDateDebut = () => {
+  const day = selectedDay.value.split(" ")[1];
+  const date = new Date(formValue.value.year, formValue.value.month, day, selectedHeure.value, selectedMinute.value);
+  formValue.value.dateDebut = date.getTime();
+};
+
+const updateDateFin = () => {
+  const day = selectedDay.value.split(" ")[1];
+  const date = new Date(formValue.value.year, formValue.value.month, day, selectedHeure.value, selectedMinute.value);
+  formValue.value.dateFin = date.getTime();
+};
 
 const formatedDate = (timestamp) => {
   const result = {};
@@ -126,11 +168,6 @@ const formatedDate = (timestamp) => {
         <div class="text-3xl font-medium">Période</div>
         <div class="text-sm">Sélectionnez les dates</div>
       </div>
-
-      <!-- <div v-if="etape == 3" class="flex-1">
-        <div class="text-2xl font-medium">Date Fin</div>
-        <div class="text-sm">Sélectionnez une date</div>
-      </div> -->
     </div>
 
     <div v-if="etape == 0" class="h-full flex flex-col overflow-auto pb-4">
@@ -145,69 +182,73 @@ const formatedDate = (timestamp) => {
       </div>
     </div>
 
-    <div v-if="etape == 2" class="flex justify-center">
-      <AppDatePickerIos :items="minutes" v-model="selectedMinute" :viewIndex="activeIndexMinute" />
-      <AppDatePickerIos :items="heures" v-model="selectedHeure" :viewIndex="activeIndexHeure" />
-    </div>
-    <p class="p-8 text-center">Résevertion : {{ selectedHeure }} h {{ selectedMinute }}</p>
+    <div v-if="etape == 2" class="flex flex-col justify-center">
+      <div class="flex items-center justify-center gap-4">
+        <div class="w-1/3 flex justify-center items-center gap-4 bg-slate-700 rounded-lg py-2 px-4">
+          <Left class="mr-auto h-6 w-6 cursor-pointer" @click="formValue.year--" />
+          <p class="text-center">{{ formValue.year }}</p>
+          <Right class="ml-auto h-6 w-6 cursor-pointer" @click="formValue.year++" />
+        </div>
+        <div class="w-1/3 flex justify-center items-center gap-4 bg-slate-700 rounded-lg py-2 px-4">
+          <Left class="mr-auto h-6 w-6 cursor-pointer" @click="formValue.month--" :class="formValue.month > 0 ? 'visible' : 'invisible'" />
+          <p class="text-center">{{ monthLetter }}</p>
+          <Right class="ml-auto h-6 w-6 cursor-pointer" @click="formValue.month++" :class="formValue.month < 11 ? 'visible' : 'invisible'" />
+        </div>
+      </div>
 
-    <!-- <div class="h-full flex flex-col px-4 gap-4" v-if="etape == 2">
-      <VueDatePicker v-model="formValue.dateDebut" ref="dateDebut" locale="fr" model-type="timestamp" :month-change-on-scroll="false" teleport-center time-picker-inline menu-class-name="dp-custom-menu" calendar-cell-class-name="dp-custom-cell">
-        <template #top-extra="{ value }">
-          <div v-if="formValue.dateDebut" class="h-20 bg-gradient-to-br from-sky-700 to-sky-500 text-white mb-2 rounded flex flex-col justify-center">
-            <p class="text-center first-letter:uppercase">{{ formatedDate(value).jourName }} {{ formatedDate(value).jour }} {{ formatedDate(value).mois }} {{ formatedDate(value).annee }}</p>
-            <p class="text-center">{{ formatedDate(value).heure }} H {{ formatedDate(value).minute }}</p>
-          </div>
-        </template>
-        <template #trigger>
-          <p class="font-medium text-lg">Début :</p>
-          <div v-if="formValue.dateDebut" class="border w-full h-32 rounded-lg flex overflow-hidden border-slate-500 mt-2">
-            <div class="h-full w-36 bg-gradient-to-br from-sky-700 to-sky-500 text-white p-4 flex flex-col items-center justify-center">
-              <p class="text-4xl font-traverse">{{ formatedDate(formValue.dateDebut).jour }}</p>
-              <p class="text-lg uppercase">{{ formatedDate(formValue.dateDebut).mois }}</p>
+      <div class="flex p-4">
+        <AppDatePickerIos :items="dayOfMonth" v-model="selectedDay" :viewIndex="activeIndexDay" />
+        <AppDatePickerIos :items="heures" v-model="selectedHeure" :viewIndex="activeIndexHeure" />
+        <AppDatePickerIos :items="minutes" v-model="selectedMinute" :viewIndex="activeIndexMinute" />
+      </div>
+
+      <div class="w-full flex justify-center items-center gap-4 py-4">
+        <Arrow class="w-10 h-10 scale-y-[-1]" />
+        <!-- <p class="italic text-sm">Tape to update</p> -->
+        <Arrow class="w-10 h-10 rotate-180" />
+      </div>
+
+      <div class="flex gap-4 px-4">
+        <div class="w-full">
+          <p class="px-4 pb-4 text-center uppercase font-medium">Début</p>
+          <div v-if="formValue.dateDebut" class="w-full h-32 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden" @click="updateDateDebut()">
+            <div class="h-full w-1/2 bg-gradient-to-br from-sky-700 to-sky-500 text-white p-4 flex flex-col items-center justify-center">
+              <div class="text-5xl font-traverse">{{ formatedDate(formValue.dateDebut).jour }}</div>
+              <div class="text-lg uppercase">{{ formatedDate(formValue.dateDebut).mois }}</div>
+              <div class="text-base uppercase">{{ formatedDate(formValue.dateDebut).annee }}</div>
             </div>
-            <div class="w-full bg-slate-700 flex justify-center items-center">
+            <div class="w-1/2 bg-slate-700 flex justify-center items-center">
               <p class="text-white text-3xl font-bold">{{ formatedDate(formValue.dateDebut).heure }} H {{ formatedDate(formValue.dateDebut).minute }}</p>
             </div>
           </div>
-          <div v-else class="border w-full h-32 rounded-lg overflow-hidden border-slate-500 mt-2 flex justify-center items-center">Choisissez une date...</div>
-        </template>
-        <template #action-row="{ selectDate }">
-          <div class="action-row w-full flex justify-center py-2">
-            <button class="py-2 px-4 bg-gradient-to-br from-sky-700 to-sky-500 rounded-lg text-white mx-auto" @click="selectDate">Valider</button>
+          <div v-else class="w-full h-32 border border-slate-500 flex items-center justify-center text-center p-4 rounded-lg bg-slate-700 cursor-pointer" @click="updateDateDebut()">
+            <p>Toucher pour mettre à jour !</p>
           </div>
-        </template>
-      </VueDatePicker>
+        </div>
 
-      <VueDatePicker v-model="formValue.dateFin" ref="dateFin" locale="fr" model-type="timestamp" :month-change-on-scroll="false" teleport-center time-picker-inline menu-class-name="dp-custom-menu" calendar-cell-class-name="dp-custom-cell">
-        <template #top-extra="{ value }">
-          <div v-if="formValue.dateFin" class="h-20 bg-gradient-to-br from-sky-700 to-sky-500 text-white mb-2 rounded flex flex-col justify-center">
-            <p class="text-center first-letter:uppercase">{{ formatedDate(value).jourName }} {{ formatedDate(value).jour }} {{ formatedDate(value).mois }} {{ formatedDate(value).annee }}</p>
-            <p class="text-center">{{ formatedDate(value).heure }} H {{ formatedDate(value).minute }}</p>
-          </div>
-        </template>
-
-        <template #trigger>
-          <p class="font-medium text-lg">Fin :</p>
-          <div v-if="formValue.dateFin" class="border w-full h-32 rounded-lg flex overflow-hidden border-slate-500 mt-2">
-            <div class="h-full w-36 bg-gradient-to-br from-sky-700 to-sky-500 text-white p-4 flex flex-col items-center justify-center">
-              <p class="text-4xl font-traverse">{{ formatedDate(formValue.dateFin).jour }}</p>
-              <p class="text-lg uppercase">{{ formatedDate(formValue.dateFin).mois }}</p>
+        <div class="w-full">
+          <p class="px-4 pb-4 text-center uppercase font-medium">Fin</p>
+          <div v-if="formValue.dateFin" class="w-full h-32 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden" @click="updateDateFin()">
+            <div class="h-full w-1/2 bg-gradient-to-br from-sky-700 to-sky-500 text-white p-4 flex flex-col items-center justify-center">
+              <div class="text-5xl font-traverse">{{ formatedDate(formValue.dateFin).jour }}</div>
+              <div class="text-lg uppercase">{{ formatedDate(formValue.dateFin).mois }}</div>
+              <div class="text-base uppercase">{{ formatedDate(formValue.dateFin).annee }}</div>
             </div>
-            <div class="w-full bg-slate-700 flex justify-center items-center">
+            <div class="w-1/2 bg-slate-700 flex justify-center items-center">
               <p class="text-white text-3xl font-bold">{{ formatedDate(formValue.dateFin).heure }} H {{ formatedDate(formValue.dateFin).minute }}</p>
             </div>
           </div>
-          <div v-else class="border w-full h-32 rounded-lg overflow-hidden border-slate-500 mt-2 flex justify-center items-center">Choisissez une date...</div>
-        </template>
-
-        <template #action-row="{ selectDate }">
-          <div class="action-row w-full flex justify-center py-2">
-            <button class="py-2 px-4 bg-gradient-to-br from-sky-700 to-sky-500 rounded-lg text-white" @click="selectDate">Valider</button>
+          <div v-else class="w-full h-32 border border-slate-500 flex items-center justify-center text-center p-4 rounded-lg bg-slate-700 cursor-pointer" @click="updateDateFin()">
+            <p>Toucher pour mettre à jour !</p>
           </div>
-        </template>
-      </VueDatePicker>
-    </div> -->
+        </div>
+      </div>
+      <div v-if="!valideDate && formValue.dateDebut != '' && formValue.dateFin != ''" class="p-4">
+        <p v-if="!valideDate && formValue.dateDebut != '' && formValue.dateFin != ''" class="w-ful text-center bg-red-100 rounded-lg p-4 text-red-500">Attention, il y a une incohérence entre la date de début et celle de fin.</p>
+      </div>
+
+      <!-- <p class="p-8 text-center">Résevertion : Jour : {{ selectedDay }} month : {{ formValue.month }} annee : {{ formValue.year }} à {{ selectedHeure }} h {{ selectedMinute }}</p> -->
+    </div>
 
     <div class="mt-auto p-6 flex justify-between items-center">
       <AppButtonCarre class="mb-4" direction="left" @click="etape--"> </AppButtonCarre>

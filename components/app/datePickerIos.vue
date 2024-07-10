@@ -77,8 +77,8 @@ const selectItem = (index) => {
         v-for="(item, index) in props.items"
         :key="index"
         :class="{
-          'snap-center text-lg font-bold text-gray-100': index === activeIndex,
-          'snap-center duration-500': true,
+          'snap-center text-lg font-bold text-gray-100 ': index === activeIndex,
+          'snap-center duration-500 ': true,
           'text-gray-200 opacity-60': Math.abs(index - activeIndex) === 1,
           'text-gray-300 opacity-30': Math.abs(index - activeIndex) === 2,
         }"
