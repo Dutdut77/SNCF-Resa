@@ -42,7 +42,7 @@ const formRadio = computed({
       </label>
     </div>
 
-    <div class="absolute top-1/2 h-10 w-full bg-white drop-shadow-[0_0px_15px_rgba(0,0,0,0.25)] z-20 -mt-3 -skew-y-6 md:-skew-y-6 flex items-center justify-center text-slate-700 italic uppercase text-sm font-medium"><Arrow class="w-8 h-8 -rotate-90 mr-4" /> Toucher pour réserver <Arrow class="w-8 h-8 rotate-90 ml-4" /></div>
+    <div class="absolute top-1/2 h-10 w-full bg-white drop-shadow-[0_0px_15px_rgba(0,0,0,0.25)] z-20 -mt-3 -skew-y-6 md:-skew-y-0 flex items-center justify-center text-slate-700 italic uppercase text-sm font-medium"><Arrow class="w-8 h-8 -rotate-90 mr-4" /> Toucher pour réserver <Arrow class="w-8 h-8 rotate-90 ml-4" /></div>
 
     <!-- VEHICULES -->
     <div class="relative w-full h-full">
