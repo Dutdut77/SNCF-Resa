@@ -223,7 +223,7 @@ const formatedDate = (timestamp) => {
               <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateDebut).minute }}</p>
             </div>
           </div>
-          <div v-else class="w-full h-32 border border-slate-500 flex items-center justify-center text-center p-4 rounded-lg bg-slate-700 cursor-pointer" @click="updateDateDebut()">
+          <div v-else class="w-full h-24 border border-slate-500 flex items-center justify-center text-center p-4 rounded-lg bg-slate-700 cursor-pointer" @click="updateDateDebut()">
             <p>Toucher pour mettre à jour !</p>
           </div>
         </div>
@@ -242,7 +242,7 @@ const formatedDate = (timestamp) => {
               <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateFin).minute }}</p>
             </div>
           </div>
-          <div v-else class="w-full h-32 border border-slate-500 flex items-center justify-center text-center p-4 rounded-lg bg-slate-700 cursor-pointer" @click="updateDateFin()">
+          <div v-else class="w-full h-24 border border-slate-500 flex items-center justify-center text-center p-4 rounded-lg bg-slate-700 cursor-pointer" @click="updateDateFin()">
             <p>Toucher pour mettre à jour !</p>
           </div>
         </div>
