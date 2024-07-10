@@ -19,7 +19,7 @@ const formRadio = computed({
 </script>
 
 <template>
-  <div class="relative w-full h-full flex flex-col -mt-8">
+  <div class="relative w-full h-full flex flex-col -mt-8 pt-4">
     <!-- SALLES -->
     <div class="relative w-full h-full">
       <input id="0" type="radio" v-model="formRadio" value="0" class="hidden peer" />
@@ -42,7 +42,7 @@ const formRadio = computed({
       </label>
     </div>
 
-    <div class="absolute top-1/2 h-10 w-full bg-white drop-shadow-[0_0px_15px_rgba(0,0,0,0.25)] z-20 -mt-5 -skew-y-6 md:-skew-y-6 flex items-center justify-center text-slate-700 italic uppercase text-sm font-medium"><Arrow class="w-8 h-8 -rotate-90" /> Toucher pour réserver <Arrow class="w-8 h-8 rotate-90" /></div>
+    <div class="absolute top-1/2 h-10 w-full bg-white drop-shadow-[0_0px_15px_rgba(0,0,0,0.25)] z-20 -mt-3 -skew-y-6 md:-skew-y-6 flex items-center justify-center text-slate-700 italic uppercase text-sm font-medium"><Arrow class="w-8 h-8 -rotate-90" /> Toucher pour réserver <Arrow class="w-8 h-8 rotate-90" /></div>
 
     <!-- VEHICULES -->
     <div class="relative w-full h-full">
