@@ -202,23 +202,25 @@ const formatedDate = (timestamp) => {
         <AppDatePickerIos :items="minutes" v-model="selectedMinute" :viewIndex="activeIndexMinute" />
       </div>
 
-      <div class="w-full flex justify-center items-center gap-4 py-4">
-        <Arrow class="w-10 h-10 scale-y-[-1]" />
+      <div class="w-full flex justify-center items-center gap-4 py-2">
+        <Arrow class="w-8 h-8 scale-y-[-1]" />
         <!-- <p class="italic text-sm">Tape to update</p> -->
-        <Arrow class="w-10 h-10 rotate-180" />
+        <Arrow class="w-8 h-8 rotate-180" />
       </div>
 
       <div class="flex gap-4 px-4">
         <div class="w-full">
           <p class="px-4 pb-4 text-center uppercase font-medium">Début</p>
           <div v-if="formValue.dateDebut" class="w-full h-24 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden" @click="updateDateDebut()">
-            <div class="h-full w-1/2 bg-gradient-to-br from-sky-700 to-sky-500 text-white p-4 flex flex-col items-center justify-center">
+            <div class="h-full w-2/3 bg-gradient-to-br from-sky-700 to-sky-500 text-white p-4 flex flex-col items-center justify-center">
               <div class="text-3xl font-traverse">{{ formatedDate(formValue.dateDebut).jour }}</div>
-              <div class="text-lg uppercase">{{ formatedDate(formValue.dateDebut).mois }}</div>
-              <div class="text-base uppercase">{{ formatedDate(formValue.dateDebut).annee }}</div>
+              <div class="text-base uppercase">{{ formatedDate(formValue.dateDebut).mois }}</div>
+              <!-- <div class="text-base uppercase">{{ formatedDate(formValue.dateDebut).annee }}</div> -->
             </div>
-            <div class="w-1/2 bg-slate-700 flex justify-center items-center">
-              <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateDebut).heure }} h {{ formatedDate(formValue.dateDebut).minute }}</p>
+            <div class="w-1/3 bg-slate-700 flex flex-col justify-center items-center">
+              <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateDebut).heure }}</p>
+              <p class="text-white text-xl font-bold">H</p>
+              <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateDebut).minute }}</p>
             </div>
           </div>
           <div v-else class="w-full h-32 border border-slate-500 flex items-center justify-center text-center p-4 rounded-lg bg-slate-700 cursor-pointer" @click="updateDateDebut()">
@@ -229,13 +231,15 @@ const formatedDate = (timestamp) => {
         <div class="w-full">
           <p class="px-4 pb-4 text-center uppercase font-medium">Fin</p>
           <div v-if="formValue.dateFin" class="w-full h-24 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden" @click="updateDateFin()">
-            <div class="h-full w-1/2 bg-gradient-to-br from-sky-700 to-sky-500 text-white p-4 flex flex-col items-center justify-center">
+            <div class="h-full w-2/3 bg-gradient-to-br from-sky-700 to-sky-500 text-white p-4 flex flex-col items-center justify-center">
               <div class="text-3xl font-traverse">{{ formatedDate(formValue.dateFin).jour }}</div>
-              <div class="text-lg uppercase">{{ formatedDate(formValue.dateFin).mois }}</div>
-              <div class="text-base uppercase">{{ formatedDate(formValue.dateFin).annee }}</div>
+              <div class="text-base uppercase">{{ formatedDate(formValue.dateFin).mois }}</div>
+              <!-- <div class="text-base uppercase">{{ formatedDate(formValue.dateFin).annee }}</div> -->
             </div>
-            <div class="w-1/2 bg-slate-700 flex justify-center items-center">
-              <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateFin).heure }} h {{ formatedDate(formValue.dateFin).minute }}</p>
+            <div class="w-1/3 bg-slate-700 flex flex-col justify-center items-center">
+              <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateFin).heure }}</p>
+              <p class="text-white text-xl font-bold">H</p>
+              <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateFin).minute }}</p>
             </div>
           </div>
           <div v-else class="w-full h-32 border border-slate-500 flex items-center justify-center text-center p-4 rounded-lg bg-slate-700 cursor-pointer" @click="updateDateFin()">
@@ -250,7 +254,7 @@ const formatedDate = (timestamp) => {
       <!-- <p class="p-8 text-center">Résevertion : Jour : {{ selectedDay }} month : {{ formValue.month }} annee : {{ formValue.year }} à {{ selectedHeure }} h {{ selectedMinute }}</p> -->
     </div>
 
-    <div class="mt-auto p-6 flex justify-between items-center">
+    <div class="mt-auto px-4 flex justify-between items-center">
       <AppButtonCarre class="mb-4" direction="left" @click="etape--"> </AppButtonCarre>
       <AppButtonCarre v-if="etape == 0" :validated="validatedSecteur" class="mb-4" direction="right" @click="etape++"> </AppButtonCarre>
       <AppButtonCarre v-if="etape == 1" :validated="validatedType" class="mb-4" direction="right" @click="etape++"> </AppButtonCarre>
