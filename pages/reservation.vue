@@ -21,7 +21,7 @@ setLoader(true);
 await getAll();
 setLoader(false);
 
-const etape = ref(2);
+const etape = ref(0);
 const formValue = ref({
   secteur: "",
   type: "",
@@ -167,7 +167,7 @@ const formatedDate = (timestamp) => {
 
       <div v-if="etape == 2" class="flex-1 text-left">
         <div class="text-3xl font-medium">Période</div>
-        <div class="text-sm">Sélectionnez les dates</div>
+        <div class="text-sm">Sélectionnez vos dates</div>
       </div>
     </div>
 
@@ -197,16 +197,19 @@ const formatedDate = (timestamp) => {
         </div>
       </div>
 
-      <div class="flex p-4">
-        <AppDatePickerIos :items="dayOfMonth" v-model="selectedDay" :viewIndex="activeIndexDay" />
-        <AppDatePickerIos :items="heures" v-model="selectedHeure" :viewIndex="activeIndexHeure" />
-        <AppDatePickerIos :items="minutes" v-model="selectedMinute" :viewIndex="activeIndexMinute" />
+      <div class="flex w-full p-4">
+        <AppDatePickerIos class="w-full" :items="dayOfMonth" v-model="selectedDay" :viewIndex="activeIndexDay" />
+        <AppDatePickerIos class="w-36" :items="heures" v-model="selectedHeure" :viewIndex="activeIndexHeure" />
+        <div class="h-full w-fit flex items-center">
+          <p class="h-12 border-t border-b border-gray-700 flex items-center justify-center">h</p>
+        </div>
+        <AppDatePickerIos class="w-36" :items="minutes" v-model="selectedMinute" :viewIndex="activeIndexMinute" />
       </div>
 
       <div class="w-full flex justify-center items-center gap-4 py-2">
-        <Arrow class="w-8 h-8 scale-y-[-1]" />
+        <Arrow class="w-8 h-8 rotate-90" />
         <!-- <p class="italic text-sm">Tape to update</p> -->
-        <Arrow class="w-8 h-8 rotate-180" />
+        <!-- <Arrow class="w-8 h-8 rotate-90" /> -->
       </div>
 
       <div class="w-full h-full flex gap-4 px-4">
@@ -227,7 +230,7 @@ const formatedDate = (timestamp) => {
             </div>
           </div>
           <div v-else class="w-full h-28 border border-gray-100 flex items-center justify-center text-center p-4 rounded-lg bg-white shadow-lg cursor-pointer italic" @click="updateDateDebut()">
-            <p>Toucher pour mettre à jour !</p>
+            <p class="text-sm">Valider votre jour et heure de début!</p>
           </div>
         </div>
 
@@ -248,7 +251,7 @@ const formatedDate = (timestamp) => {
             </div>
           </div>
           <div v-else class="w-full h-28 border border-gray-100 flex items-center justify-center text-center p-4 rounded-lg bg-white shadow-lg cursor-pointer italic" @click="updateDateFin()">
-            <p>Toucher pour mettre à jour !</p>
+            <p class="text-sm">Valider votre jour et heure de fin!</p>
           </div>
         </div>
       </div>
