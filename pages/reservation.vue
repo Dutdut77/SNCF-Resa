@@ -28,14 +28,15 @@ setLoader(true);
 await getAll();
 setLoader(false);
 
-const etape = ref(0);
-
+const etape = ref(2);
 const formValue = ref({
   secteur: "",
   type: "",
   dateDebut: "",
   dateFin: "",
 });
+const animals = ["Cat", "Dog", "Elephant", "Giraffe", "Lion", "Monkey", "Tiger"];
+
 const progress = computed(() => {
   return Math.floor((100 * etape.value) / 6);
 });
@@ -126,7 +127,9 @@ const formatedDate = (timestamp) => {
       </div>
     </div>
 
-    <div class="h-full flex flex-col px-4 gap-4" v-if="etape == 2">
+    <AppDatePickerIos :items="animals" />
+
+    <!-- <div class="h-full flex flex-col px-4 gap-4" v-if="etape == 2">
       <VueDatePicker v-model="formValue.dateDebut" ref="dateDebut" locale="fr" model-type="timestamp" :month-change-on-scroll="false" teleport-center time-picker-inline menu-class-name="dp-custom-menu" calendar-cell-class-name="dp-custom-cell">
         <template #top-extra="{ value }">
           <div v-if="formValue.dateDebut" class="h-20 bg-gradient-to-br from-sky-700 to-sky-500 text-white mb-2 rounded flex flex-col justify-center">
@@ -182,7 +185,7 @@ const formatedDate = (timestamp) => {
           </div>
         </template>
       </VueDatePicker>
-    </div>
+    </div> -->
 
     <div class="mt-auto p-6 flex justify-between items-center">
       <AppButtonCarre class="mb-4" direction="left" @click="etape--"> </AppButtonCarre>
