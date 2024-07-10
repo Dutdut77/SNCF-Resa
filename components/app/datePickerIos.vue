@@ -67,7 +67,7 @@ const selectItem = (index) => {
 </script>
 
 <template>
-  <div class="relative w-48 overflow-hidden">
+  <div class="relative w-full overflow-hidden">
     <ul class="overflow-y-auto h-48 snap-y snap-mandatory scroll-smooth" ref="list" @scroll="onScroll">
       <!-- Item vide pour gérer le scroll du haut -->
       <li v-for="index in paddingItems" :key="'top-' + index" class="h-12 flex items-center justify-center"></li>

@@ -28,7 +28,7 @@ setLoader(true);
 await getAll();
 setLoader(false);
 
-const etape = ref(2);
+const etape = ref(0);
 const formValue = ref({
   secteur: "",
   type: "",
@@ -36,7 +36,25 @@ const formValue = ref({
   dateFin: "",
 });
 const minutes = ["00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"];
+const heures = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
 const selectedMinute = ref("");
+const selectedHeure = ref("");
+
+const activeIndexHeure = ref(new Date().getHours());
+
+const activeIndexMinute = computed(() => {
+  const date = new Date();
+  let currentMinutes = date.getMinutes();
+
+  // Arrondir les minutes à 5 près
+  currentMinutes = Math.round(currentMinutes / 5) * 5;
+
+  // Trouver l'index correspondant dans le tableau 'minutes'
+  const index = minutes.indexOf(currentMinutes.toString().padStart(2, "0"));
+
+  return index;
+});
+
 const progress = computed(() => {
   return Math.floor((100 * etape.value) / 6);
 });
@@ -115,24 +133,23 @@ const formatedDate = (timestamp) => {
       </div> -->
     </div>
 
-    <div class="h-full flex flex-col overflow-auto pb-4" v-if="etape == 0">
+    <div v-if="etape == 0" class="h-full flex flex-col overflow-auto pb-4">
       <div class="h-fit px-4">
         <ResaRadioSecteur :data="secteurs" v-model="formValue.secteur" />
       </div>
     </div>
 
-    <div class="h-full flex flex-col" v-if="etape == 1">
+    <div v-if="etape == 1" class="h-full flex flex-col">
       <div class="relative h-full">
         <ResaType v-model="formValue.type" />
       </div>
     </div>
 
-    <div class="flex justify-center">
-      <!-- <AppDatePickerIos :items="minutes" v-model="selectedMinute" :activeIndex="8" /> -->
-      <AppDatePickerIos :items="minutes" v-model="selectedMinute" :viewIndex="3" />
+    <div v-if="etape == 2" class="flex justify-center">
+      <AppDatePickerIos :items="minutes" v-model="selectedMinute" :viewIndex="activeIndexMinute" />
+      <AppDatePickerIos :items="heures" v-model="selectedHeure" :viewIndex="activeIndexHeure" />
     </div>
-
-    Valeur Sélectionée : {{ selectedMinute }}
+    <p class="p-8 text-center">Résevertion : {{ selectedHeure }} h {{ selectedMinute }}</p>
 
     <!-- <div class="h-full flex flex-col px-4 gap-4" v-if="etape == 2">
       <VueDatePicker v-model="formValue.dateDebut" ref="dateDebut" locale="fr" model-type="timestamp" :month-change-on-scroll="false" teleport-center time-picker-inline menu-class-name="dp-custom-menu" calendar-cell-class-name="dp-custom-cell">
