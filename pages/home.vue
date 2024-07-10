@@ -15,13 +15,13 @@ const client = useSupabaseClient();
 </script>
 
 <template>
-  <section class="bg-gradient-to-b from-slate-900 to-slate-700 w-full h-full text-gray-200">
+  <section class="bg-slate-100 w-full h-full text-gray-700">
     <div class="p-4 flex w-full items-center">
       <div class="">
-        <p class="text-gray-100 text-xl">{{ userProfil.nom }} {{ userProfil.prenom }}</p>
-        <p class="text-xs italic text-gray-300">{{ userProfil.email }}</p>
+        <p class="text-gray-700 text-xl">{{ userProfil.nom }} {{ userProfil.prenom }}</p>
+        <p class="text-xs italic text-gray-500">{{ userProfil.email }}</p>
       </div>
-      <img class="ml-auto w-12" src="../assets/img/logo_sncf.png" alt="" />
+      <img class="ml-auto w-12" src="../assets/img/logo.png" alt="" />
     </div>
 
     <div class="p-4">

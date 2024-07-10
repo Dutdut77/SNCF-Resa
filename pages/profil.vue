@@ -10,5 +10,5 @@ useHead({
 </script>
 
 <template>
-  <section class="bg-gradient-to-b from-slate-900 to-slate-700 w-full h-full text-gray-200">Profil</section>
+  <section class="bg-slate-100 w-full h-full text-gray-700 flex justify-center items-center text-4xl">Profil</section>
 </template>

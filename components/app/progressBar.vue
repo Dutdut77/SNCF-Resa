@@ -22,7 +22,7 @@ const offset = computed(() => {
       <circle class="text-gray-300" stroke-width="4" stroke="currentColor" fill="transparent" r="48" cx="50%" cy="50%" />
       <circle class="text-sky-500" stroke-width="4" :stroke-dasharray="circumference" :stroke-dashoffset="offset" stroke-linecap="round" stroke="currentColor" fill="transparent" r="48" cx="50%" cy="50%" />
     </svg>
-    <span class="absolute text-xl font-semibold text-sky-500">{{ percentage }}%</span>
+    <span class="absolute text-3xl font-semibold text-sky-500">{{ percentage }}%</span>
   </div>
 </template>
 

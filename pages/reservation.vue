@@ -21,7 +21,7 @@ setLoader(true);
 await getAll();
 setLoader(false);
 
-const etape = ref(0);
+const etape = ref(2);
 const formValue = ref({
   secteur: "",
   type: "",
@@ -148,23 +148,24 @@ const formatedDate = (timestamp) => {
 </script>
 
 <template>
-  <section class="bg-gradient-to-b from-slate-900 to-slate-700 w-full h-full max-h-full text-gray-200 pb-20 flex flex-col overflow-auto">
-    <div class="sticky top-0 p-4 flex items-center">
-      <div class="flex justify-start items-center flex-1">
+  <section class="bg-slate-100 w-full h-full text-gray-600 pb-20 flex flex-col overflow-auto">
+    <div class="sticky top-0 p-4 flex items-center bg-slate-100">
+      <img class="absolute top-5 right-5 w-12" src="../assets/img/logo.png" alt="" />
+      <div class="flex justify-center items-center flex-1">
         <AppProgressBar :percentage="progress" />
       </div>
 
-      <div v-if="etape == 0" class="flex-1">
-        <div class="text-2xl font-medium">Secteur</div>
+      <div v-if="etape == 0" class="flex-1 text-left">
+        <div class="text-3xl font-medium">Secteur</div>
         <div class="text-sm">Infrapôle Paris-Est</div>
       </div>
 
-      <div v-if="etape == 1" class="flex-1">
-        <div class="text-2xl font-medium">Type</div>
+      <div v-if="etape == 1" class="flex-1 text-left">
+        <div class="text-3xl font-medium">Type</div>
         <div class="text-sm">Salles / Véhicules</div>
       </div>
 
-      <div v-if="etape == 2" class="flex-1 ml-auto text-right">
+      <div v-if="etape == 2" class="flex-1 text-left">
         <div class="text-3xl font-medium">Période</div>
         <div class="text-sm">Sélectionnez les dates</div>
       </div>
@@ -182,16 +183,16 @@ const formatedDate = (timestamp) => {
       </div>
     </div>
 
-    <div v-if="etape == 2" class="flex flex-col justify-center">
-      <div class="flex items-center justify-center gap-4">
-        <div class="w-1/3 flex justify-center items-center gap-4 bg-slate-700 rounded-lg py-2 px-4">
+    <div v-if="etape == 2" class="w-full h-fit flex flex-col justify-center">
+      <div class="flex items-center justify-center gap-4 pb-4 px-4">
+        <div class="w-1/2 flex justify-center items-center gap-2 bg-white rounded-lg py-2 px-2 shadow-lg">
           <Left class="mr-auto h-6 w-6 cursor-pointer" @click="formValue.year--" />
-          <p class="text-center">{{ formValue.year }}</p>
+          <p class="text-center font-medium">{{ formValue.year }}</p>
           <Right class="ml-auto h-6 w-6 cursor-pointer" @click="formValue.year++" />
         </div>
-        <div class="w-1/3 flex justify-center items-center gap-4 bg-slate-700 rounded-lg py-2 px-4">
+        <div class="w-1/2 flex justify-center items-center gap-2 bg-white shadow-lg rounded-lg py-2 px-2">
           <Left class="mr-auto h-6 w-6 cursor-pointer" @click="formValue.month--" :class="formValue.month > 0 ? 'visible' : 'invisible'" />
-          <p class="text-center">{{ monthLetter }}</p>
+          <p class="text-center font-medium">{{ monthLetter }}</p>
           <Right class="ml-auto h-6 w-6 cursor-pointer" @click="formValue.month++" :class="formValue.month < 11 ? 'visible' : 'invisible'" />
         </div>
       </div>
@@ -208,47 +209,52 @@ const formatedDate = (timestamp) => {
         <Arrow class="w-8 h-8 rotate-180" />
       </div>
 
-      <div class="flex gap-4 px-4">
-        <div class="w-full">
-          <p class="px-4 pb-4 text-center uppercase font-medium">Début</p>
-          <div v-if="formValue.dateDebut" class="w-full h-24 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden" @click="updateDateDebut()">
-            <div class="h-full w-2/3 bg-gradient-to-br from-sky-700 to-sky-500 text-white p-4 flex flex-col items-center justify-center">
-              <div class="text-3xl font-traverse">{{ formatedDate(formValue.dateDebut).jour }}</div>
-              <div class="text-base uppercase">{{ formatedDate(formValue.dateDebut).mois }}</div>
-              <!-- <div class="text-base uppercase">{{ formatedDate(formValue.dateDebut).annee }}</div> -->
+      <div class="w-full h-full flex gap-4 px-4">
+        <div class="w-full h-fit flex flex-col">
+          <p class="px-4 pb-2 text-center uppercase font-medium">Début</p>
+          <div v-if="formValue.dateDebut" class="w-full h-28 border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg" @click="updateDateDebut()">
+            <div class="h-full w-full bg-gradient-to-br from-sky-700 to-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
+              <div class="w-1/3 h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(formValue.dateDebut).jour }}</div>
+              <div class="w-2/3 h-full flex flex-col items-start justify-center">
+                <div class="text-base uppercase">{{ formatedDate(formValue.dateDebut).mois }}</div>
+                <div class="text-base uppercase">{{ formatedDate(formValue.dateDebut).annee }}</div>
+              </div>
             </div>
-            <div class="w-1/3 bg-slate-700 flex flex-col justify-center items-center">
+            <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
               <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateDebut).heure }}</p>
-              <p class="text-white text-xl font-bold">H</p>
+              <p class="text-white text-xl font-bold">h</p>
               <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateDebut).minute }}</p>
             </div>
           </div>
-          <div v-else class="w-full h-24 border border-slate-500 flex items-center justify-center text-center p-4 rounded-lg bg-slate-700 cursor-pointer" @click="updateDateDebut()">
+          <div v-else class="w-full h-28 border border-gray-100 flex items-center justify-center text-center p-4 rounded-lg bg-white shadow-lg cursor-pointer italic" @click="updateDateDebut()">
             <p>Toucher pour mettre à jour !</p>
           </div>
         </div>
 
-        <div class="w-full">
-          <p class="px-4 pb-4 text-center uppercase font-medium">Fin</p>
-          <div v-if="formValue.dateFin" class="w-full h-24 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden" @click="updateDateFin()">
-            <div class="h-full w-2/3 bg-gradient-to-br from-sky-700 to-sky-500 text-white p-4 flex flex-col items-center justify-center">
-              <div class="text-3xl font-traverse">{{ formatedDate(formValue.dateFin).jour }}</div>
-              <div class="text-base uppercase">{{ formatedDate(formValue.dateFin).mois }}</div>
-              <!-- <div class="text-base uppercase">{{ formatedDate(formValue.dateFin).annee }}</div> -->
+        <div class="w-full h-fit flex flex-col">
+          <p class="px-4 pb-2 text-center uppercase font-medium">Fin</p>
+          <div v-if="formValue.dateFin" class="w-full h-28 border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg" @click="updateDateFin()">
+            <div class="h-full w-full bg-gradient-to-br from-sky-700 to-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
+              <div class="w-1/3 h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(formValue.dateFin).jour }}</div>
+              <div class="w-2/3 h-full flex flex-col items-start justify-center">
+                <div class="text-base uppercase">{{ formatedDate(formValue.dateFin).mois }}</div>
+                <div class="text-base uppercase">{{ formatedDate(formValue.dateFin).annee }}</div>
+              </div>
             </div>
-            <div class="w-1/3 bg-slate-700 flex flex-col justify-center items-center">
+            <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
               <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateFin).heure }}</p>
-              <p class="text-white text-xl font-bold">H</p>
+              <p class="text-white text-xl font-bold">h</p>
               <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateFin).minute }}</p>
             </div>
           </div>
-          <div v-else class="w-full h-24 border border-slate-500 flex items-center justify-center text-center p-4 rounded-lg bg-slate-700 cursor-pointer" @click="updateDateFin()">
+          <div v-else class="w-full h-28 border border-gray-100 flex items-center justify-center text-center p-4 rounded-lg bg-white shadow-lg cursor-pointer italic" @click="updateDateFin()">
             <p>Toucher pour mettre à jour !</p>
           </div>
         </div>
       </div>
-      <div v-if="!valideDate && formValue.dateDebut != '' && formValue.dateFin != ''" class="p-4">
-        <p v-if="!valideDate && formValue.dateDebut != '' && formValue.dateFin != ''" class="w-ful text-center bg-red-100 rounded-lg p-4 text-red-500">Attention, il y a une incohérence entre la date de début et celle de fin.</p>
+
+      <div v-if="!valideDate && formValue.dateDebut != '' && formValue.dateFin != ''" class="p-4 w-full">
+        <p class="w-full text-center bg-red-100 rounded-lg p-4 text-red-700 italic">Attention, il y a une incohérence entre la date de début et celle de fin.</p>
       </div>
 
       <!-- <p class="p-8 text-center">Résevertion : Jour : {{ selectedDay }} month : {{ formValue.month }} annee : {{ formValue.year }} à {{ selectedHeure }} h {{ selectedMinute }}</p> -->

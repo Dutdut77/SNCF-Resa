@@ -77,10 +77,10 @@ const selectItem = (index) => {
         v-for="(item, index) in props.items"
         :key="index"
         :class="{
-          'snap-center text-lg font-bold text-gray-100 ': index === activeIndex,
+          'snap-center text-lg font-bold text-gray-700 ': index === activeIndex,
           'snap-center duration-500 ': true,
-          'text-gray-200 opacity-60': Math.abs(index - activeIndex) === 1,
-          'text-gray-300 opacity-30': Math.abs(index - activeIndex) === 2,
+          'text-gray-600 opacity-60': Math.abs(index - activeIndex) === 1,
+          'text-gray-400 opacity-30': Math.abs(index - activeIndex) === 2,
         }"
         class="h-12 flex items-center justify-center cursor-pointer"
         @click="selectItem(index)"
@@ -92,7 +92,7 @@ const selectItem = (index) => {
       <li v-for="index in paddingItems" :key="'bottom-' + index" class="h-12 flex items-center justify-center"></li>
     </ul>
     <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <div class="border-t border-b border-gray-300 h-12 w-full"></div>
+      <div class="border-t border-b border-gray-700 h-12 w-full"></div>
     </div>
   </div>
 </template>
