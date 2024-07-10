@@ -35,8 +35,8 @@ const formValue = ref({
   dateDebut: "",
   dateFin: "",
 });
-const animals = ["00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"];
-const selectedAnimal = ref("");
+const minutes = ["00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"];
+const selectedMinute = ref("");
 const progress = computed(() => {
   return Math.floor((100 * etape.value) / 6);
 });
@@ -85,11 +85,6 @@ const formatedDate = (timestamp) => {
 
   return result;
 };
-
-const onItemSelected = (value) => {
-  console.log("PArent received :", value);
-  selectedAnimal.value = value;
-};
 </script>
 
 <template>
@@ -132,8 +127,12 @@ const onItemSelected = (value) => {
       </div>
     </div>
 
-    <AppDatePickerIos :items="animals" @input="onItemSelected" />
-    Valeur Sélectionée : {{ selectedAnimal }}
+    <div class="flex justify-center">
+      <!-- <AppDatePickerIos :items="minutes" v-model="selectedMinute" :activeIndex="8" /> -->
+      <AppDatePickerIos :items="minutes" v-model="selectedMinute" :viewIndex="3" />
+    </div>
+
+    Valeur Sélectionée : {{ selectedMinute }}
 
     <!-- <div class="h-full flex flex-col px-4 gap-4" v-if="etape == 2">
       <VueDatePicker v-model="formValue.dateDebut" ref="dateDebut" locale="fr" model-type="timestamp" :month-change-on-scroll="false" teleport-center time-picker-inline menu-class-name="dp-custom-menu" calendar-cell-class-name="dp-custom-cell">
