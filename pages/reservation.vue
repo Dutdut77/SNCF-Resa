@@ -148,8 +148,8 @@ const formatedDate = (timestamp) => {
 </script>
 
 <template>
-  <section class="bg-gradient-to-b from-slate-900 to-slate-700 w-full h-full max-h-full text-gray-200 pb-20 flex flex-col overflow-hidden">
-    <div class="p-4 flex items-center">
+  <section class="bg-gradient-to-b from-slate-900 to-slate-700 w-full h-full max-h-full text-gray-200 pb-20 flex flex-col overflow-auto">
+    <div class="sticky top-0 p-4 flex items-center">
       <div class="flex justify-start items-center flex-1">
         <AppProgressBar :percentage="progress" />
       </div>
@@ -211,14 +211,14 @@ const formatedDate = (timestamp) => {
       <div class="flex gap-4 px-4">
         <div class="w-full">
           <p class="px-4 pb-4 text-center uppercase font-medium">Début</p>
-          <div v-if="formValue.dateDebut" class="w-full h-32 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden" @click="updateDateDebut()">
+          <div v-if="formValue.dateDebut" class="w-full h-24 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden" @click="updateDateDebut()">
             <div class="h-full w-1/2 bg-gradient-to-br from-sky-700 to-sky-500 text-white p-4 flex flex-col items-center justify-center">
-              <div class="text-5xl font-traverse">{{ formatedDate(formValue.dateDebut).jour }}</div>
+              <div class="text-3xl font-traverse">{{ formatedDate(formValue.dateDebut).jour }}</div>
               <div class="text-lg uppercase">{{ formatedDate(formValue.dateDebut).mois }}</div>
               <div class="text-base uppercase">{{ formatedDate(formValue.dateDebut).annee }}</div>
             </div>
             <div class="w-1/2 bg-slate-700 flex justify-center items-center">
-              <p class="text-white text-3xl font-bold">{{ formatedDate(formValue.dateDebut).heure }} H {{ formatedDate(formValue.dateDebut).minute }}</p>
+              <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateDebut).heure }} h {{ formatedDate(formValue.dateDebut).minute }}</p>
             </div>
           </div>
           <div v-else class="w-full h-32 border border-slate-500 flex items-center justify-center text-center p-4 rounded-lg bg-slate-700 cursor-pointer" @click="updateDateDebut()">
@@ -228,14 +228,14 @@ const formatedDate = (timestamp) => {
 
         <div class="w-full">
           <p class="px-4 pb-4 text-center uppercase font-medium">Fin</p>
-          <div v-if="formValue.dateFin" class="w-full h-32 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden" @click="updateDateFin()">
+          <div v-if="formValue.dateFin" class="w-full h-24 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden" @click="updateDateFin()">
             <div class="h-full w-1/2 bg-gradient-to-br from-sky-700 to-sky-500 text-white p-4 flex flex-col items-center justify-center">
-              <div class="text-5xl font-traverse">{{ formatedDate(formValue.dateFin).jour }}</div>
+              <div class="text-3xl font-traverse">{{ formatedDate(formValue.dateFin).jour }}</div>
               <div class="text-lg uppercase">{{ formatedDate(formValue.dateFin).mois }}</div>
               <div class="text-base uppercase">{{ formatedDate(formValue.dateFin).annee }}</div>
             </div>
             <div class="w-1/2 bg-slate-700 flex justify-center items-center">
-              <p class="text-white text-3xl font-bold">{{ formatedDate(formValue.dateFin).heure }} H {{ formatedDate(formValue.dateFin).minute }}</p>
+              <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateFin).heure }} h {{ formatedDate(formValue.dateFin).minute }}</p>
             </div>
           </div>
           <div v-else class="w-full h-32 border border-slate-500 flex items-center justify-center text-center p-4 rounded-lg bg-slate-700 cursor-pointer" @click="updateDateFin()">
@@ -259,12 +259,9 @@ const formatedDate = (timestamp) => {
   </section>
 </template>
 
-<style>
-.dp-custom-menu {
-  border-radius: 10px;
-  padding: 10px 30px 10px 30px;
-}
-.dp-custom-cell {
-  border-radius: 50%;
+<style scoped>
+/* Cacher la barre de défilement */
+::-webkit-scrollbar {
+  display: none;
 }
 </style>
