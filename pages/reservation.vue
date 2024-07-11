@@ -2,6 +2,7 @@
 import Arrow from "@/assets/svg/Arrow.vue";
 import Left from "@/assets/svg/Left.vue";
 import Right from "@/assets/svg/Right.vue";
+import Touch from "@/assets/svg/Touch.vue";
 
 definePageMeta({
   requiresAuth: true,
@@ -21,14 +22,15 @@ setLoader(true);
 await getAll();
 setLoader(false);
 
-const etape = ref(0);
+const etape = ref(3);
 const formValue = ref({
-  secteur: "",
-  type: "",
+  secteur: "5",
+  type: "1",
   dateDebut: "",
   dateFin: "",
   year: new Date().getFullYear(),
   month: new Date().getMonth(),
+  id_vehicule: "",
 });
 
 const minutes = ["00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"];
@@ -148,8 +150,8 @@ const formatedDate = (timestamp) => {
 </script>
 
 <template>
-  <section class="bg-slate-100 w-full h-full text-gray-600 pb-20 flex flex-col overflow-auto">
-    <div class="sticky top-0 p-4 flex items-center bg-slate-100">
+  <section class="bg-slate-100 w-full h-full text-gray-600 pb-20 flex flex-col overflow-auto gap-4">
+    <div class="sticky top-0 z-30 p-4 flex items-center bg-slate-100">
       <img class="absolute top-5 right-5 w-12" src="../assets/img/logo.png" alt="" />
       <div class="flex justify-center items-center flex-1">
         <AppProgressBar :percentage="progress" />
@@ -168,6 +170,16 @@ const formatedDate = (timestamp) => {
       <div v-if="etape == 2" class="flex-1 text-left">
         <div class="text-3xl font-medium">Période</div>
         <div class="text-sm">Sélectionnez vos dates</div>
+      </div>
+
+      <div v-if="etape == 3 && formValue.type == 0" class="flex-1 text-left">
+        <div class="text-3xl font-medium">Salles</div>
+        <div class="text-sm">Sélectionnez votre salle</div>
+      </div>
+
+      <div v-if="etape == 3 && formValue.type == 1" class="flex-1 text-left">
+        <div class="text-3xl font-medium">Véhicules</div>
+        <div class="text-sm">Sélectionnez votre véhicule</div>
       </div>
     </div>
 
@@ -229,8 +241,10 @@ const formatedDate = (timestamp) => {
               <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateDebut).minute }}</p>
             </div>
           </div>
-          <div v-else class="w-full h-28 border border-gray-100 flex items-center justify-center text-center p-4 rounded-lg bg-white shadow-lg cursor-pointer italic" @click="updateDateDebut()">
-            <p class="text-sm">Valider votre jour et heure de début!</p>
+          <div v-else class="w-full h-28 border border-gray-100 flex flex-col gap-2 items-center justify-center text-center p-4 rounded-lg bg-white shadow-lg cursor-pointer italic" @click="updateDateDebut()">
+            <Touch class="w-8 h-8 text-sky-500 animate__animated animate__heartBeat animate__repeat-2 animate__delay-2s" />
+
+            <p class="text-sm">Mettre à jour</p>
           </div>
         </div>
 
@@ -250,8 +264,9 @@ const formatedDate = (timestamp) => {
               <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateFin).minute }}</p>
             </div>
           </div>
-          <div v-else class="w-full h-28 border border-gray-100 flex items-center justify-center text-center p-4 rounded-lg bg-white shadow-lg cursor-pointer italic" @click="updateDateFin()">
-            <p class="text-sm">Valider votre jour et heure de fin!</p>
+          <div v-else class="w-full h-28 border border-gray-100 flex flex-col items-center justify-center gap-4 text-center p-4 rounded-lg bg-white shadow-lg cursor-pointer italic" @click="updateDateFin()">
+            <Touch class="w-8 h-8 text-sky-500 animate__animated animate__heartBeat animate__repeat-2 animate__delay-2s" />
+            <p class="text-sm">Mettre à jour</p>
           </div>
         </div>
       </div>
@@ -261,6 +276,16 @@ const formatedDate = (timestamp) => {
       </div>
 
       <!-- <p class="p-8 text-center">Résevertion : Jour : {{ selectedDay }} month : {{ formValue.month }} annee : {{ formValue.year }} à {{ selectedHeure }} h {{ selectedMinute }}</p> -->
+    </div>
+
+    <div v-if="etape == 3 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
+      <ResaChoixSalles />
+    </div>
+
+    <div v-if="etape == 3 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center">
+      <ResaRadioVehicule :data="formValue" v-model="formValue.id_vehicule" />
+
+      <!-- <ResaChoixVehicules :formValue="formValue" /> -->
     </div>
 
     <div class="mt-auto px-4 flex justify-between items-center">
