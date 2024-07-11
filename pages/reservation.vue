@@ -31,6 +31,7 @@ const formValue = ref({
   year: new Date().getFullYear(),
   month: new Date().getMonth(),
   id_vehicule: "",
+  id_salle: "",
 });
 
 const minutes = ["00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"];
@@ -82,7 +83,7 @@ const monthLetter = computed(() => {
 });
 
 const progress = computed(() => {
-  return Math.floor((100 * etape.value) / 6);
+  return Math.floor((100 * etape.value) / 4);
 });
 
 const valideDate = computed(() => {
@@ -101,6 +102,14 @@ const validatedType = computed(() => {
 
 const validatedDate = computed(() => {
   return formValue.value.dateDebut != "" && formValue.value.dateFin != "" && valideDate.value != false ? true : false;
+});
+
+const validatedSalle = computed(() => {
+  return formValue.value.id_salle != "" ? true : false;
+});
+
+const validatedVehicule = computed(() => {
+  return formValue.value.id_vehicule != "" ? true : false;
 });
 
 const updateDateDebut = () => {
@@ -152,7 +161,7 @@ const formatedDate = (timestamp) => {
 <template>
   <section class="bg-slate-100 w-full h-full text-gray-600 pb-20 flex flex-col overflow-auto gap-4">
     <div class="sticky top-0 z-30 p-4 flex items-center bg-slate-100">
-      <img class="absolute top-5 right-5 w-12" src="../assets/img/logo.png" alt="" />
+      <!-- <img class="absolute top-5 right-5 w-12" src="../assets/img/logo.png" alt="" /> -->
       <div class="flex justify-center items-center flex-1">
         <AppProgressBar :percentage="progress" />
       </div>
@@ -180,6 +189,16 @@ const formatedDate = (timestamp) => {
       <div v-if="etape == 3 && formValue.type == 1" class="flex-1 text-left">
         <div class="text-3xl font-medium">Véhicules</div>
         <div class="text-sm">Sélectionnez votre véhicule</div>
+      </div>
+
+      <div v-if="etape == 4 && formValue.type == 0" class="flex-1 text-left">
+        <div class="text-3xl font-medium">Récapitulatif</div>
+        <div class="text-sm">Réservation d'une salle</div>
+      </div>
+
+      <div v-if="etape == 4 && formValue.type == 1" class="flex-1 text-left">
+        <div class="text-3xl font-medium">Récapitulatif</div>
+        <div class="text-sm">Réservation d'un véhicule</div>
       </div>
     </div>
 
@@ -293,6 +312,8 @@ const formatedDate = (timestamp) => {
       <AppButtonCarre v-if="etape == 0" :validated="validatedSecteur" class="mb-4" direction="right" @click="etape++"> </AppButtonCarre>
       <AppButtonCarre v-if="etape == 1" :validated="validatedType" class="mb-4" direction="right" @click="etape++"> </AppButtonCarre>
       <AppButtonCarre v-if="etape == 2" :validated="validatedDate" class="mb-4" direction="right" @click="etape++"> </AppButtonCarre>
+      <AppButtonCarre v-if="etape == 3 && formValue.type == 0" :validated="validatedSalle" class="mb-4" direction="right" @click="etape++"> </AppButtonCarre>
+      <AppButtonCarre v-if="etape == 3 && formValue.type == 1" :validated="validatedVehicule" class="mb-4" direction="right" @click="etape++"> </AppButtonCarre>
     </div>
   </section>
 </template>
