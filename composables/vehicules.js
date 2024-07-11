@@ -10,7 +10,7 @@ export const useVehicules = () => {
         try {
             const { data, error } = await supabase
             .from('vehicules')
-            .select()
+            .select('*, carburant!inner(name)' )
             .eq('id_secteur', id)
             .eq('is_dispo', 1)
            if (error) throw error;

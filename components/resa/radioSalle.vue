@@ -7,7 +7,6 @@ import Manuel from "@/assets/svg/Manuel.vue";
 const { setLoader } = useLoader();
 const { getAllSecteurDispo, vehicules } = useVehicules();
 const { getAllResaSecteurTime, allResaSecteurTime } = useResaVehicules();
-const finalReservation = useState("finalReservation");
 
 const props = defineProps({
   data: {
@@ -31,8 +30,6 @@ const formRadio = computed({
     return props.modelValue;
   },
   set(value) {
-    const name = vehicules.value.find((e) => e.id === value);
-    finalReservation.value.vehicule = name;
     emits("update:model-value", value);
   },
 });
@@ -40,7 +37,7 @@ const formRadio = computed({
 
 <template>
   <div class="w-full h-fit flex flex-col gap-2 px-4">
-    <div v-if="vehicules.length > 0" class="relative w-full h-fit" v-for="(vehicule, index) in vehicules" :key="index">
+    <div class="relative w-full h-fit" v-for="(vehicule, index) in vehicules" :key="index">
       <input :id="vehicule.id" type="radio" v-model="formRadio" :value="vehicule.id" class="hidden peer" />
       <label :for="vehicule.id" class="rounded-lg shadow-lg overflow-hidden flex flex-col items-center border justify-center bg-white hover:bg-opacity-75 peer-checked:shadow-lg peer-checked:text-white cursor-pointer transition">
         <div class="w-full cursor-pointer flex z-30">
@@ -72,7 +69,6 @@ const formRadio = computed({
         </svg>
       </div>
     </div>
-    <div v-else class="italic">Aucun véhicule de disponible.</div>
   </div>
 </template>
 

@@ -15,17 +15,19 @@ useHead({
 
 const { setLoader } = useLoader();
 const { getAll, secteurs } = useSecteurs();
+const userProfil = useState("userProfil");
 const dateFin = ref("");
 const dateDebut = ref("");
+const finalReservation = useState("finalReservation", () => ({}));
 
 setLoader(true);
 await getAll();
 setLoader(false);
 
-const etape = ref(3);
+const etape = ref(0);
 const formValue = ref({
-  secteur: "5",
-  type: "1",
+  secteur: "",
+  type: "",
   dateDebut: "",
   dateFin: "",
   year: new Date().getFullYear(),
@@ -112,15 +114,26 @@ const validatedVehicule = computed(() => {
   return formValue.value.id_vehicule != "" ? true : false;
 });
 
+const isAuthToReserv = computed(() => {
+  if (finalReservation.value.sect_admin == null || !finalReservation.value.sect_admin) {
+    return false;
+  } else {
+    const array = finalReservation.value.sect_admin.split(",");
+    return array.includes(userProfil.value.id);
+  }
+});
+
 const updateDateDebut = () => {
   const day = selectedDay.value.split(" ")[1];
   const date = new Date(formValue.value.year, formValue.value.month, day, selectedHeure.value, selectedMinute.value);
+  finalReservation.value.dateDebut = date.getTime();
   formValue.value.dateDebut = date.getTime();
 };
 
 const updateDateFin = () => {
   const day = selectedDay.value.split(" ")[1];
   const date = new Date(formValue.value.year, formValue.value.month, day, selectedHeure.value, selectedMinute.value);
+  finalReservation.value.dateFin = date.getTime();
   formValue.value.dateFin = date.getTime();
 };
 
@@ -161,8 +174,8 @@ const formatedDate = (timestamp) => {
 <template>
   <section class="bg-slate-100 w-full h-full text-gray-600 pb-20 flex flex-col overflow-auto gap-4">
     <div class="sticky top-0 z-30 p-4 flex items-center bg-slate-100">
-      <!-- <img class="absolute top-5 right-5 w-12" src="../assets/img/logo.png" alt="" /> -->
-      <div class="flex justify-center items-center flex-1">
+      <img class="absolute top-5 right-5 w-12" src="../assets/img/logo.png" alt="" />
+      <div class="flex justify-start items-center">
         <AppProgressBar :percentage="progress" />
       </div>
 
@@ -298,22 +311,30 @@ const formatedDate = (timestamp) => {
     </div>
 
     <div v-if="etape == 3 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
-      <ResaChoixSalles />
+      <!-- <ResaRadioSalle :data="formValue" v-model="formValue.id_salle" /> -->
     </div>
 
     <div v-if="etape == 3 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center">
       <ResaRadioVehicule :data="formValue" v-model="formValue.id_vehicule" />
-
-      <!-- <ResaChoixVehicules :formValue="formValue" /> -->
     </div>
 
-    <div class="mt-auto px-4 flex justify-between items-center">
-      <AppButtonCarre class="mb-4" direction="left" @click="etape--"> </AppButtonCarre>
-      <AppButtonCarre v-if="etape == 0" :validated="validatedSecteur" class="mb-4" direction="right" @click="etape++"> </AppButtonCarre>
-      <AppButtonCarre v-if="etape == 1" :validated="validatedType" class="mb-4" direction="right" @click="etape++"> </AppButtonCarre>
-      <AppButtonCarre v-if="etape == 2" :validated="validatedDate" class="mb-4" direction="right" @click="etape++"> </AppButtonCarre>
-      <AppButtonCarre v-if="etape == 3 && formValue.type == 0" :validated="validatedSalle" class="mb-4" direction="right" @click="etape++"> </AppButtonCarre>
-      <AppButtonCarre v-if="etape == 3 && formValue.type == 1" :validated="validatedVehicule" class="mb-4" direction="right" @click="etape++"> </AppButtonCarre>
+    <div v-if="etape == 4 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
+      <!-- <ResaRadioSalle :data="formValue" v-model="formValue.id_salle" /> -->
+    </div>
+
+    <div v-if="etape == 4 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center">
+      <ResaRecapVehicule :data="formValue" />
+    </div>
+
+    <div class="mt-auto mb-4 px-4 flex justify-between items-center">
+      <AppButtonCarre v-if="etape > 0" class="" direction="left" @click="etape--"> </AppButtonCarre>
+      <AppButtonCarre v-if="etape == 0" :validated="validatedSecteur" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
+      <AppButtonCarre v-if="etape == 1" :validated="validatedType" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
+      <AppButtonCarre v-if="etape == 2" :validated="validatedDate" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
+      <AppButtonCarre v-if="etape == 3 && formValue.type == 0" :validated="validatedSalle" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
+      <AppButtonCarre v-if="etape == 3 && formValue.type == 1" :validated="validatedVehicule" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
+      <AppButtonValidated v-if="etape == 4 && isAuthToReserv" class="w-fit ml-auto" theme=""> <template #default> Réserver </template> </AppButtonValidated>
+      <AppButtonValidated v-if="etape == 4 && !isAuthToReserv" class="w-fit ml-auto" theme=""> <template #default> Envoyer la demande </template> </AppButtonValidated>
     </div>
   </section>
 </template>

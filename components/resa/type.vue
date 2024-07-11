@@ -8,11 +8,14 @@ const props = defineProps({
   },
 });
 
+const finalReservation = useState("finalReservation");
+
 const formRadio = computed({
   get() {
     return props.modelValue;
   },
   set(value) {
+    finalReservation.value.type = value;
     emits("update:model-value", value);
   },
 });

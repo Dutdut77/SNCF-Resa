@@ -1,8 +1,5 @@
 <script setup>
-// Exemple :
-// <Radio :name="['decret_92', 'decret_94']" :value="[92, 94]" :radioTitle="['92', '94']" title="Décret Test:" v-model="formValue.decret" />
-//
-
+const finalReservation = useState("finalReservation");
 const props = defineProps({
   data: {
     default: [],
@@ -20,6 +17,10 @@ const formRadio = computed({
     return props.modelValue;
   },
   set(value) {
+    const name = props.data.find((e) => e.id === value);
+    finalReservation.value.secteur = name.name;
+
+    finalReservation.value.sect_admin = name.sect_admin_id_user;
     emits("update:model-value", value);
   },
 });
