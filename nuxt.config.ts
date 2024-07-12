@@ -2,6 +2,11 @@
 export default defineNuxtConfig({
   devtools: { enabled: false },
   modules: ['@nuxtjs/tailwindcss', "@nuxtjs/supabase"],
+  imports: {
+    dirs: [
+      'composables/**'
+    ]
+  },
   supabase: {
     redirect : false
   },

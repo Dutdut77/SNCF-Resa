@@ -1,51 +1,51 @@
-export const useResaVehicules = () => {
+export const useResaSalles = () => {
 
     const { addToast } = useToast();
     const supabase = useSupabaseClient();
     const userProfil = useState("userProfil");
   
-    const allResaSecteurTime = useState('allResaSecteur', () => [])
-  
-    const allResaUserActuel= useState('allResaUserActuel', () => [])
+    const allResaSallesSecteurTime = useState('allResaSallesSecteurTime', () => [])
+    const allResaSallesUserActuel= useState('allResaSallesUserActuel', () => [])
 
-    const getAllResaUserActuel = async () => {
+    const getAllSallesResaUserActuel = async () => {
         try {
             const now = Date.now()
             const { data, error } = await supabase
-            .from('resa_vehicules')
-            .select('*, vehicules!inner(*), secteurs!inner(name)')
+            .from('resa_salles')
+            .select('*, salles!inner(*), secteurs!inner(name)')
             .eq('id_user', userProfil.value.id)
             .gte('fin', now);
            if (error) throw error;
-           allResaUserActuel.value = data
+           allResaSallesUserActuel.value = data
+           .value = data
         } catch (err) {
             console.log("erreurs :", err);
         //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
         }
     }
 
-    const getAllResaSecteurTime = async (secteur, dateDebut, dateFin) => {
+    const getAllResaSallesSecteurTime = async (secteur, dateDebut, dateFin) => {
         try {
             const { data, error } = await supabase
-            .from('resa_vehicules')
+            .from('resa_salles')
             .select()
             .eq('id_secteur', secteur)
             .gt('fin', dateDebut)
             .lt('debut', dateFin);
            if (error) throw error;
-           allResaSecteurTime.value = data
+           allResaSallesSecteurTime.value = data
         } catch (err) {
             console.log("erreurs :", err);
         //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
         }
     }
 
-    const addResaVehicule = async (form) => {
+    const addResaSalles = async (form) => {
         try {
             const { data : resa, error } = await supabase
-            .from('resa_vehicules')
+            .from('resa_salles')
             .insert([
-              { id_vehicule : form.id_vehicule, id_secteur : form.secteur, id_user : form.id_user, debut : form.dateDebut, fin : form.dateFin, is_validated : form.is_validated },
+              { id_salle : form.id_salle, id_secteur : form.secteur, id_user : form.id_user, debut : form.dateDebut, fin : form.dateFin, is_validated : form.is_validated },
             ])
             .select() 
             if (error) throw error;
@@ -65,6 +65,6 @@ export const useResaVehicules = () => {
      
   
   
-      return { getAllResaSecteurTime,  addResaVehicule, getAllResaUserActuel, allResaSecteurTime, allResaUserActuel}
+      return { getAllResaSallesSecteurTime,  addResaSalles, getAllSallesResaUserActuel, allResaSallesSecteurTime, allResaSallesUserActuel}
       
   }

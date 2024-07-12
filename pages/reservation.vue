@@ -16,6 +16,8 @@ useHead({
 const { setLoader } = useLoader();
 const { getAll, secteurs } = useSecteurs();
 const { addResaVehicule } = useResaVehicules();
+const { addResaSalles } = useResaSalles();
+const { formatedDate, monthLetter } = useFormatDate();
 const userProfil = useState("userProfil");
 const dateFin = ref("");
 const dateDebut = ref("");
@@ -69,52 +71,29 @@ const dayOfMonth = computed(() => {
   }
   return days;
 });
-
-const monthLetter = computed(() => {
-  if (formValue.value.month == 0) return "Janvier";
-  if (formValue.value.month == 1) return "Février";
-  if (formValue.value.month == 2) return "Mars";
-  if (formValue.value.month == 3) return "Avril";
-  if (formValue.value.month == 4) return "Mai";
-  if (formValue.value.month == 5) return "Juin";
-  if (formValue.value.month == 6) return "Juillet";
-  if (formValue.value.month == 7) return "Aout";
-  if (formValue.value.month == 8) return "Septembre";
-  if (formValue.value.month == 9) return "Octobre";
-  if (formValue.value.month == 10) return "Novembre";
-  if (formValue.value.month == 11) return "Décembre";
-});
-
 const progress = computed(() => {
   return Math.floor((100 * etape.value) / 4);
 });
-
 const valideDate = computed(() => {
   if (formValue.value.dateFin < formValue.value.dateDebut) {
     return false;
   } else return true;
 });
-
 const validatedSecteur = computed(() => {
   return formValue.value.secteur != "" ? true : false;
 });
-
 const validatedType = computed(() => {
   return formValue.value.type != "" ? true : false;
 });
-
 const validatedDate = computed(() => {
   return formValue.value.dateDebut != "" && formValue.value.dateFin != "" && valideDate.value != false ? true : false;
 });
-
 const validatedSalle = computed(() => {
   return formValue.value.id_salle != "" ? true : false;
 });
-
 const validatedVehicule = computed(() => {
   return formValue.value.id_vehicule != "" ? true : false;
 });
-
 const isAuthToReserv = computed(() => {
   if (finalReservation.value.sect_admin == null || !finalReservation.value.sect_admin) {
     return false;
@@ -138,39 +117,6 @@ const updateDateFin = () => {
   formValue.value.dateFin = date.getTime();
 };
 
-const formatedDate = (timestamp) => {
-  const result = {};
-  // Créer une nouvelle date à partir du timestamp
-  let date = new Date(timestamp);
-
-  // Obtenir les différentes parties de la date et de l'heure
-  let day = date.getDate();
-  let month = date.getMonth() + 1; // Les mois commencent à 0, donc nous ajoutons 1
-  let year = date.getFullYear();
-  let hours = date.getHours();
-  let minutes = date.getMinutes();
-  let dayOfWeek = date.getDay();
-
-  // Formater les parties de la date pour ajouter des zéros si nécessaire
-  day = day < 10 ? "0" + day : day;
-  month = month < 10 ? "0" + month : month;
-  hours = hours < 10 ? "0" + hours : hours;
-  minutes = minutes < 10 ? "0" + minutes : minutes;
-
-  // Tableau des noms des jours et mois en français
-  const dayNames = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
-  const monthNames = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
-
-  result.jourName = dayNames[dayOfWeek];
-  result.jour = day;
-  result.mois = monthNames[date.getMonth()];
-  result.annee = year;
-  result.heure = hours;
-  result.minute = minutes;
-
-  return result;
-};
-
 const addResa = async () => {
   if (isAuthToReserv) {
     formValue.value.is_validated = 1;
@@ -178,16 +124,24 @@ const addResa = async () => {
     formValue.value.is_validated = 0;
   }
   formValue.value.id_user = userProfil.value.id;
-  setLoader(true);
-  await addResaVehicule(formValue.value);
-  navigateTo("/home");
-  setLoader(false);
+
+  if (formValue.value.type == 0) {
+    setLoader(true);
+    await addResaSalles(formValue.value);
+    navigateTo("/home");
+    setLoader(false);
+  } else {
+    setLoader(true);
+    await addResaVehicule(formValue.value);
+    navigateTo("/home");
+    setLoader(false);
+  }
 };
 </script>
 
 <template>
   <section class="bg-slate-100 w-full h-full text-gray-600 pb-20 flex flex-col overflow-auto gap-4">
-    <div class="sticky top-0 z-30 p-4 flex items-center bg-slate-100">
+    <div class="sticky top-0 z-50 px-4 pt-4 flex items-center bg-slate-100">
       <img class="absolute top-5 right-5 w-12" src="../assets/img/logo.png" alt="" />
       <div class="flex justify-start items-center">
         <AppProgressBar :percentage="progress" />
@@ -250,7 +204,7 @@ const addResa = async () => {
         </div>
         <div class="w-1/2 flex justify-center items-center gap-2 bg-white shadow-lg rounded-lg py-2 px-2">
           <Left class="mr-auto h-6 w-6 cursor-pointer" @click="formValue.month--" :class="formValue.month > 0 ? 'visible' : 'invisible'" />
-          <p class="text-center font-medium">{{ monthLetter }}</p>
+          <p class="text-center font-medium">{{ monthLetter(formValue.month) }}</p>
           <Right class="ml-auto h-6 w-6 cursor-pointer" @click="formValue.month++" :class="formValue.month < 11 ? 'visible' : 'invisible'" />
         </div>
       </div>
@@ -288,7 +242,7 @@ const addResa = async () => {
             </div>
           </div>
           <div v-else class="w-full h-28 border border-gray-100 flex flex-col gap-2 items-center justify-center text-center p-4 rounded-lg bg-white shadow-lg cursor-pointer italic" @click="updateDateDebut()">
-            <Touch class="w-8 h-8 text-sky-500 animate__animated animate__heartBeat animate__repeat-2 animate__delay-2s" />
+            <Touch class="w-8 h-8 text-sky-500 animate__animated animate__heartBeat animate__repeat-3 animate__delay-1s" />
 
             <p class="text-sm">Mettre à jour</p>
           </div>
@@ -311,7 +265,7 @@ const addResa = async () => {
             </div>
           </div>
           <div v-else class="w-full h-28 border border-gray-100 flex flex-col items-center justify-center gap-4 text-center p-4 rounded-lg bg-white shadow-lg cursor-pointer italic" @click="updateDateFin()">
-            <Touch class="w-8 h-8 text-sky-500 animate__animated animate__heartBeat animate__repeat-2 animate__delay-2s" />
+            <Touch class="w-8 h-8 text-sky-500 animate__animated animate__heartBeat animate__repeat-3 animate__delay-1s" />
             <p class="text-sm">Mettre à jour</p>
           </div>
         </div>
@@ -325,7 +279,7 @@ const addResa = async () => {
     </div>
 
     <div v-if="etape == 3 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
-      <!-- <ResaRadioSalle :data="formValue" v-model="formValue.id_salle" /> -->
+      <ResaRadioSalle :data="formValue" v-model="formValue.id_salle" />
     </div>
 
     <div v-if="etape == 3 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center">
@@ -333,7 +287,7 @@ const addResa = async () => {
     </div>
 
     <div v-if="etape == 4 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
-      <!-- <ResaRadioSalle :data="formValue" v-model="formValue.id_salle" /> -->
+      <ResaRecapSalle :data="formValue" />
     </div>
 
     <div v-if="etape == 4 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center">

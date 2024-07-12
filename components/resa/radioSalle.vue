@@ -1,12 +1,17 @@
 <script setup>
 import Group from "@/assets/svg/Group.vue";
-import Electric from "@/assets/svg/Electric.vue";
-import Fuel from "@/assets/svg/Fuel.vue";
-import Manuel from "@/assets/svg/Manuel.vue";
+import Wifi from "@/assets/svg/Wifi.vue";
+import Pmr from "@/assets/svg/Pmr.vue";
+import Clim from "@/assets/svg/Clim.vue";
+import VideoProj from "@/assets/svg/VideoProj.vue";
+import Jabra from "@/assets/svg/Jabra.vue";
+import WhiteBoard from "@/assets/svg/WhiteBoard.vue";
+import Webcam from "@/assets/svg/Webcam.vue";
 
 const { setLoader } = useLoader();
-const { getAllSecteurDispo, vehicules } = useVehicules();
-const { getAllResaSecteurTime, allResaSecteurTime } = useResaVehicules();
+const { getAllSallesSecteurDispo, salles } = useSalles();
+const { getAllResaSallesSecteurTime, allResaSallesSecteurTime } = useResaSalles();
+const finalReservation = useState("finalReservation");
 
 const props = defineProps({
   data: {
@@ -17,12 +22,11 @@ const props = defineProps({
     default: "",
   },
 });
-
 const emits = defineEmits(["update:model-value"]);
 
 setLoader(true);
-await getAllSecteurDispo(props.data.secteur);
-await getAllResaSecteurTime(props.data.secteur, props.data.dateDebut);
+await getAllSallesSecteurDispo(props.data.secteur);
+await getAllResaSallesSecteurTime(props.data.secteur, props.data.dateDebut, props.data.dateFin);
 setLoader(false);
 
 const formRadio = computed({
@@ -30,34 +34,71 @@ const formRadio = computed({
     return props.modelValue;
   },
   set(value) {
+    const name = salles.value.find((e) => e.id === value);
+    finalReservation.value.salle = name;
     emits("update:model-value", value);
   },
+});
+
+const dispoSalles = computed(() => {
+  // Créer un ensemble (Set) des id_vehicule réservés
+  const reservedSalleIds = new Set(allResaSallesSecteurTime.value.map((reservation) => reservation.id_salle));
+
+  // Filtrer les véhicules qui ne sont pas réservés
+  const availableSalles = salles.value.filter((salle) => !reservedSalleIds.has(salle.id));
+
+  return availableSalles;
 });
 </script>
 
 <template>
   <div class="w-full h-fit flex flex-col gap-2 px-4">
-    <div class="relative w-full h-fit" v-for="(vehicule, index) in vehicules" :key="index">
-      <input :id="vehicule.id" type="radio" v-model="formRadio" :value="vehicule.id" class="hidden peer" />
-      <label :for="vehicule.id" class="rounded-lg shadow-lg overflow-hidden flex flex-col items-center border justify-center bg-white hover:bg-opacity-75 peer-checked:shadow-lg peer-checked:text-white cursor-pointer transition">
-        <div class="w-full cursor-pointer flex z-30">
-          <div class="w-2/5 border-r text-xl p-2 flex items-center justify-center">{{ vehicule.immat }}</div>
+    <div v-if="dispoSalles.length > 0" class="relative w-full h-fit" v-for="(salle, index) in dispoSalles" :key="index">
+      <input :id="salle.id" type="radio" v-model="formRadio" :value="salle.id" class="hidden peer" />
+      <label :for="salle.id" class="rounded-lg shadow-lg overflow-hidden flex flex-col items-center border justify-center bg-white hover:bg-opacity-75 peer-checked:shadow-lg peer-checked:text-white cursor-pointer transition">
+        <div class="w-full h-30 cursor-pointer flex z-30">
+          <div class="w-2/5 border-r text-lg p-2 flex items-center justify-center">{{ salle.name }}</div>
           <div class="w-3/5 flex flex-col gap-3 p-2">
-            <p class="text-center font-medium text-lg">{{ vehicule.marque }} {{ vehicule.model }}</p>
-            <div class="flex justify-center gap-4">
-              <div class="flex gap-1 items-center text-sm"><Group class="w-4 h-4" />{{ vehicule.capacite }}</div>
-              <div v-if="vehicule.id_carburant == 1" class="flex gap-1 items-center text-sm">
-                <Electric class="w-4 h-4" />
-                <p class="first-letter:uppercase">électrique</p>
+            <div>
+              <p class="font-bold text-sm">Adresse :</p>
+              <p class="text-xs">{{ salle.adresse }}</p>
+            </div>
+            <div>
+              <p class="font-bold text-sm">Informations :</p>
+              <div class="grid grid-cols-3 gap-2 text-xs">
+                <div class="flex gap-1">
+                  <Group class="w-4 h-4" />
+                  <p>{{ salle.capacite }}</p>
+                </div>
+                <div class="flex gap-1">
+                  <Wifi class="w-4 h-4" />
+                  <p :class="salle.wifi ? '' : 'line-through  decoration-slate-900 decoration-2'">Wifi</p>
+                </div>
+                <div class="flex gap-1">
+                  <Pmr class="w-4 h-4" />
+                  <p :class="salle.pmr ? '' : 'line-through  decoration-slate-900 decoration-2'">PMR</p>
+                </div>
+                <div class="flex gap-1">
+                  <Clim class="w-4 h-4" />
+                  <p :class="salle.clim ? '' : 'line-through  decoration-slate-900 decoration-2'">Clim</p>
+                </div>
+                <div class="flex gap-1">
+                  <VideoProj class="w-4 h-4" />
+                  <p :class="salle.video_proj ? '' : 'line-through decoration-slate-900  decoration-2 '">VP</p>
+                </div>
+                <div class="flex gap-1">
+                  <Jabra class="w-4 h-4" />
+                  <p :class="salle.jabra ? '' : 'line-through  decoration-slate-900 decoration-2'">Jabra</p>
+                </div>
+                <div class="flex gap-1">
+                  <WhiteBoard class="w-4 h-4" />
+                  <p :class="salle.white_board ? '' : 'line-through  decoration-slate-900 decoration-2'">Tableau</p>
+                </div>
+                <div class="flex gap-1">
+                  <Webcam class="w-4 h-4" />
+                  <p :class="salle.webcam ? '' : 'line-through  decoration-slate-900 decoration-2'">Webcam</p>
+                </div>
               </div>
-              <div v-if="vehicule.id_carburant == 2" class="flex gap-1 items-center text-sm"><Fuel class="w-4 h-4" />Diesel</div>
-              <div v-if="vehicule.id_carburant == 3" class="flex gap-1 items-center text-sm"><Fuel class="w-4 h-4" />Essence</div>
-
-              <div v-if="vehicule.vitesse == 0" class="flex gap-1 items-center text-sm">
-                <div class="w-4 h-4 border rounded flex items-center justify-center">A</div>
-                Auto
-              </div>
-              <div v-if="vehicule.vitesse == 1" class="flex gap-1 items-center text-sm"><Manuel class="w-4 h-4" />Manuel</div>
             </div>
           </div>
         </div>
@@ -69,6 +110,7 @@ const formRadio = computed({
         </svg>
       </div>
     </div>
+    <div v-else class="italic">Aucune salle de disponible.</div>
   </div>
 </template>
 

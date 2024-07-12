@@ -1,8 +1,12 @@
 <script setup>
 import Group from "@/assets/svg/Group.vue";
-import Electric from "@/assets/svg/Electric.vue";
-import Fuel from "@/assets/svg/Fuel.vue";
-import Manuel from "@/assets/svg/Manuel.vue";
+import Wifi from "@/assets/svg/Wifi.vue";
+import Pmr from "@/assets/svg/Pmr.vue";
+import Clim from "@/assets/svg/Clim.vue";
+import VideoProj from "@/assets/svg/VideoProj.vue";
+import Jabra from "@/assets/svg/Jabra.vue";
+import WhiteBoard from "@/assets/svg/WhiteBoard.vue";
+import Webcam from "@/assets/svg/Webcam.vue";
 import ArrowRight from "@/assets/svg/ArrowRight.vue";
 
 const finalReservation = useState("finalReservation");
@@ -14,25 +18,48 @@ const { formatedDate } = useFormatDate();
     <p class="text-xl font-bold">{{ finalReservation.secteur }}</p>
 
     <div class="w-full flex bg-white rounded-lg overflow-hidden shadow-lg border">
-      <div class="w-2/5 border-r text-xl p-2 flex items-center justify-center">{{ finalReservation.vehicule.immat }}</div>
+      <div class="w-2/5 border-r text-xl p-2 flex items-center justify-center">{{ finalReservation.salle.name }}</div>
       <div class="w-3/5 flex flex-col gap-3 p-2">
-        <p class="text-center font-medium text-lg">{{ finalReservation.vehicule.marque }} {{ finalReservation.vehicule.model }}</p>
-        <div class="flex justify-center gap-4">
-          <div class="flex gap-1 items-center text-sm"><Group class="w-4 h-4" />{{ finalReservation.vehicule.capacite }}</div>
-          <div v-if="finalReservation.vehicule.id_carburant == 1" class="flex gap-1 items-center text-sm">
-            <Electric class="w-4 h-4" />
-            <p class="first-letter:uppercase">électrique</p>
+        <div>
+          <p class="font-bold text-sm">Adresse :</p>
+          <p class="text-xs">{{ finalReservation.salle.adresse }}</p>
+        </div>
+        <div>
+          <p class="font-bold text-sm">Informations :</p>
+          <div class="grid grid-cols-3 gap-2 text-xs">
+            <div class="flex gap-1">
+              <Group class="w-4 h-4" />
+              <p>{{ finalReservation.salle.capacite }}</p>
+            </div>
+            <div class="flex gap-1">
+              <Wifi class="w-4 h-4" />
+              <p :class="finalReservation.salle.wifi ? '' : 'line-through  decoration-slate-900 decoration-2'">Wifi</p>
+            </div>
+            <div class="flex gap-1">
+              <Pmr class="w-4 h-4" />
+              <p :class="finalReservation.salle.pmr ? '' : 'line-through  decoration-slate-900 decoration-2'">PMR</p>
+            </div>
+            <div class="flex gap-1">
+              <Clim class="w-4 h-4" />
+              <p :class="finalReservation.salle.clim ? '' : 'line-through  decoration-slate-900 decoration-2'">Clim</p>
+            </div>
+            <div class="flex gap-1">
+              <VideoProj class="w-4 h-4" />
+              <p :class="finalReservation.salle.video_proj ? '' : 'line-through decoration-slate-900  decoration-2 '">VP</p>
+            </div>
+            <div class="flex gap-1">
+              <Jabra class="w-4 h-4" />
+              <p :class="finalReservation.salle.jabra ? '' : 'line-through  decoration-slate-900 decoration-2'">Jabra</p>
+            </div>
+            <div class="flex gap-1">
+              <WhiteBoard class="w-4 h-4" />
+              <p :class="finalReservation.salle.white_board ? '' : 'line-through  decoration-slate-900 decoration-2'">Tableau</p>
+            </div>
+            <div class="flex gap-1">
+              <Webcam class="w-4 h-4" />
+              <p :class="finalReservation.salle.webcam ? '' : 'line-through  decoration-slate-900 decoration-2'">Webcam</p>
+            </div>
           </div>
-
-          <div v-if="finalReservation.vehicule.id_carburant == 2" class="flex gap-1 items-center text-sm"><Fuel class="w-4 h-4" />Diesel</div>
-          <div v-if="finalReservation.vehicule.id_carburant == 3" class="flex gap-1 items-center text-sm"><Fuel class="w-4 h-4" />Essence</div>
-
-          <div v-if="finalReservation.vehicule.vitesse == 0" class="flex gap-1 items-center text-sm">
-            <div class="w-4 h-4 border rounded flex items-center justify-center">A</div>
-            Auto
-          </div>
-
-          <div v-if="finalReservation.vehicule.vitesse == 1" class="flex gap-1 items-center text-sm"><Manuel class="w-4 h-4" />Manuel</div>
         </div>
       </div>
     </div>
