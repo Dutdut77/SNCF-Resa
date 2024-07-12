@@ -15,6 +15,7 @@ useHead({
 
 const { setLoader } = useLoader();
 const { getAll, secteurs } = useSecteurs();
+const { addResaVehicule } = useResaVehicules();
 const userProfil = useState("userProfil");
 const dateFin = ref("");
 const dateDebut = ref("");
@@ -168,6 +169,19 @@ const formatedDate = (timestamp) => {
   result.minute = minutes;
 
   return result;
+};
+
+const addResa = async () => {
+  if (isAuthToReserv) {
+    formValue.value.is_validated = 1;
+  } else {
+    formValue.value.is_validated = 0;
+  }
+  formValue.value.id_user = userProfil.value.id;
+  setLoader(true);
+  await addResaVehicule(formValue.value);
+  navigateTo("/home");
+  setLoader(false);
 };
 </script>
 
@@ -333,8 +347,8 @@ const formatedDate = (timestamp) => {
       <AppButtonCarre v-if="etape == 2" :validated="validatedDate" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
       <AppButtonCarre v-if="etape == 3 && formValue.type == 0" :validated="validatedSalle" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
       <AppButtonCarre v-if="etape == 3 && formValue.type == 1" :validated="validatedVehicule" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
-      <AppButtonValidated v-if="etape == 4 && isAuthToReserv" class="w-fit ml-auto" theme=""> <template #default> Réserver </template> </AppButtonValidated>
-      <AppButtonValidated v-if="etape == 4 && !isAuthToReserv" class="w-fit ml-auto" theme=""> <template #default> Envoyer la demande </template> </AppButtonValidated>
+      <AppButtonValidated v-if="etape == 4 && isAuthToReserv" class="w-fit ml-auto" theme="" @click="addResa()"> <template #default> Réserver </template> </AppButtonValidated>
+      <AppButtonValidated v-if="etape == 4 && !isAuthToReserv" class="w-fit ml-auto" theme="" @click="addResa()"> <template #default> Envoyer la demande </template> </AppButtonValidated>
     </div>
   </section>
 </template>

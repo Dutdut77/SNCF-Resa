@@ -12,6 +12,12 @@ useHead({
 
 const userProfil = useState("userProfil");
 const client = useSupabaseClient();
+const { setLoader } = useLoader();
+const { getAllResaUserActuel, allResaUserActuel } = useResaVehicules();
+
+setLoader(true);
+await getAllResaUserActuel();
+setLoader(false);
 </script>
 
 <template>
@@ -34,10 +40,11 @@ const client = useSupabaseClient();
 
     <div class="p-4">
       <div class="">
-        <p class="text-base font-medium uppercase">Véhicules (3)</p>
+        <p class="text-base font-medium uppercase">Véhicules ({{ allResaUserActuel.length }})</p>
         <div class="w-full h-[1px] bg-slate-300 mt-2"></div>
       </div>
-      <div class="py-2 text-xs italic">Aucune réservation pour le moment</div>
+      <div v-if="allResaUserActuel.length > 0" class="py-2 text-xs italic">{{ allResaUserActuel }}</div>
+      <div v-else class="py-2 text-xs italic">Aucune réservation pour le moment</div>
     </div>
   </section>
 </template>
