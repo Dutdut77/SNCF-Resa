@@ -30,8 +30,8 @@ export const useResaVehicules = () => {
             .from('resa_vehicules')
             .select()
             .eq('id_secteur', secteur)
-            .gte('fin', dateDebut)
-            .lte('debut', dateFin);
+            .gt('fin', dateDebut)
+            .lt('debut', dateFin);
            if (error) throw error;
            allResaSecteurTime.value = data
         } catch (err) {
