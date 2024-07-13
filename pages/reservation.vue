@@ -184,9 +184,7 @@ const addResa = async () => {
     </div>
 
     <div v-if="etape == 0" class="h-full flex flex-col overflow-auto pb-4">
-      <div class="h-fit px-4">
-        <ResaRadioSecteur :data="secteurs" v-model="formValue.secteur" />
-      </div>
+      <div class="h-fit px-4"><ResaRadioSecteur :data="secteurs" v-model="formValue.secteur" /></div>
     </div>
 
     <div v-if="etape == 1" class="h-full flex flex-col">

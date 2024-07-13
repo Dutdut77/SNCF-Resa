@@ -60,11 +60,27 @@ export const useResaSalles = () => {
             console.log("erreurs :", err);
         //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
         }
-      }
+    }
+
+    const deleteResaSalle = async (id) => {
+        try {
+            const { error } = await supabase
+            .from('resa_salles')
+            .delete()
+            .eq('id', id)
+            if (error) throw error;
+                 addToast({ type: "Success", title: "Félicitation", message: "Votre réservation a  été annulée." });
+
+        } catch (err) {
+            console.log("erreurs :", err);
+        //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
+        }
+
+    }
   
      
   
   
-      return { getAllResaSallesSecteurTime,  addResaSalles, getAllSallesResaUserActuel, allResaSallesSecteurTime, allResaSallesUserActuel}
+      return { getAllResaSallesSecteurTime,  addResaSalles, getAllSallesResaUserActuel,deleteResaSalle, allResaSallesSecteurTime, allResaSallesUserActuel}
       
   }

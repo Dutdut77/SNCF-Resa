@@ -21,6 +21,8 @@ export const useVehicules = () => {
         //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
         }
       }
+
+      
   
   
   

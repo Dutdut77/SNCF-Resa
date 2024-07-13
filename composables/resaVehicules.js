@@ -8,7 +8,7 @@ export const useResaVehicules = () => {
   
     const allResaUserActuel= useState('allResaUserActuel', () => [])
 
-    const getAllResaUserActuel = async () => {
+    const getAllVehiculesResaUserActuel = async () => {
         try {
             const now = Date.now()
             const { data, error } = await supabase
@@ -60,11 +60,26 @@ export const useResaVehicules = () => {
             console.log("erreurs :", err);
         //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
         }
-      }
+    }
+    const deleteResaVehicule = async (id) => {
+        try {
+            const { error } = await supabase
+            .from('resa_vehicules')
+            .delete()
+            .eq('id', id)
+            if (error) throw error;
+                 addToast({ type: "Success", title: "Félicitation", message: "Votre réservation a  été annulée." });
+
+        } catch (err) {
+            console.log("erreurs :", err);
+        //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
+        }
+
+    }
   
      
   
   
-      return { getAllResaSecteurTime,  addResaVehicule, getAllResaUserActuel, allResaSecteurTime, allResaUserActuel}
+      return { getAllResaSecteurTime,  addResaVehicule, getAllVehiculesResaUserActuel ,deleteResaVehicule,  allResaSecteurTime, allResaUserActuel}
       
   }
