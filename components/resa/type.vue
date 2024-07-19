@@ -27,7 +27,7 @@ const formRadio = computed({
     <div class="relative w-full h-full">
       <input id="0" type="radio" v-model="formRadio" value="0" class="hidden peer" />
       <label for="0" class="h-full w-full flex items-center justify-center gap-2 border-slate-600 peer-checked:text-white cursor-pointer transition duration-300">
-        <div class="text-3xl font-traverse -skew-y-6 z-40">Salles</div>
+        <div class="text-3xl font-traverse z-40">Salles</div>
       </label>
       <div class="absolute top-0 left-0 h-full w-0 bg-gradient-to-br from-sky-700 to-sky-500 peer-checked:w-full transition-all duration-300"></div>
     </div>
@@ -38,7 +38,7 @@ const formRadio = computed({
     <div class="relative w-full h-full">
       <input id="1" type="radio" v-model="formRadio" value="1" class="hidden peer" />
       <label for="1" class="h-full w-full flex items-center justify-center gap-2 border-slate-600 peer-checked:text-white cursor-pointer transition duration-300">
-        <div class="text-3xl font-traverse -skew-y-6 z-40">Véhicules</div>
+        <div class="text-3xl font-traverse z-40">Véhicules</div>
       </label>
       <div class="absolute top-0 left-0 h-full w-0 bg-gradient-to-br from-sky-700 to-sky-500 peer-checked:w-full transition-all duration-300"></div>
     </div>

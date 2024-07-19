@@ -55,7 +55,7 @@ const dispoSalles = computed(() => {
   <div class="w-full h-fit flex flex-col gap-2 px-4">
     <div v-if="dispoSalles.length > 0" class="relative w-full h-fit" v-for="(salle, index) in dispoSalles" :key="index">
       <input :id="salle.id" type="radio" v-model="formRadio" :value="salle.id" class="hidden peer" />
-      <label :for="salle.id" class="rounded-lg shadow-lg overflow-hidden flex flex-col items-center border justify-center bg-white hover:bg-opacity-75 peer-checked:shadow-lg peer-checked:text-white cursor-pointer transition">
+      <label :for="salle.id" class="rounded-lg shadow-lg overflow-hidden flex flex-col items-center border justify-center bg-white hover:bg-opacity-75 peer-checked:text-white cursor-pointer transition">
         <div class="w-full h-30 cursor-pointer flex z-30">
           <div class="w-2/5 border-r text-lg p-2 flex items-center justify-center">{{ salle.name }}</div>
           <div class="w-3/5 flex flex-col gap-3 p-2">

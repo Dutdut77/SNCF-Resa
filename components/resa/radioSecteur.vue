@@ -19,7 +19,7 @@ const formRadio = computed({
   set(value) {
     const name = props.data.find((e) => e.id === value);
     finalReservation.value.secteur = name.name;
-
+    finalReservation.value.sec_superviseurs = name.superviseurs;
     finalReservation.value.sect_admin = name.sect_admin_id_user;
     emits("update:model-value", value);
   },
@@ -30,7 +30,7 @@ const formRadio = computed({
   <div class="w-full h-full grid grid-cols-2 gap-4">
     <div class="relative w-full h-fit" v-for="(secteur, index) in props.data" :key="index">
       <input :id="secteur.id" type="radio" v-model="formRadio" :value="secteur.id" class="hidden peer" />
-      <label :for="secteur.id" class="h-24 flex flex-col items-center justify-center rounded-lg bg-gradient-to-br from-white to-white border border-slate-300 hover:bg-opacity-75 peer-checked:shadow-xl peer-checked:from-sky-700 peer-checked:to-sky-500 peer-checked:border-sky-500 peer-checked:text-white cursor-pointer transition">
+      <label :for="secteur.id" class="h-24 flex flex-col items-center justify-center rounded-lg bg-gradient-to-br from-white to-white border border-slate-300 hover:bg-opacity-75 peer-checked:shadow-lg peer-checked:shadow-sky-500/30 peer-checked:from-sky-700 peer-checked:to-sky-500 peer-checked:border-sky-500 peer-checked:text-white cursor-pointer transition">
         <div class="uppercase text-lg">{{ secteur.name }}</div>
       </label>
       <div class="flex absolute top-2 right-2 bottom-0 w-5 h-5 rounded-full border-2 scale-0 peer-checked:scale-100 transition delay-100">

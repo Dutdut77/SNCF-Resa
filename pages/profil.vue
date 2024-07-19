@@ -1,4 +1,6 @@
 <script setup>
+import Save from "@/assets/svg/Save.vue";
+
 definePageMeta({
   requiresAuth: true,
   isAdmin: false,
@@ -7,8 +9,106 @@ useHead({
   title: "Profil - Résa Pro",
   description: "Profil utilisateur",
 });
+
+const { addToast } = useToast();
+const { setLoader } = useLoader();
+const userProfil = useState("userProfil");
+const { updateProfiles } = useAuth();
+const supabase = useSupabaseClient();
+const newPassword = ref("");
+const modalPassword = ref(false);
+const modalMentions = ref(false);
+
+const updateProfil = async () => {
+  setLoader(true);
+  await updateProfiles(userProfil.value);
+  setLoader(false);
+};
+
+const logout = async () => {
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    console.log(error);
+  }
+  navigateTo({ path: "/login" });
+};
+
+const showModalPassword = () => {
+  modalPassword.value = !modalPassword.value;
+};
+
+const showModalMentions = () => {
+  modalMentions.value = !modalMentions.value;
+};
+
+const changeMdp = async () => {
+  try {
+    const { data, error } = await supabase.auth.updateUser({
+      password: newPassword.value,
+    });
+    modalPassword.value = false;
+    if (error) throw error;
+
+    addToast({ type: "Success", title: "Félicitation", message: "Votre nouveau mot de passe à été enregistré." });
+  } catch (err) {
+    addToast({ type: "Error", title: "Problème lors de la modification du mot de passe.", message: err.message });
+  }
+};
 </script>
 
 <template>
-  <section class="bg-slate-100 w-full h-full text-gray-700 flex justify-center items-center text-4xl">Profil</section>
+  <section class="bg-slate-100 w-full h-full text-gray-600 pb-20 flex flex-col gap-4 overflow-auto">
+    <div class="flex justify-between items-center p-4">
+      <p class="text-xl font-medium">Mon profil</p>
+      <Save class="w-6 h-6 cursor-pointer" @click="updateProfil()" />
+    </div>
+
+    <div class="flex flex-col gap-4 px-4">
+      <AppInput name="prenom" type="text" title="Prénom : " v-model="userProfil.prenom" />
+      <AppInput name="nom" type="text" title="Nom : " v-model="userProfil.nom" />
+    </div>
+
+    <div class="mt-auto p-4">
+      <div class="w-full border-t pt-4 text-sm">
+        <p class="cursor-pointer" @click="showModalPassword()">Changer de mot de passe</p>
+        <p class="cursor-pointer" @click="logout()">Se déconnecter</p>
+        <p class="cursor-pointer" @click="showModalMentions()">Mentions légales</p>
+      </div>
+    </div>
+
+    <AppModal v-if="modalPassword" :closeModal="showModalPassword">
+      <template #title>
+        <span class="text-xl text-gray-700 font-bold uppercase">Modification mot de passe</span>
+      </template>
+      <template #default>
+        <div class="w-full">
+          <AppInput name="password" type="password" title="Mot de passe : " v-model="newPassword" />
+        </div>
+
+        <span class="text-base text-cyan-700 font-bold"> </span>
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-4">
+          <AppButtonValidated class="w-32" theme="cancel" @click="showModalPassword()"> <template #default> Annuler </template> </AppButtonValidated>
+          <AppButtonValidated class="w-32" theme="" @click="changeMdp()"> <template #default> Enregistrer </template> </AppButtonValidated>
+        </div>
+      </template>
+    </AppModal>
+
+    <AppModal v-if="modalMentions" :closeModal="showModalMentions">
+      <template #title>
+        <span class="text-xl text-gray-700 font-bold uppercase">Mentions Légales</span>
+      </template>
+      <template #default>
+        <div class="w-full">a venir...</div>
+
+        <span class="text-base text-cyan-700 font-bold"> </span>
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-4">
+          <AppButtonValidated class="w-32" theme="cancel" @click="showModalMentions()"> <template #default> Fermer </template> </AppButtonValidated>
+        </div>
+      </template>
+    </AppModal>
+  </section>
 </template>

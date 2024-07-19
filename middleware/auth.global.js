@@ -4,9 +4,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const client = useSupabaseClient();
     const session = useSupabaseSession();
 
-if ( ! to.matched[0] ) {
-    return navigateTo({ path: '/404' })
-}
+// if ( ! to.matched[0] ) {
+//     return navigateTo({ path: '/404' })
+// }
 
 if (to.meta.requiresAuth) {
 

@@ -14,13 +14,14 @@ useHead({
 });
 
 const { setLoader } = useLoader();
-const { getAll, secteurs } = useSecteurs();
+const { getAll, getMailSuperviseursSecteur, secteurs } = useSecteurs();
 const { addResaVehicule } = useResaVehicules();
 const { addResaSalles } = useResaSalles();
 const { formatedDate, monthLetter } = useFormatDate();
+const { sendEmail } = useEmail();
 const userProfil = useState("userProfil");
-const dateFin = ref("");
-const dateDebut = ref("");
+// const dateFin = ref("");
+// const dateDebut = ref("");
 const finalReservation = useState("finalReservation", () => ({}));
 
 setLoader(true);
@@ -118,20 +119,31 @@ const updateDateFin = () => {
 };
 
 const addResa = async () => {
-  if (isAuthToReserv) {
+  if (isAuthToReserv.value) {
     formValue.value.is_validated = 1;
   } else {
     formValue.value.is_validated = 0;
   }
+
   formValue.value.id_user = userProfil.value.id;
 
   if (formValue.value.type == 0) {
     setLoader(true);
+    if (!isAuthToReserv.value) {
+      const listes = await getMailSuperviseursSecteur(finalReservation.value.sec_superviseurs);
+      await sendEmail(listes, userProfil.value, formValue.value);
+    }
+
     await addResaSalles(formValue.value);
     navigateTo("/home");
     setLoader(false);
   } else {
     setLoader(true);
+    if (!isAuthToReserv.value) {
+      const listes = await getMailSuperviseursSecteur(finalReservation.value.sec_superviseurs);
+      await sendEmail(listes, userProfil.value, formValue.value);
+    }
+
     await addResaVehicule(formValue.value);
     navigateTo("/home");
     setLoader(false);
@@ -140,8 +152,8 @@ const addResa = async () => {
 </script>
 
 <template>
-  <section class="bg-slate-100 w-full h-full text-gray-600 pb-20 flex flex-col overflow-auto gap-4">
-    <div class="sticky top-0 z-50 px-4 pt-4 flex items-center bg-slate-100">
+  <section class="bg-slate-100 w-full h-full text-gray-600 pb-20 flex flex-col gap-4 overflow-auto">
+    <div class="sticky top-0 px-4 pt-4 flex items-center bg-slate-100">
       <img class="absolute top-5 right-5 w-12" src="../assets/img/logo.png" alt="" />
       <div class="flex justify-start items-center">
         <AppProgressBar :percentage="progress" />
@@ -183,14 +195,12 @@ const addResa = async () => {
       </div>
     </div>
 
-    <div v-if="etape == 0" class="h-full flex flex-col overflow-auto pb-4">
-      <div class="h-fit px-4"><ResaRadioSecteur :data="secteurs" v-model="formValue.secteur" /></div>
+    <div v-if="etape == 0" class="w-full h-fit flex flex-col px-4 pb-8 overflow-auto">
+      <ResaRadioSecteur :data="secteurs" v-model="formValue.secteur" />
     </div>
 
-    <div v-if="etape == 1" class="h-full flex flex-col">
-      <div class="relative h-full">
-        <ResaType v-model="formValue.type" />
-      </div>
+    <div v-if="etape == 1" class="w-full h-full flex flex-col overflow-auto">
+      <ResaType v-model="formValue.type" />
     </div>
 
     <div v-if="etape == 2" class="w-full h-fit flex flex-col justify-center">
@@ -218,17 +228,15 @@ const addResa = async () => {
 
       <div class="w-full flex justify-center items-center gap-4 py-2">
         <Arrow class="w-8 h-8 rotate-90" />
-        <!-- <p class="italic text-sm">Tape to update</p> -->
-        <!-- <Arrow class="w-8 h-8 rotate-90" /> -->
       </div>
 
       <div class="w-full h-full flex gap-4 px-4">
         <div class="w-full h-fit flex flex-col">
           <p class="px-4 pb-2 text-center uppercase font-medium">Début</p>
-          <div v-if="formValue.dateDebut" class="w-full h-28 border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg" @click="updateDateDebut()">
+          <div v-if="formValue.dateDebut" class="w-full h-28 justify-center items-center border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg" @click="updateDateDebut()">
             <div class="h-full w-full bg-gradient-to-br from-sky-700 to-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
-              <div class="w-1/3 h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(formValue.dateDebut).jour }}</div>
-              <div class="w-2/3 h-full flex flex-col items-start justify-center">
+              <div class="w-full h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(formValue.dateDebut).jour }}</div>
+              <div class="w-full h-full flex flex-col items-start justify-center">
                 <div class="text-base uppercase">{{ formatedDate(formValue.dateDebut).mois }}</div>
                 <div class="text-base uppercase">{{ formatedDate(formValue.dateDebut).annee }}</div>
               </div>
@@ -248,10 +256,10 @@ const addResa = async () => {
 
         <div class="w-full h-fit flex flex-col">
           <p class="px-4 pb-2 text-center uppercase font-medium">Fin</p>
-          <div v-if="formValue.dateFin" class="w-full h-28 border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg" @click="updateDateFin()">
+          <div v-if="formValue.dateFin" class="w-full h-28 justify-center items-center border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg" @click="updateDateFin()">
             <div class="h-full w-full bg-gradient-to-br from-sky-700 to-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
-              <div class="w-1/3 h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(formValue.dateFin).jour }}</div>
-              <div class="w-2/3 h-full flex flex-col items-start justify-center">
+              <div class="w-full h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(formValue.dateFin).jour }}</div>
+              <div class="w-full h-full flex flex-col items-start justify-center">
                 <div class="text-base uppercase">{{ formatedDate(formValue.dateFin).mois }}</div>
                 <div class="text-base uppercase">{{ formatedDate(formValue.dateFin).annee }}</div>
               </div>

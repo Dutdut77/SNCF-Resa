@@ -27,7 +27,7 @@ export const useAuth = () => {
         }
       }
   
-      const login = async (form) => {
+    const login = async (form) => {
 
         try {
             const { data, error } = await supabase.auth.signInWithPassword({
@@ -42,8 +42,31 @@ export const useAuth = () => {
         }
       }
   
+  
+     const updateProfiles = async (form) => {
+
+      try {
+        const { error } = await supabase
+        .from('profiles')
+        .update({ nom : form.nom, prenom : form.prenom })
+        .eq('id', form.id)
+        .select()
+        if (error) throw error;
+        
+        addToast({ type: "Success", title: "Félicitation", message: "Enregistrement réussit." });
+      } catch (err) {
+        addToast({ type: "Error", title: "Problème lors de la modification du profil.",  message: err.message  });
+      }
+    }
 
 
-      return { signup, login}
+
+
+
+
+
+
+
+      return { signup,updateProfiles, login}
       
   }
