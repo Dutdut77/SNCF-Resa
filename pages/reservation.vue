@@ -14,19 +14,12 @@ useHead({
 });
 
 const { setLoader } = useLoader();
-const { getAll, getMailSuperviseursSecteur, secteurs } = useSecteurs();
+const { getMailSuperviseursSecteur, secteurs } = useSecteurs();
 const { addResaVehicule } = useResaVehicules();
 const { addResaSalles } = useResaSalles();
 const { formatedDate, monthLetter } = useFormatDate();
 const { sendEmail } = useEmail();
 const userProfil = useState("userProfil");
-// const dateFin = ref("");
-// const dateDebut = ref("");
-const finalReservation = useState("finalReservation", () => ({}));
-
-setLoader(true);
-await getAll();
-setLoader(false);
 
 const etape = ref(0);
 const formValue = ref({
@@ -36,8 +29,8 @@ const formValue = ref({
   dateFin: "",
   year: new Date().getFullYear(),
   month: new Date().getMonth(),
-  id_vehicule: "",
-  id_salle: "",
+  vehicule: "",
+  salle: "",
 });
 
 const minutes = ["00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"];
@@ -52,7 +45,7 @@ const activeIndexMinute = computed(() => {
   let currentMinutes = date.getMinutes();
 
   // Arrondir les minutes à 5 près
-  currentMinutes = Math.round(currentMinutes / 5) * 5;
+  currentMinutes = Math.ceil(currentMinutes / 5) * 5;
 
   // Trouver l'index correspondant dans le tableau 'minutes'
   const index = minutes.indexOf(currentMinutes.toString().padStart(2, "0"));
@@ -90,16 +83,16 @@ const validatedDate = computed(() => {
   return formValue.value.dateDebut != "" && formValue.value.dateFin != "" && valideDate.value != false ? true : false;
 });
 const validatedSalle = computed(() => {
-  return formValue.value.id_salle != "" ? true : false;
+  return formValue.value.salle != "" ? true : false;
 });
 const validatedVehicule = computed(() => {
-  return formValue.value.id_vehicule != "" ? true : false;
+  return formValue.value.vehicule != "" ? true : false;
 });
 const isAuthToReserv = computed(() => {
-  if (finalReservation.value.sect_admin == null || !finalReservation.value.sect_admin) {
+  if (formValue.value.secteur.sect_admin_id_user == null || !formValue.value.secteur.sect_admin_id_user) {
     return false;
   } else {
-    const array = finalReservation.value.sect_admin.split(",");
+    const array = formValue.value.secteur.sect_admin_id_user.split(",");
     return array.includes(userProfil.value.id);
   }
 });
@@ -107,14 +100,12 @@ const isAuthToReserv = computed(() => {
 const updateDateDebut = () => {
   const day = selectedDay.value.split(" ")[1];
   const date = new Date(formValue.value.year, formValue.value.month, day, selectedHeure.value, selectedMinute.value);
-  finalReservation.value.dateDebut = date.getTime();
   formValue.value.dateDebut = date.getTime();
 };
 
 const updateDateFin = () => {
   const day = selectedDay.value.split(" ")[1];
   const date = new Date(formValue.value.year, formValue.value.month, day, selectedHeure.value, selectedMinute.value);
-  finalReservation.value.dateFin = date.getTime();
   formValue.value.dateFin = date.getTime();
 };
 
@@ -130,7 +121,7 @@ const addResa = async () => {
   if (formValue.value.type == 0) {
     setLoader(true);
     if (!isAuthToReserv.value) {
-      const listes = await getMailSuperviseursSecteur(finalReservation.value.sec_superviseurs);
+      const listes = await getMailSuperviseursSecteur(formValue.value.secteur.superviseurs);
       await sendEmail(listes, userProfil.value, formValue.value);
     }
 
@@ -140,7 +131,7 @@ const addResa = async () => {
   } else {
     setLoader(true);
     if (!isAuthToReserv.value) {
-      const listes = await getMailSuperviseursSecteur(finalReservation.value.sec_superviseurs);
+      const listes = await getMailSuperviseursSecteur(formValue.value.secteur.superviseurs);
       await sendEmail(listes, userProfil.value, formValue.value);
     }
 
@@ -196,11 +187,11 @@ const addResa = async () => {
     </div>
 
     <div v-if="etape == 0" class="w-full h-fit flex flex-col px-4 pb-8 overflow-auto">
-      <ResaRadioSecteur :data="secteurs" v-model="formValue.secteur" />
+      <ResaRadioSecteur v-model="formValue.secteur" @change="etape++" />
     </div>
 
     <div v-if="etape == 1" class="w-full h-full flex flex-col overflow-auto">
-      <ResaType v-model="formValue.type" />
+      <ResaType v-model="formValue.type" @change="etape++" />
     </div>
 
     <div v-if="etape == 2" class="w-full h-fit flex flex-col justify-center">
@@ -285,11 +276,11 @@ const addResa = async () => {
     </div>
 
     <div v-if="etape == 3 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
-      <ResaRadioSalle :data="formValue" v-model="formValue.id_salle" />
+      <ResaRadioSalle :data="formValue" v-model="formValue.salle" @change="etape++" />
     </div>
 
     <div v-if="etape == 3 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center">
-      <ResaRadioVehicule :data="formValue" v-model="formValue.id_vehicule" />
+      <ResaRadioVehicule :data="formValue" v-model="formValue.vehicule" @change="etape++" />
     </div>
 
     <div v-if="etape == 4 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">

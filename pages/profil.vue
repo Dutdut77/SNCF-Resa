@@ -69,10 +69,15 @@ const changeMdp = async () => {
     </div>
 
     <div class="mt-auto p-4">
-      <div class="w-full border-t pt-4 text-sm">
-        <p class="cursor-pointer" @click="showModalPassword()">Changer de mot de passe</p>
-        <p class="cursor-pointer" @click="logout()">Se déconnecter</p>
-        <p class="cursor-pointer" @click="showModalMentions()">Mentions légales</p>
+      <div class="w-full border-t pt-4 text-sm flex justify-between">
+        <div>
+          <p class="cursor-pointer" @click="showModalPassword()">Changer de mot de passe</p>
+          <p class="cursor-pointer" @click="logout()">Se déconnecter</p>
+        </div>
+        <div>
+          <p class="cursor-pointer text-right">Contact</p>
+          <p class="cursor-pointer text-right" @click="showModalMentions()">Mentions légales</p>
+        </div>
       </div>
     </div>
 

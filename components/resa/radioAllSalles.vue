@@ -9,8 +9,7 @@ import WhiteBoard from "@/assets/svg/WhiteBoard.vue";
 import Webcam from "@/assets/svg/Webcam.vue";
 
 const { setLoader } = useLoader();
-const { getAllSallesSecteurDispo, salles } = useSalles();
-const { getAllResaSallesSecteurTime, allResaSallesSecteurTime } = useResaSalles();
+const { getAllSallesBySecteur, allSallesSecteur } = useSalles();
 
 const props = defineProps({
   data: {
@@ -24,8 +23,7 @@ const props = defineProps({
 const emits = defineEmits(["update:model-value"]);
 
 setLoader(true);
-await getAllSallesSecteurDispo(props.data.secteur.id);
-await getAllResaSallesSecteurTime(props.data.secteur.id, props.data.dateDebut, props.data.dateFin);
+await getAllSallesBySecteur(props.data.secteur.id);
 setLoader(false);
 
 const formRadio = computed({
@@ -36,21 +34,11 @@ const formRadio = computed({
     emits("update:model-value", value);
   },
 });
-
-const dispoSalles = computed(() => {
-  // Créer un ensemble (Set) des id_vehicule réservés
-  const reservedSalleIds = new Set(allResaSallesSecteurTime.value.map((reservation) => reservation.id_salle));
-
-  // Filtrer les véhicules qui ne sont pas réservés
-  const availableSalles = salles.value.filter((salle) => !reservedSalleIds.has(salle.id));
-
-  return availableSalles;
-});
 </script>
 
 <template>
   <div class="w-full h-fit flex flex-col gap-2 px-4">
-    <div v-if="dispoSalles.length > 0" class="relative w-full h-fit" v-for="(salle, index) in dispoSalles" :key="index">
+    <div v-if="allSallesSecteur.length > 0" class="relative w-full h-fit" v-for="(salle, index) in allSallesSecteur" :key="index">
       <input :id="salle.id" type="radio" v-model="formRadio" :value="salle" class="hidden peer" />
       <label :for="salle.id" class="rounded-lg shadow-lg overflow-hidden flex flex-col items-center border justify-center bg-white hover:bg-opacity-75 peer-checked:text-white cursor-pointer transition">
         <div class="w-full h-30 cursor-pointer flex z-30">

@@ -80,7 +80,7 @@ const annulationVehicule = async (id) => {
         <p class="text-base font-medium">Mes réservations de salles ({{ allResaSallesUserActuel.length }})</p>
         <div class="w-full h-[1px] bg-slate-300 mt-2"></div>
       </div>
-      <!-- {{ allResaSallesUserActuel[0] }} -->
+
       <div v-if="allResaSallesUserActuel.length > 0" class="w-full flex flex-col gap-2 pt-4">
         <div v-for="(salle, index) in allResaSallesUserActuel" :key="index" class="relative w-full bg-white border rounded-lg p-4 flex flex-col cursor-pointer overflow-hidden" @click="showModalSalle(salle)">
           <div v-if="!salle.is_validated" class="absolute top-4 -right-4 bg-slate-200 rotate-45 px-4 text-xs">En cours</div>
@@ -104,7 +104,7 @@ const annulationVehicule = async (id) => {
         <p class="text-base font-medium">Mes réservations de véhicules ({{ allResaUserActuel.length }})</p>
         <div class="w-full h-[1px] bg-slate-300 mt-2"></div>
       </div>
-      <!-- {{ allResaUserActuel[0] }} -->
+
       <div v-if="allResaUserActuel.length > 0" class="w-full flex flex-col gap-2 pt-4">
         <div v-for="(vehicule, index) in allResaUserActuel" :key="index" class="relative w-full bg-white border rounded-lg p-4 flex flex-col cursor-pointer overflow-hidden" @click="showModalVehicule(vehicule)">
           <div v-if="!vehicule.is_validated" class="absolute top-4 -right-4 bg-slate-200 rotate-45 px-4 text-xs">En cours</div>
@@ -173,6 +173,11 @@ const annulationVehicule = async (id) => {
             </div>
           </div>
         </div>
+        <div class="w-full text-gray-700 -space-y-1 px-4">
+          <p class="font-medium underline underline-offset-2">Divers :</p>
+          <p v-if="salle.salles.autres" class="text-sm">{{ salle.salles.autres }}</p>
+          <p v-else class="text-sm italic">Néant</p>
+        </div>
       </template>
       <template #footer>
         <div class="w-full flex justify-end gap-4 px-2">
@@ -208,6 +213,11 @@ const annulationVehicule = async (id) => {
 
             <div v-if="vehicule.vehicules.vitesse == 1" class="flex gap-1 items-center text-sm"><Manuel class="w-4 h-4" />Manuel</div>
           </div>
+        </div>
+        <div class="w-full text-gray-700 -space-y-1">
+          <p class="font-medium underline underline-offset-2">Divers :</p>
+          <p v-if="vehicule.vehicules.autres" class="text-sm">{{ vehicule.vehicules.autres }}</p>
+          <p v-else class="text-sm italic">Néant</p>
         </div>
       </template>
       <template #footer>

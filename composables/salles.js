@@ -4,7 +4,25 @@ export const useSalles = () => {
     const supabase = useSupabaseClient();
   
     const salles = useState('salles', () => [])
-  
+    const allSallesSecteur = useState('allSallesSecteur', () => [])
+
+
+    const getAllSallesBySecteur = async (id) => {
+        try {
+            const { data, error } = await supabase
+            .from('salles')
+            .select()
+            .eq('id_secteur', id)
+           if (error) throw error;
+           allSallesSecteur.value = data
+            // addToast({ type: "Success", title: "Félicitation", message: "Votre catégorie a correctement été ajoutée." });
+        } catch (err) {
+            console.log("erreurs :", err);
+        //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
+        }
+      }
+
+
 
     const getAllSallesSecteurDispo = async (id) => {
         try {
@@ -24,6 +42,6 @@ export const useSalles = () => {
   
   
   
-      return { getAllSallesSecteurDispo, salles}
+      return { getAllSallesSecteurDispo, getAllSallesBySecteur, salles, allSallesSecteur}
       
   }

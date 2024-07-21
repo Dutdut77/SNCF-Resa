@@ -42,10 +42,11 @@ export const useResaVehicules = () => {
 
     const addResaVehicule = async (form) => {
         try {
+       
             const { data : resa, error } = await supabase
             .from('resa_vehicules')
             .insert([
-              { id_vehicule : form.id_vehicule, id_secteur : form.secteur, id_user : form.id_user, debut : form.dateDebut, fin : form.dateFin, is_validated : form.is_validated },
+              { id_vehicule : form.vehicule.id, id_secteur : form.secteur.id, id_user : form.id_user, debut : form.dateDebut, fin : form.dateFin, is_validated : form.is_validated },
             ])
             .select() 
             if (error) throw error;
@@ -61,6 +62,7 @@ export const useResaVehicules = () => {
         //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
         }
     }
+
     const deleteResaVehicule = async (id) => {
         try {
             const { error } = await supabase

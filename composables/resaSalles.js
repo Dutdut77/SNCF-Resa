@@ -41,12 +41,11 @@ export const useResaSalles = () => {
     }
 
     const addResaSalles = async (form) => {
-
         try {
             const { data : resa, error } = await supabase
             .from('resa_salles')
             .insert([
-              { id_salle : form.id_salle, id_secteur : form.secteur, id_user : form.id_user, debut : form.dateDebut, fin : form.dateFin, is_validated : form.is_validated },
+              { id_salle : form.salle.id, id_secteur : form.secteur.id, id_user : form.id_user, debut : form.dateDebut, fin : form.dateFin, is_validated : form.is_validated },
             ])
             .select() 
             if (error) throw error;

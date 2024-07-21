@@ -5,8 +5,7 @@ import Fuel from "@/assets/svg/Fuel.vue";
 import Manuel from "@/assets/svg/Manuel.vue";
 
 const { setLoader } = useLoader();
-const { getAllSecteurDispo, vehicules } = useVehicules();
-const { getAllResaSecteurTime, allResaSecteurTime } = useResaVehicules();
+const { getAllVehiculesBySecteur, allVehiculesSecteur } = useVehicules();
 
 const props = defineProps({
   data: {
@@ -20,8 +19,7 @@ const props = defineProps({
 const emits = defineEmits(["update:model-value"]);
 
 setLoader(true);
-await getAllSecteurDispo(props.data.secteur.id);
-await getAllResaSecteurTime(props.data.secteur.id, props.data.dateDebut, props.data.dateFin);
+await getAllVehiculesBySecteur(props.data.secteur.id);
 setLoader(false);
 
 const formRadio = computed({
@@ -32,21 +30,11 @@ const formRadio = computed({
     emits("update:model-value", value);
   },
 });
-
-const dispoVehicules = computed(() => {
-  // Créer un ensemble (Set) des id_vehicule réservés
-  const reservedVehicleIds = new Set(allResaSecteurTime.value.map((reservation) => reservation.id_vehicule));
-
-  // Filtrer les véhicules qui ne sont pas réservés
-  const availableVehicules = vehicules.value.filter((vehicle) => !reservedVehicleIds.has(vehicle.id));
-
-  return availableVehicules;
-});
 </script>
 
 <template>
   <div class="w-full h-fit flex flex-col gap-2 px-4">
-    <div v-if="dispoVehicules.length > 0" class="relative w-full h-fit" v-for="(vehicule, index) in dispoVehicules" :key="index">
+    <div v-if="allVehiculesSecteur.length > 0" class="relative w-full h-fit" v-for="(vehicule, index) in allVehiculesSecteur" :key="index">
       <input :id="vehicule.id" type="radio" v-model="formRadio" :value="vehicule" class="hidden peer" />
       <label :for="vehicule.id" class="rounded-lg shadow-lg overflow-hidden flex flex-col items-center border justify-center bg-white hover:bg-opacity-75 peer-checked:shadow-lg peer-checked:text-white cursor-pointer transition">
         <div class="w-full cursor-pointer flex z-30">
