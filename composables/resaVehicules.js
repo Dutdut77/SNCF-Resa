@@ -4,9 +4,29 @@ export const useResaVehicules = () => {
     const supabase = useSupabaseClient();
     const userProfil = useState("userProfil");
   
-    const allResaSecteurTime = useState('allResaSecteur', () => [])
-  
+    const allResaSecteurTime = useState('allResaSecteurTime', () => [])  
     const allResaUserActuel= useState('allResaUserActuel', () => [])
+    const allResaSecteurVehicule = useState('allResaSecteurVehicule', () => [])  
+
+
+
+    const getAllResaSecteurVehicule = async (id) => {
+        try {
+            const now = Date.now()
+            const { data, error } = await supabase
+            .from('resa_vehicules')
+            .select('*, vehicules!inner(*), profiles!inner(*)')
+            .eq('id_secteur', id)
+ 
+           if (error) throw error;
+           allResaSecteurVehicule.value = data
+        } catch (err) {
+            console.log("erreurs :", err);
+        //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
+        }
+    }
+
+
 
     const getAllVehiculesResaUserActuel = async () => {
         try {
@@ -82,6 +102,6 @@ export const useResaVehicules = () => {
      
   
   
-      return { getAllResaSecteurTime,  addResaVehicule, getAllVehiculesResaUserActuel ,deleteResaVehicule,  allResaSecteurTime, allResaUserActuel}
+      return {getAllResaSecteurVehicule,  getAllResaSecteurTime,  addResaVehicule, getAllVehiculesResaUserActuel ,deleteResaVehicule,  allResaSecteurTime, allResaUserActuel,allResaSecteurVehicule}
       
   }

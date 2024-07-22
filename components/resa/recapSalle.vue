@@ -76,11 +76,11 @@ setLoader(false);
 
     <p class="text-xl font-bold pt-4">Période :</p>
 
-    <div class="w-full flex justify-between items-center gap-4">
+    <div class="w-full flex justify-between items-center gap-1">
       <div class="w-full h-28 border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg">
         <div class="h-full w-full bg-gradient-to-br from-sky-700 to-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
-          <div class="w-1/3 h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(props.data.dateDebut).jour }}</div>
-          <div class="w-2/3 h-full flex flex-col items-start justify-center">
+          <div class="flex-1 h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(props.data.dateDebut).jour }}</div>
+          <div class="flex-1 h-full flex flex-col items-start justify-center">
             <div class="text-base uppercase">{{ formatedDate(props.data.dateDebut).mois }}</div>
             <div class="text-base uppercase">{{ formatedDate(props.data.dateDebut).annee }}</div>
           </div>
@@ -94,8 +94,8 @@ setLoader(false);
       <ArrowRight class="w-14 h-14" />
       <div class="w-full h-28 border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg">
         <div class="h-full w-full bg-gradient-to-br from-sky-700 to-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
-          <div class="w-1/3 h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(props.data.dateFin).jour }}</div>
-          <div class="w-2/3 h-full flex flex-col items-start justify-center">
+          <div class="flex-1 h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(props.data.dateFin).jour }}</div>
+          <div class="flex-1 h-full flex flex-col items-start justify-center">
             <div class="text-base uppercase">{{ formatedDate(props.data.dateFin).mois }}</div>
             <div class="text-base uppercase">{{ formatedDate(props.data.dateFin).annee }}</div>
           </div>

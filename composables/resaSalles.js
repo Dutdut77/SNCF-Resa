@@ -6,6 +6,25 @@ export const useResaSalles = () => {
   
     const allResaSallesSecteurTime = useState('allResaSallesSecteurTime', () => [])
     const allResaSallesUserActuel= useState('allResaSallesUserActuel', () => [])
+    const allResaSecteurSalle= useState('allResaSecteurSalle', () => [])
+
+
+    const getAllResaSecteurSalle= async (id) => {
+        try {
+            const now = Date.now()
+            const { data, error } = await supabase
+            .from('resa_salles')
+            .select('*, salles!inner(*), profiles!inner(*)')
+            .eq('id_secteur', id)
+           if (error) throw error;
+           allResaSecteurSalle.value = data
+           .value = data
+        } catch (err) {
+            console.log("erreurs :", err);
+        //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
+        }
+    }
+
 
     const getAllSallesResaUserActuel = async () => {
         try {
@@ -81,6 +100,6 @@ export const useResaSalles = () => {
      
   
   
-      return { getAllResaSallesSecteurTime,  addResaSalles, getAllSallesResaUserActuel,deleteResaSalle, allResaSallesSecteurTime, allResaSallesUserActuel}
+      return { getAllResaSecteurSalle, getAllResaSallesSecteurTime,  addResaSalles, getAllSallesResaUserActuel,deleteResaSalle, allResaSallesSecteurTime, allResaSallesUserActuel, allResaSecteurSalle}
       
   }

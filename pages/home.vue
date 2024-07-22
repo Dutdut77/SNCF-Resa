@@ -1,5 +1,6 @@
 <script setup>
 import ArrowRight from "@/assets/svg/ArrowRight.vue";
+import Check from "@/assets/svg/Check.vue";
 import More from "@/assets/svg/More.vue";
 import Group from "@/assets/svg/Group.vue";
 import Wifi from "@/assets/svg/Wifi.vue";
@@ -81,9 +82,12 @@ const annulationVehicule = async (id) => {
         <div class="w-full h-[1px] bg-slate-300 mt-2"></div>
       </div>
 
-      <div v-if="allResaSallesUserActuel.length > 0" class="w-full flex flex-col gap-2 pt-4">
+      <div v-if="allResaSallesUserActuel.length > 0" class="w-full flex flex-col gap-2 pt-4 text-sm">
         <div v-for="(salle, index) in allResaSallesUserActuel" :key="index" class="relative w-full bg-white border rounded-lg p-4 flex flex-col cursor-pointer overflow-hidden" @click="showModalSalle(salle)">
-          <div v-if="!salle.is_validated" class="absolute top-4 -right-4 bg-slate-200 rotate-45 px-4 text-xs">En cours</div>
+          <div v-if="!salle.is_validated" class="absolute top-3 right-3 text-xs">?</div>
+          <div v-else class="absolute top-3 right-3">
+            <Check class="w-3 h-3 text-sky-500" />
+          </div>
           <div class="w-full flex flex-col items-center">
             <p class="font-bold text-center">{{ salle.secteurs.name }}</p>
             <p class="font-medium">Salle : {{ salle.salles.name }}</p>
@@ -105,9 +109,12 @@ const annulationVehicule = async (id) => {
         <div class="w-full h-[1px] bg-slate-300 mt-2"></div>
       </div>
 
-      <div v-if="allResaUserActuel.length > 0" class="w-full flex flex-col gap-2 pt-4">
+      <div v-if="allResaUserActuel.length > 0" class="w-full flex flex-col gap-2 pt-4 text-sm">
         <div v-for="(vehicule, index) in allResaUserActuel" :key="index" class="relative w-full bg-white border rounded-lg p-4 flex flex-col cursor-pointer overflow-hidden" @click="showModalVehicule(vehicule)">
-          <div v-if="!vehicule.is_validated" class="absolute top-4 -right-4 bg-slate-200 rotate-45 px-4 text-xs">En cours</div>
+          <div v-if="!vehicule.is_validated" class="absolute top-3 right-3 text-xs">?</div>
+          <div v-else class="absolute top-3 right-3">
+            <Check class="w-3 h-3 text-sky-500" />
+          </div>
           <div class="w-full flex flex-col items-center">
             <p class="font-bold text-center">{{ vehicule.secteurs.name }}</p>
             <p class="font-medium">{{ vehicule.vehicules.marque }} {{ vehicule.vehicules.model }} - {{ vehicule.vehicules.immat }}</p>
