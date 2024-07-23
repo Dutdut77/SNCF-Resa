@@ -29,6 +29,7 @@ const { setLoader } = useLoader();
 const { getAllVehiculesResaUserActuel, allResaUserActuel, deleteResaVehicule } = useResaVehicules();
 const { getAllSallesResaUserActuel, allResaSallesUserActuel, deleteResaSalle } = useResaSalles();
 const { timestampToDateFr, timestampToHeure } = useFormatDate();
+const { getAllAnomaliesVehicule, getAllAnomaliesSalle, anomalies } = useAnomalies();
 const salle = ref("");
 const modalSalle = ref(false);
 const vehicule = ref("");
@@ -39,13 +40,25 @@ await getAllVehiculesResaUserActuel();
 await getAllSallesResaUserActuel();
 setLoader(false);
 
-const showModalSalle = (data) => {
-  salle.value = data;
+const showModalSalle = async (data) => {
+  if (data) {
+    await getAllAnomaliesSalle(data.id_salle);
+    salle.value = data;
+  } else {
+    anomalies.value = [];
+  }
+
   modalSalle.value = !modalSalle.value;
 };
 
-const showModalVehicule = (data) => {
-  vehicule.value = data;
+const showModalVehicule = async (data) => {
+  if (data) {
+    await getAllAnomaliesVehicule(data.id_vehicule);
+    vehicule.value = data;
+  } else {
+    anomalies.value = [];
+  }
+
   modalVehicule.value = !modalVehicule.value;
 };
 
@@ -132,18 +145,18 @@ const annulationVehicule = async (id) => {
 
     <AppModal v-if="modalSalle" :closeModal="showModalSalle">
       <template #title>
-        <div class="w-full flex flex-col items-center text-xl text-slate-700">
+        <div class="w-full flex flex-col items-center text-lg text-slate-700">
           <p class="font-bold text-center">{{ salle.secteurs.name }}</p>
           <p class="font-medium">Salle : {{ salle.salles.name }}</p>
         </div>
       </template>
       <template #default>
-        <div class="w-full flex flex-col gap-3 p-2">
-          <div class="bg-slate-200 p-4 rounded-lg border">
-            <p class="font-bold text-slate-700 underline underline-offset-4">Adresse :</p>
-            <p class="text-sm pt-4 text-slate-700">{{ salle.salles.adresse }}</p>
+        <div class="w-full flex flex-col gap-4 px-2">
+          <div class="px-2">
+            <p class="font-bold text-slate-700 underline underline-offset-4 text-sm">Adresse :</p>
+            <p class="text-sm pt-1 text-slate-700">{{ salle.salles.adresse }}</p>
           </div>
-          <div class="bg-gradient-to-br from-sky-700 to-sky-500 p-4 rounded-lg border text-white">
+          <div class="bg-gradient-to-br from-sky-700 to-sky-500 p-4 rounded-lg border text-white text-sm">
             <div class="grid grid-cols-3 gap-2">
               <div class="flex gap-1">
                 <Group class="w-4 h-4" />
@@ -181,13 +194,18 @@ const annulationVehicule = async (id) => {
           </div>
         </div>
         <div class="w-full text-gray-700 -space-y-1 px-4">
-          <p class="font-medium underline underline-offset-2">Divers :</p>
+          <p class="font-bold underline underline-offset-2 text-sm">Divers :</p>
           <p v-if="salle.salles.autres" class="text-sm">{{ salle.salles.autres }}</p>
-          <p v-else class="text-sm italic">Néant</p>
+          <p v-else class="text-sm italic pt-1">Néant</p>
+        </div>
+
+        <div v-if="anomalies.length > 0" class="w-full text-gray-700 -space-y-1 px-4">
+          <p class="font-medium underline underline-offset-2 text-sm pb-1">Anomalies :</p>
+          <p v-for="(anomalie, index) in anomalies" :key="index" class="text-sm">{{ anomalie.anomalie }}</p>
         </div>
       </template>
       <template #footer>
-        <div class="w-full flex justify-end gap-4 px-2">
+        <div class="w-full flex flex-col justify-end gap-2 p-2 text-sm">
           <AppButtonValidated class="w-full" theme="cancel" @click="showModalSalle()"> <template #default> Fermer </template> </AppButtonValidated>
           <AppButtonValidated class="w-full" theme="delete" @click="annulationSalle(salle.id)"> <template #default> Annuler la réservation </template> </AppButtonValidated>
         </div>
@@ -196,39 +214,47 @@ const annulationVehicule = async (id) => {
 
     <AppModal v-if="modalVehicule" :closeModal="showModalVehicule">
       <template #title>
-        <div class="w-full flex flex-col items-center text-xl text-slate-700">
+        <div class="w-full flex flex-col items-center text-lg text-slate-700">
           <p class="font-bold text-center">{{ vehicule.secteurs.name }}</p>
           <p class="font-medium">{{ vehicule.vehicules.marque }} {{ vehicule.vehicules.model }} - {{ vehicule.vehicules.immat }}</p>
         </div>
       </template>
       <template #default>
-        <div class="w-full flex flex-col gap-3 p-4 text-white bg-gradient-to-br from-sky-700 to-sky-500 rounded-lg border">
-          <div class="flex justify-center gap-4">
-            <div class="flex gap-1 items-center text-sm"><Group class="w-4 h-4" />{{ vehicule.vehicules.capacite }}</div>
-            <div v-if="vehicule.vehicules.id_carburant == 1" class="flex gap-1 items-center text-sm">
-              <Electric class="w-4 h-4" />
-              <p class="first-letter:uppercase">électrique</p>
+        <div class="px-2 w-full">
+          <div class="w-full flex flex-col gap-3 p-4 text-white bg-gradient-to-br from-sky-700 to-sky-500 rounded-lg border">
+            <div class="flex justify-center gap-4">
+              <div class="flex gap-1 items-center text-sm"><Group class="w-4 h-4" />{{ vehicule.vehicules.capacite }}</div>
+              <div v-if="vehicule.vehicules.id_carburant == 1" class="flex gap-1 items-center text-sm">
+                <Electric class="w-4 h-4" />
+                <p class="first-letter:uppercase">électrique</p>
+              </div>
+
+              <div v-if="vehicule.vehicules.id_carburant == 2" class="flex gap-1 items-center text-sm"><Fuel class="w-4 h-4" />Diesel</div>
+              <div v-if="vehicule.vehicules.id_carburant == 3" class="flex gap-1 items-center text-sm"><Fuel class="w-4 h-4" />Essence</div>
+
+              <div v-if="vehicule.vehicules.vitesse == 0" class="flex gap-1 items-center text-sm">
+                <div class="w-4 h-4 border rounded flex items-center justify-center">A</div>
+                Auto
+              </div>
+
+              <div v-if="vehicule.vehicules.vitesse == 1" class="flex gap-1 items-center text-sm"><Manuel class="w-4 h-4" />Manuel</div>
             </div>
-
-            <div v-if="vehicule.vehicules.id_carburant == 2" class="flex gap-1 items-center text-sm"><Fuel class="w-4 h-4" />Diesel</div>
-            <div v-if="vehicule.vehicules.id_carburant == 3" class="flex gap-1 items-center text-sm"><Fuel class="w-4 h-4" />Essence</div>
-
-            <div v-if="vehicule.vehicules.vitesse == 0" class="flex gap-1 items-center text-sm">
-              <div class="w-4 h-4 border rounded flex items-center justify-center">A</div>
-              Auto
-            </div>
-
-            <div v-if="vehicule.vehicules.vitesse == 1" class="flex gap-1 items-center text-sm"><Manuel class="w-4 h-4" />Manuel</div>
           </div>
         </div>
-        <div class="w-full text-gray-700 -space-y-1">
-          <p class="font-medium underline underline-offset-2">Divers :</p>
-          <p v-if="vehicule.vehicules.autres" class="text-sm">{{ vehicule.vehicules.autres }}</p>
-          <p v-else class="text-sm italic">Néant</p>
+
+        <div class="w-full text-gray-700 -space-y-1 px-4">
+          <p class="font-medium underline underline-offset-2 text-sm">Divers :</p>
+          <p v-if="vehicule.vehicules.autres" class="text-sm pt-1">{{ vehicule.vehicules.autres }}</p>
+          <p v-else class="text-sm italic pt-1">Néant</p>
+        </div>
+
+        <div v-if="anomalies.length > 0" class="w-full text-gray-700 -space-y-1 px-4">
+          <p class="font-medium underline underline-offset-2 text-sm pb-1">Anomalies :</p>
+          <p v-for="(anomalie, index) in anomalies" :key="index" class="text-sm">{{ anomalie.anomalie }}</p>
         </div>
       </template>
       <template #footer>
-        <div class="w-full flex justify-end gap-4 px-2">
+        <div class="w-full flex flex-col justify-end gap-2 p-2 text-sm">
           <AppButtonValidated class="w-full" theme="cancel" @click="showModalVehicule()"> <template #default> Fermer </template> </AppButtonValidated>
           <AppButtonValidated class="w-full" theme="delete" @click="annulationVehicule(vehicule.id)"> <template #default> Annuler la réservation </template> </AppButtonValidated>
         </div>
@@ -236,3 +262,10 @@ const annulationVehicule = async (id) => {
     </AppModal>
   </section>
 </template>
+
+<style scoped>
+/* Cacher la barre de défilement */
+::-webkit-scrollbar {
+  display: none;
+}
+</style>
