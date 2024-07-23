@@ -198,9 +198,9 @@ const formatDate = (date) => {
                   <!-- <p>{{ resa.vehicules.marque }} {{ resa.vehicules.model }}</p> -->
                 </div>
 
-                <p class="italic">({{ resa.profiles.nom }} {{ resa.profiles.prenom }})</p>
+                <p class="italic text-gray-500">({{ resa.profiles.nom }} {{ resa.profiles.prenom }})</p>
               </div>
-              <div class="flex justify-start items-center gap-2 text-sm">
+              <div class="flex justify-start items-center gap-2 text-sm text-gray-500">
                 <p class="">{{ timestampToDateFr(resa.debut) }} {{ timestampToHeure(resa.debut) }}</p>
                 <ArrowRight class="w-4 h-4 text-gray-700" />
                 <p class="">{{ timestampToDateFr(resa.fin) }} {{ timestampToHeure(resa.fin) }}</p>
@@ -211,7 +211,7 @@ const formatDate = (date) => {
         </div>
       </div>
 
-      <div class="mt-auto mb-4 px-4 flex justify-between items-center">
+      <div class="mt-auto p-4 flex justify-between items-center">
         <AppButtonCarre v-if="etape == 1" class="mr-auto" direction="left" @click="etape--"> </AppButtonCarre>
       </div>
     </div>

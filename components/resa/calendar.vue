@@ -104,7 +104,7 @@ const selectDay = (selectedDay) => {
               {{ date }}
             </div>
 
-            <div v-if="isReserved(date)" class="absolute bottom-0.5 h-1 w-1 rounded-full bg-sky-500" :class="colorOptionIsReserved(date)"></div>
+            <div v-if="isReserved(date)" class="absolute bottom-0.5 h-1 w-1 rounded-full bg-sky-500"></div>
           </div>
         </div>
       </div>
