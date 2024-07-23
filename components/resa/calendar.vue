@@ -15,6 +15,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["update:modelValue"]);
+const { formatedDate } = useFormatDate();
 
 const year = ref(props.modelValue.year);
 const month = ref(props.modelValue.month);
@@ -24,6 +25,11 @@ const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet"
 
 // Change the order of days to start with Monday
 const days = ["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"];
+
+const selectedDateFormat = computed(() => {
+  const dateObject = new Date(props.modelValue.year, props.modelValue.month, props.modelValue.day);
+  return formatedDate(dateObject.getTime());
+});
 
 const firstDayOfMonth = computed(() => {
   const firstDay = new Date(year.value, month.value, 1).getDay();
@@ -75,7 +81,9 @@ const selectDay = (selectedDay) => {
 
     <div class="w-full content-center px-4">
       <div class="bg-white rounded-lg shadow-lg">
-        <div class="flex items-center justify-center gap-4 pb-4 p-4">
+        <div class="text-center font-medium text-lg px-4 pt-4 pb-2 first-letter:uppercase">{{ selectedDateFormat.jourName }} {{ selectedDateFormat.jour }} {{ selectedDateFormat.mois }} {{ selectedDateFormat.annee }}</div>
+
+        <div class="flex items-center justify-center gap-4 pb-4">
           <div class="w-1/2 flex justify-center items-center gap-2 py-2 px-2">
             <Left class="mr-auto h-6 w-6 cursor-pointer" @click="year--" />
             <p class="text-center font-medium">{{ year }}</p>

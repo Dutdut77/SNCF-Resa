@@ -6,7 +6,7 @@
     <!-- END : NAVBAR -->
 
     <!-- START : PAGE -->
-    <div class="w-full h-full overflow-auto">
+    <div class="w-full h-full overflow-auto pb-20">
       <slot />
     </div>
 
