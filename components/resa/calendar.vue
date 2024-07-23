@@ -60,7 +60,7 @@ const selectDay = (selectedDay) => {
 
 <template>
   <div>
-    <div class="flex items-center justify-center gap-4 pb-4 px-4">
+    <!-- <div class="flex items-center justify-center gap-4 pb-4 px-4">
       <div class="w-1/2 flex justify-center items-center gap-2 bg-white rounded-lg py-2 px-2 shadow-lg">
         <Left class="mr-auto h-6 w-6 cursor-pointer" @click="year--" />
         <p class="text-center font-medium">{{ year }}</p>
@@ -71,18 +71,33 @@ const selectDay = (selectedDay) => {
         <p class="text-center font-medium">{{ months[month] }}</p>
         <Right class="ml-auto h-6 w-6 cursor-pointer" @click="month++" :class="month < 11 ? 'visible' : 'invisible'" />
       </div>
-    </div>
+    </div> -->
 
     <div class="w-full content-center px-4">
-      <div class="w-full grid grid-cols-7 gap-1 p-4 bg-white rounded-lg shadow-lg">
-        <div class="text-center font-bold" v-for="day in days" :key="day">{{ day }}</div>
-        <div v-for="n in firstDayOfMonth" :key="'empty-' + n" class=""></div>
-        <div class="relative w-full h-7 text-sm flex items-center justify-center cursor-pointer duration-300" v-for="date in datesInMonth" :key="date" @click="selectDay(date)">
-          <div class="rounded-full w-8 h-8 flex items-center justify-center" :class="colorOption(date)">
-            {{ date }}
+      <div class="bg-white rounded-lg shadow-lg">
+        <div class="flex items-center justify-center gap-4 pb-4 p-4">
+          <div class="w-1/2 flex justify-center items-center gap-2 py-2 px-2">
+            <Left class="mr-auto h-6 w-6 cursor-pointer" @click="year--" />
+            <p class="text-center font-medium">{{ year }}</p>
+            <Right class="ml-auto h-6 w-6 cursor-pointer" @click="year++" />
           </div>
+          <div class="w-1/2 flex justify-center items-center gap-2 py-2 px-2">
+            <Left class="mr-auto h-6 w-6 cursor-pointer" @click="month--" :class="month > 0 ? 'visible' : 'invisible'" />
+            <p class="text-center font-medium">{{ months[month] }}</p>
+            <Right class="ml-auto h-6 w-6 cursor-pointer" @click="month++" :class="month < 11 ? 'visible' : 'invisible'" />
+          </div>
+        </div>
 
-          <div v-if="isReserved(date)" class="absolute bottom-0.5 h-1 w-1 rounded-full bg-sky-500" :class="colorOptionIsReserved(date)"></div>
+        <div class="w-full grid grid-cols-7 gap-1 px-4 pb-4">
+          <div class="text-center font-bold" v-for="day in days" :key="day">{{ day }}</div>
+          <div v-for="n in firstDayOfMonth" :key="'empty-' + n" class=""></div>
+          <div class="relative w-full h-7 text-sm flex items-center justify-center cursor-pointer duration-300" v-for="date in datesInMonth" :key="date" @click="selectDay(date)">
+            <div class="rounded-full w-8 h-8 flex items-center justify-center" :class="colorOption(date)">
+              {{ date }}
+            </div>
+
+            <div v-if="isReserved(date)" class="absolute bottom-0.5 h-1 w-1 rounded-full bg-sky-500" :class="colorOptionIsReserved(date)"></div>
+          </div>
         </div>
       </div>
     </div>

@@ -140,7 +140,7 @@ const formatDate = (date) => {
 
 <template>
   <section class="bg-slate-100 w-full h-full text-gray-600 pb-20 flex flex-col overflow-auto m-0 p-0">
-    <div class="sticky top-0 h-16 p-4 flex items-center justify-between bg-sky-500 rounded-b-3xl">
+    <div class="fixed top-0 w-full h-16 p-4 flex items-center justify-between bg-sky-500 rounded-b-3xl z-50">
       <div class="-space-y-1 text-white">
         <p v-if="etape == 0" class="text-medium text-xl">Agenda</p>
         <p v-if="etape == 1" class="text-medium text-xl">Agenda - {{ formValue.secteur.name }}</p>
@@ -151,7 +151,7 @@ const formatDate = (date) => {
       <img class="w-12" src="../assets/img/logo_sncf.png" alt="" />
     </div>
 
-    <div class="w-full h-full bg-slate-100 rounded-t-3xl pt-4 flex flex-col">
+    <div class="w-full h-full bg-slate-100 rounded-t-3xl pt-20 flex flex-col">
       <div v-if="etape == 0" class="w-full h-fit flex flex-col px-4 pb-8 overflow-auto">
         <ResaRadioSecteur v-model="formValue.secteur" @change="etape = 1" />
       </div>
