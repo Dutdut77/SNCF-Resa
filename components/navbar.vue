@@ -9,7 +9,7 @@ import Add from "@/assets/svg/Add.vue";
 
 <template>
   <section class="w-full h-20 bg-slate-100">
-    <div class="h-14 flex justify-around items-center text-gray-700 border-t border-gray-400 px-">
+    <div class="w-full h-20 pb-6 flex justify-around items-center text-gray-500 border-t border-gray-300 rounded-t-3xl bg-white">
       <NuxtLink to="/home" class="relative group flex flex-col items-center flex-1 h-full justify-center">
         <!-- <div class="h-[3px] bg-sky-500 absolute -top-0.5 left-0 right-0 group-hover:w-full group-hover:duration-500 duration-200 rounded-full" :class="'/home' === $route.path ? 'w-full' : 'w-0'"></div> -->
         <Home class="h-6 w-6 group-hover:text-sky-500 duration-200" :class="'/home' === $route.path ? 'text-sky-500' : ''" />
