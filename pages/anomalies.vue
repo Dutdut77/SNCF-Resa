@@ -60,7 +60,7 @@ const sendAnomalieVehicule = async () => {
   <ResaPage>
     <template #title>
       <div class="-space-y-1">
-        <p class="text-bold text-xl">Anomalie</p>
+        <p class="font-bold text-xl">Anomalie</p>
         <p v-if="etape == 0" class="text-sm italic">Description de cette fonctionnalité</p>
         <p v-if="etape == 1" class="text-sm italic">Choix du secteur</p>
         <p v-if="etape == 2" class="text-sm italic">Salle ou véhicule ?</p>

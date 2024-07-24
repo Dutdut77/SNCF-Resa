@@ -11,7 +11,7 @@
     <!-- TITLE -->
     <div class="fixed top-0 text-white w-full h-16 p-4 flex items-center justify-between bg-gradient-to-b from-sky-600 to-sky-500 z-50">
       <slot name="title"></slot>
-      <img class="w-12 h-full" src="@/assets/img/logo_sncf.png" alt="" />
+      <img class="w-12 h-full ml-auto" src="@/assets/img/logo_sncf.png" alt="" />
     </div>
 
     <!-- DEFAULT -->
