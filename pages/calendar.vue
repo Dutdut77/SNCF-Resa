@@ -143,19 +143,17 @@ const validatedSecteur = computed(() => {
 </script>
 
 <template>
-  <section class="bg-sky-500 w-full h-full text-gray-600 flex flex-col overflow-hidden">
-    <div class="fixed top-0 w-full h-16 p-4 flex items-center justify-between bg-sky-500 z-50">
+  <ResaPage>
+    <template #title>
       <div class="-space-y-1 text-white">
-        <p v-if="etape == 0" class="text-bold text-xl">Agenda</p>
-        <p v-if="etape == 1" class="text-bold text-xl">Agenda - {{ formValue.secteur.name }}</p>
+        <p v-if="etape == 0" class="font-bold text-xl">Agenda</p>
+        <p v-if="etape == 1" class="font-bold text-xl">Agenda - {{ formValue.secteur.name }}</p>
         <p v-if="etape == 0" class="text-sm italic">Selectionnez votre secteur</p>
         <p v-if="etape == 1" class="text-sm italic">Calendrier des réservations</p>
       </div>
+    </template>
 
-      <img class="w-12" src="../assets/img/logo_sncf.png" alt="" />
-    </div>
-
-    <div class="w-full h-full bg-slate-100 rounded-t-xl mt-16 pt-4 flex flex-col overflow-auto">
+    <template #default>
       <div v-if="etape == 0" class="w-full h-fit flex flex-col px-4 pb-8">
         <ResaRadioSecteur v-model="formValue.secteur" @change="etape = 1" />
       </div>
@@ -165,14 +163,9 @@ const validatedSecteur = computed(() => {
         <!-- <div v-if="selectedDate.day" class="text-center font-medium text-lg p-4 first-letter:uppercase">{{ selectedDateFormat.jourName }} {{ selectedDateFormat.jour }} {{ selectedDateFormat.mois }} {{ selectedDateFormat.annee }}</div> -->
 
         <div class="px-4 pt-4">
-          <p class="font-bold">Réservations salles :</p>
+          <p class="font-bold text-base">Réservations salles :</p>
           <div class="pt-2 pl-2" v-if="reservationSalleAtDate.length > 0">
             <div class="relative border-l-2 w-full px-2 overflow-hidden mb-2" :class="!resa.is_validated ? 'border-gray-500' : 'border-sky-500'" v-for="(resa, index) in reservationSalleAtDate" :key="index">
-              <!-- <div v-if="!resa.is_validated" class="absolute top-3 right-3 text-xs">?</div>
-              <div v-else class="absolute top-3 right-3">
-                <Check class="w-3 h-3 text-sky-500" />
-              </div> -->
-
               <div class="flex justify-between gap-2 items-center text-sm">
                 <p class="font-medium">{{ resa.salles.name }}</p>
                 <p class="italic text-gray-500">({{ resa.profiles.nom }} {{ resa.profiles.prenom }})</p>
@@ -188,39 +181,12 @@ const validatedSecteur = computed(() => {
         </div>
 
         <div class="px-4 pt-2">
-          <p class="font-bold">Réservations véhicules :</p>
+          <p class="font-bold text-base">Réservations véhicules :</p>
           <div class="pt-2 pl-2" v-if="reservationVehiculeAtDate.length > 0">
             <div class="relative border-l-2 w-full px-2 overflow-hidden mb-2" :class="!resa.is_validated ? 'border-gray-500' : 'border-sky-500'" v-for="(resa, index) in reservationVehiculeAtDate" :key="index">
-              <!-- <div v-if="!resa.is_validated" class="absolute top-3 right-3 text-xs">?</div>
-              <div v-else class="absolute top-3 right-3">
-                <Check class="w-3 h-3 text-sky-500" />
-              </div> -->
-
               <div class="flex justify-between gap-2 items-center text-sm">
                 <div class="flex flex-col">
                   <p class="font-medium">{{ resa.vehicules.model }} - {{ resa.vehicules.immat }}</p>
-                  <!-- <p>{{ resa.vehicules.marque }} {{ resa.vehicules.model }}</p> -->
-                </div>
-
-                <p class="italic text-gray-500">({{ resa.profiles.nom }} {{ resa.profiles.prenom }})</p>
-              </div>
-              <div class="flex justify-start items-center gap-2 text-sm text-gray-500">
-                <p class="">{{ timestampToDateFr(resa.debut) }} {{ timestampToHeure(resa.debut) }}</p>
-                <ArrowRight class="w-4 h-4 text-gray-700" />
-                <p class="">{{ timestampToDateFr(resa.fin) }} {{ timestampToHeure(resa.fin) }}</p>
-              </div>
-            </div>
-
-            <div class="relative border-l-2 w-full px-2 overflow-hidden mb-2" :class="!resa.is_validated ? 'border-gray-500' : 'border-sky-500'" v-for="(resa, index) in reservationVehiculeAtDate" :key="index">
-              <!-- <div v-if="!resa.is_validated" class="absolute top-3 right-3 text-xs">?</div>
-              <div v-else class="absolute top-3 right-3">
-                <Check class="w-3 h-3 text-sky-500" />
-              </div> -->
-
-              <div class="flex justify-between gap-2 items-center text-sm">
-                <div class="flex flex-col">
-                  <p class="font-medium">{{ resa.vehicules.model }} - {{ resa.vehicules.immat }}</p>
-                  <!-- <p>{{ resa.vehicules.marque }} {{ resa.vehicules.model }}</p> -->
                 </div>
 
                 <p class="italic text-gray-500">({{ resa.profiles.nom }} {{ resa.profiles.prenom }})</p>
@@ -235,17 +201,13 @@ const validatedSecteur = computed(() => {
           <div v-else class="text-sm italic">Néant</div>
         </div>
       </div>
-    </div>
-    <div class="w-full bg-slate-100 p-4">
+    </template>
+
+    <template #footer>
       <AppButtonCarre v-if="etape == 0" :validated="validatedSecteur" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
       <AppButtonCarre v-if="etape == 1" class="" direction="left" @click="etape--"> </AppButtonCarre>
-    </div>
-  </section>
+    </template>
+  </ResaPage>
 </template>
 
-<style scoped>
-/* Cacher la barre de défilement */
-::-webkit-scrollbar {
-  display: none;
-}
-</style>
+<style scoped></style>

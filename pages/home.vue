@@ -80,68 +80,70 @@ const annulationVehicule = async (id) => {
 </script>
 
 <template>
-  <section class="bg-slate-100 w-full h-full text-gray-700 overflow-auto pb-20">
-    <div class="p-4 flex w-full items-center">
-      <div class="">
-        <p class="text-gray-700 text-xl">{{ userProfil.nom }} {{ userProfil.prenom }}</p>
-        <p class="text-xs italic text-gray-500">{{ userProfil.email }}</p>
-      </div>
-      <img class="ml-auto w-12" src="../assets/img/logo.png" alt="" />
-    </div>
-
-    <div class="p-4">
-      <div class="">
-        <p class="text-base font-medium">Mes réservations de salles ({{ allResaSallesUserActuel.length }})</p>
-        <div class="w-full h-[1px] bg-slate-300 mt-2"></div>
-      </div>
-
-      <div v-if="allResaSallesUserActuel.length > 0" class="w-full flex flex-col gap-2 pt-4 text-sm">
-        <div v-for="(salle, index) in allResaSallesUserActuel" :key="index" class="relative w-full bg-white border rounded-lg p-4 flex flex-col cursor-pointer overflow-hidden" @click="showModalSalle(salle)">
-          <div v-if="!salle.is_validated" class="absolute top-3 right-3 text-xs">?</div>
-          <div v-else class="absolute top-3 right-3">
-            <Check class="w-3 h-3 text-sky-500" />
-          </div>
-          <div class="w-full flex flex-col items-center">
-            <p class="font-bold text-center">{{ salle.secteurs.name }}</p>
-            <p class="font-medium">Salle : {{ salle.salles.name }}</p>
-          </div>
-          <div class="w-full flex items-center justify-between pt-2 0">
-            <div class="flex items-center bg-gradient-to-br from-sky-700 to-sky-500 text-white rounded-lg p-2 px-4 gap-2">{{ timestampToDateFr(salle.debut) }} {{ timestampToHeure(salle.debut) }}</div>
-            <ArrowRight class="w-6 h-6 text-slate-700" />
-            <div class="flex items-center bg-gradient-to-br from-sky-700 to-sky-500 text-white rounded-lg p-2 px-4 gap-2">{{ timestampToDateFr(salle.fin) }} {{ timestampToHeure(salle.fin) }}</div>
-          </div>
-          <!-- <More class="absolute top-4 right-4 w-6 h-6 cursor-pointer" @click="showModalSalle(salle)" /> -->
+  <section class="h-full w-full">
+    <ResaPage>
+      <template #title>
+        <div class="-space-y-1">
+          <p class="font-bold text-xl">{{ userProfil.nom }} {{ userProfil.prenom }}</p>
+          <p class="text-sm italic">{{ userProfil.email }}</p>
         </div>
-      </div>
-      <div v-else class="py-2 text-xs italic">Aucune réservation pour le moment</div>
-    </div>
+      </template>
 
-    <div class="p-4">
-      <div class="">
-        <p class="text-base font-medium">Mes réservations de véhicules ({{ allResaUserActuel.length }})</p>
-        <div class="w-full h-[1px] bg-slate-300 mt-2"></div>
-      </div>
+      <template #default>
+        <div class="p-4">
+          <div class="">
+            <p class="text-base font-medium">Mes réservations de salles ({{ allResaSallesUserActuel.length }})</p>
+            <div class="w-full h-[1px] bg-slate-300 mt-2"></div>
+          </div>
 
-      <div v-if="allResaUserActuel.length > 0" class="w-full flex flex-col gap-2 pt-4 text-sm">
-        <div v-for="(vehicule, index) in allResaUserActuel" :key="index" class="relative w-full bg-white border rounded-lg p-4 flex flex-col cursor-pointer overflow-hidden" @click="showModalVehicule(vehicule)">
-          <div v-if="!vehicule.is_validated" class="absolute top-3 right-3 text-xs">?</div>
-          <div v-else class="absolute top-3 right-3">
-            <Check class="w-3 h-3 text-sky-500" />
+          <div v-if="allResaSallesUserActuel.length > 0" class="w-full flex flex-col gap-2 pt-4 text-sm">
+            <div v-for="(salle, index) in allResaSallesUserActuel" :key="index" class="relative w-full bg-white border rounded-lg p-4 flex flex-col cursor-pointer overflow-hidden" @click="showModalSalle(salle)">
+              <div v-if="!salle.is_validated" class="absolute top-3 right-3 text-xs">?</div>
+              <div v-else class="absolute top-3 right-3">
+                <Check class="w-3 h-3 text-sky-500" />
+              </div>
+              <div class="w-full flex flex-col items-center">
+                <p class="font-bold text-center">{{ salle.secteurs.name }}</p>
+                <p class="font-medium">Salle : {{ salle.salles.name }}</p>
+              </div>
+              <div class="w-full flex items-center justify-between pt-2 0">
+                <div class="flex items-center bg-sky-500 text-white rounded-lg p-2 px-4 gap-2">{{ timestampToDateFr(salle.debut) }} {{ timestampToHeure(salle.debut) }}</div>
+                <ArrowRight class="w-6 h-6 text-slate-700" />
+                <div class="flex items-center bg-sky-500 text-white rounded-lg p-2 px-4 gap-2">{{ timestampToDateFr(salle.fin) }} {{ timestampToHeure(salle.fin) }}</div>
+              </div>
+            </div>
           </div>
-          <div class="w-full flex flex-col items-center">
-            <p class="font-bold text-center">{{ vehicule.secteurs.name }}</p>
-            <p class="font-medium">{{ vehicule.vehicules.marque }} {{ vehicule.vehicules.model }} - {{ vehicule.vehicules.immat }}</p>
-          </div>
-          <div class="w-full flex items-center justify-between pt-2 0">
-            <div class="flex items-center bg-gradient-to-br from-sky-700 to-sky-500 text-white rounded-lg p-2 px-4 gap-2">{{ timestampToDateFr(vehicule.debut) }} {{ timestampToHeure(vehicule.debut) }}</div>
-            <ArrowRight class="w-6 h-6 text-slate-700" />
-            <div class="flex items-center bg-gradient-to-br from-sky-700 to-sky-500 text-white rounded-lg p-2 px-4 gap-2">{{ timestampToDateFr(vehicule.fin) }} {{ timestampToHeure(vehicule.fin) }}</div>
-          </div>
-          <!-- <More class="absolute top-4 right-4 w-6 h-6 cursor-pointer" @click="showModalVehicule(vehicule)" /> -->
+          <div v-else class="py-2 text-xs italic">Aucune réservation pour le moment</div>
         </div>
-      </div>
-      <div v-else class="py-2 text-xs italic">Aucune réservation pour le moment</div>
-    </div>
+
+        <div class="p-4">
+          <div class="">
+            <p class="text-base font-medium">Mes réservations de véhicules ({{ allResaUserActuel.length }})</p>
+            <div class="w-full h-[1px] bg-slate-300 mt-2"></div>
+          </div>
+
+          <div v-if="allResaUserActuel.length > 0" class="w-full flex flex-col gap-2 pt-4 text-sm">
+            <div v-for="(vehicule, index) in allResaUserActuel" :key="index" class="relative w-full bg-white border rounded-lg p-4 flex flex-col cursor-pointer overflow-hidden" @click="showModalVehicule(vehicule)">
+              <div v-if="!vehicule.is_validated" class="absolute top-3 right-3 text-xs">?</div>
+              <div v-else class="absolute top-3 right-3">
+                <Check class="w-3 h-3 text-sky-500" />
+              </div>
+              <div class="w-full flex flex-col items-center">
+                <p class="font-bold text-center">{{ vehicule.secteurs.name }}</p>
+                <p class="font-medium">{{ vehicule.vehicules.marque }} {{ vehicule.vehicules.model }} - {{ vehicule.vehicules.immat }}</p>
+              </div>
+              <div class="w-full flex items-center justify-between pt-2 0">
+                <div class="flex items-center bg-sky-500 text-white rounded-lg p-2 px-4 gap-2">{{ timestampToDateFr(vehicule.debut) }} {{ timestampToHeure(vehicule.debut) }}</div>
+                <ArrowRight class="w-6 h-6 text-slate-700" />
+                <div class="flex items-center bg-sky-500 text-white rounded-lg p-2 px-4 gap-2">{{ timestampToDateFr(vehicule.fin) }} {{ timestampToHeure(vehicule.fin) }}</div>
+              </div>
+            </div>
+          </div>
+          <div v-else class="py-2 text-xs italic">Aucune réservation pour le moment</div>
+        </div>
+      </template>
+      <template #footer></template>
+    </ResaPage>
 
     <AppModal v-if="modalSalle" :closeModal="showModalSalle">
       <template #title>
@@ -156,7 +158,7 @@ const annulationVehicule = async (id) => {
             <p class="font-bold text-slate-700 underline underline-offset-4 text-sm">Adresse :</p>
             <p class="text-sm pt-1 text-slate-700">{{ salle.salles.adresse }}</p>
           </div>
-          <div class="bg-gradient-to-br from-sky-700 to-sky-500 p-4 rounded-lg border text-white text-sm">
+          <div class="bg-sky-500 p-4 rounded-lg border text-white text-sm">
             <div class="grid grid-cols-3 gap-2">
               <div class="flex gap-1">
                 <Group class="w-4 h-4" />
@@ -200,14 +202,14 @@ const annulationVehicule = async (id) => {
         </div>
 
         <div v-if="anomalies.length > 0" class="w-full text-gray-700 -space-y-1 px-4">
-          <p class="font-medium underline underline-offset-2 text-sm pb-1">Anomalies :</p>
+          <p class="font-bold underline underline-offset-2 text-sm pb-1">Anomalies :</p>
           <p v-for="(anomalie, index) in anomalies" :key="index" class="text-sm">{{ anomalie.anomalie }}</p>
         </div>
       </template>
       <template #footer>
-        <div class="w-full flex flex-col justify-end gap-2 p-2 text-sm">
-          <AppButtonValidated class="w-full" theme="cancel" @click="showModalSalle()"> <template #default> Fermer </template> </AppButtonValidated>
-          <AppButtonValidated class="w-full" theme="delete" @click="annulationSalle(salle.id)"> <template #default> Annuler la réservation </template> </AppButtonValidated>
+        <div class="w-full flex justify-end gap-2 p-2 text-sm">
+          <AppButtonValidated class="w-fit px-4" theme="cancel" @click="showModalSalle()"> <template #default> Fermer </template> </AppButtonValidated>
+          <AppButtonValidated class="w-fit px-4" theme="delete" @click="annulationSalle(salle.id)"> <template #default> Annuler la réservation </template> </AppButtonValidated>
         </div>
       </template>
     </AppModal>
@@ -221,7 +223,7 @@ const annulationVehicule = async (id) => {
       </template>
       <template #default>
         <div class="px-2 w-full">
-          <div class="w-full flex flex-col gap-3 p-4 text-white bg-gradient-to-br from-sky-700 to-sky-500 rounded-lg border">
+          <div class="w-full flex flex-col gap-3 p-4 text-white bg-sky-500 rounded-lg border">
             <div class="flex justify-center gap-4">
               <div class="flex gap-1 items-center text-sm"><Group class="w-4 h-4" />{{ vehicule.vehicules.capacite }}</div>
               <div v-if="vehicule.vehicules.id_carburant == 1" class="flex gap-1 items-center text-sm">
@@ -243,29 +245,24 @@ const annulationVehicule = async (id) => {
         </div>
 
         <div class="w-full text-gray-700 -space-y-1 px-4">
-          <p class="font-medium underline underline-offset-2 text-sm">Divers :</p>
+          <p class="font-bold underline underline-offset-2 text-sm">Divers :</p>
           <p v-if="vehicule.vehicules.autres" class="text-sm pt-1">{{ vehicule.vehicules.autres }}</p>
           <p v-else class="text-sm italic pt-1">Néant</p>
         </div>
 
         <div v-if="anomalies.length > 0" class="w-full text-gray-700 -space-y-1 px-4">
-          <p class="font-medium underline underline-offset-2 text-sm pb-1">Anomalies :</p>
+          <p class="font-bold underline underline-offset-2 text-sm pb-1">Anomalies :</p>
           <p v-for="(anomalie, index) in anomalies" :key="index" class="text-sm">{{ anomalie.anomalie }}</p>
         </div>
       </template>
       <template #footer>
-        <div class="w-full flex flex-col justify-end gap-2 p-2 text-sm">
-          <AppButtonValidated class="w-full" theme="cancel" @click="showModalVehicule()"> <template #default> Fermer </template> </AppButtonValidated>
-          <AppButtonValidated class="w-full" theme="delete" @click="annulationVehicule(vehicule.id)"> <template #default> Annuler la réservation </template> </AppButtonValidated>
+        <div class="w-full flex justify-end gap-2 p-2 text-sm">
+          <AppButtonValidated class="w-fit px-4" theme="cancel" @click="showModalVehicule()"> <template #default> Fermer </template> </AppButtonValidated>
+          <AppButtonValidated class="w-fit px-4" theme="delete" @click="annulationVehicule(vehicule.id)"> <template #default> Annuler la réservation </template> </AppButtonValidated>
         </div>
       </template>
     </AppModal>
   </section>
 </template>
 
-<style scoped>
-/* Cacher la barre de défilement */
-::-webkit-scrollbar {
-  display: none;
-}
-</style>
+<style scoped></style>

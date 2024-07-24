@@ -143,165 +143,166 @@ const addResa = async () => {
 </script>
 
 <template>
-  <section class="bg-slate-100 w-full h-full text-gray-600 pb-20 flex flex-col gap-4 overflow-auto">
-    <div class="sticky top-0 px-4 pt-4 flex items-center bg-slate-100">
-      <img class="absolute top-5 right-5 w-12" src="../assets/img/logo.png" alt="" />
-      <div class="flex justify-start items-center">
-        <AppProgressBar :percentage="progress" />
+  <ResaPage>
+    <template #title>
+      <AppProgressBar :percentage="progress" />
+
+      <div v-if="etape == 0" class="-space-y-1 mr-auto pl-4">
+        <div class="text-xl font-bold">Secteur</div>
+        <div class="text-sm italic">Infrapôle Paris-Est</div>
       </div>
 
-      <div v-if="etape == 0" class="flex-1 text-left">
-        <div class="text-3xl font-medium">Secteur</div>
-        <div class="text-sm">Infrapôle Paris-Est</div>
+      <div v-if="etape == 1" class="-space-y-1 mr-auto pl-4">
+        <div class="text-xl font-bold">Type</div>
+        <div class="text-sm italic">Salles / Véhicules</div>
       </div>
 
-      <div v-if="etape == 1" class="flex-1 text-left">
-        <div class="text-3xl font-medium">Type</div>
-        <div class="text-sm">Salles / Véhicules</div>
+      <div v-if="etape == 2" class="-space-y-1 mr-auto pl-4">
+        <div class="text-xl font-bold">Période</div>
+        <div class="text-sm italic">Sélectionnez vos dates</div>
       </div>
 
-      <div v-if="etape == 2" class="flex-1 text-left">
-        <div class="text-3xl font-medium">Période</div>
-        <div class="text-sm">Sélectionnez vos dates</div>
+      <div v-if="etape == 3 && formValue.type == 0" class="-space-y-1 mr-auto pl-4">
+        <div class="text-xl font-bold">Salles</div>
+        <div class="text-sm italic">Sélectionnez votre salle</div>
       </div>
 
-      <div v-if="etape == 3 && formValue.type == 0" class="flex-1 text-left">
-        <div class="text-3xl font-medium">Salles</div>
-        <div class="text-sm">Sélectionnez votre salle</div>
+      <div v-if="etape == 3 && formValue.type == 1" class="-space-y-1 mr-auto pl-4">
+        <div class="text-xl font-bold">Véhicules</div>
+        <div class="text-sm italic">Sélectionnez votre véhicule</div>
       </div>
 
-      <div v-if="etape == 3 && formValue.type == 1" class="flex-1 text-left">
-        <div class="text-3xl font-medium">Véhicules</div>
-        <div class="text-sm">Sélectionnez votre véhicule</div>
+      <div v-if="etape == 4 && formValue.type == 0" class="-space-y-1 mr-auto pl-4">
+        <div class="text-xl font-bold">Récapitulatif</div>
+        <div class="text-sm italic">Réservation d'une salle</div>
       </div>
 
-      <div v-if="etape == 4 && formValue.type == 0" class="flex-1 text-left">
-        <div class="text-3xl font-medium">Récapitulatif</div>
-        <div class="text-sm">Réservation d'une salle</div>
+      <div v-if="etape == 4 && formValue.type == 1" class="-space-y-1 mr-auto pl-4">
+        <div class="text-xl font-bold">Récapitulatif</div>
+        <div class="text-sm italic">Réservation d'un véhicule</div>
+      </div>
+    </template>
+
+    <template #default>
+      <div v-if="etape == 0" class="w-full h-fit flex flex-col px-4 pb-8 overflow-auto">
+        <ResaRadioSecteur v-model="formValue.secteur" @change="etape++" />
       </div>
 
-      <div v-if="etape == 4 && formValue.type == 1" class="flex-1 text-left">
-        <div class="text-3xl font-medium">Récapitulatif</div>
-        <div class="text-sm">Réservation d'un véhicule</div>
+      <div v-if="etape == 1" class="w-full h-full flex flex-col overflow-auto">
+        <ResaType v-model="formValue.type" @change="etape++" />
       </div>
-    </div>
 
-    <div v-if="etape == 0" class="w-full h-fit flex flex-col px-4 pb-8 overflow-auto">
-      <ResaRadioSecteur v-model="formValue.secteur" @change="etape++" />
-    </div>
-
-    <div v-if="etape == 1" class="w-full h-full flex flex-col overflow-auto">
-      <ResaType v-model="formValue.type" @change="etape++" />
-    </div>
-
-    <div v-if="etape == 2" class="w-full h-fit flex flex-col justify-center">
-      <div class="flex items-center justify-center gap-4 pb-4 px-4">
-        <div class="w-1/2 flex justify-center items-center gap-2 bg-white rounded-lg py-2 px-2 shadow-lg">
-          <Left class="mr-auto h-6 w-6 cursor-pointer" @click="formValue.year--" />
-          <p class="text-center font-medium">{{ formValue.year }}</p>
-          <Right class="ml-auto h-6 w-6 cursor-pointer" @click="formValue.year++" />
+      <div v-if="etape == 2" class="w-full h-fit flex flex-col justify-center">
+        <div class="flex items-center justify-center gap-4 pb-4 px-4">
+          <div class="w-1/2 flex justify-center items-center gap-2 bg-white rounded-lg py-2 px-2 shadow-lg">
+            <Left class="mr-auto h-6 w-6 cursor-pointer" @click="formValue.year--" />
+            <p class="text-center font-medium">{{ formValue.year }}</p>
+            <Right class="ml-auto h-6 w-6 cursor-pointer" @click="formValue.year++" />
+          </div>
+          <div class="w-1/2 flex justify-center items-center gap-2 bg-white shadow-lg rounded-lg py-2 px-2">
+            <Left class="mr-auto h-6 w-6 cursor-pointer" @click="formValue.month--" :class="formValue.month > 0 ? 'visible' : 'invisible'" />
+            <p class="text-center font-medium">{{ monthLetter(formValue.month) }}</p>
+            <Right class="ml-auto h-6 w-6 cursor-pointer" @click="formValue.month++" :class="formValue.month < 11 ? 'visible' : 'invisible'" />
+          </div>
         </div>
-        <div class="w-1/2 flex justify-center items-center gap-2 bg-white shadow-lg rounded-lg py-2 px-2">
-          <Left class="mr-auto h-6 w-6 cursor-pointer" @click="formValue.month--" :class="formValue.month > 0 ? 'visible' : 'invisible'" />
-          <p class="text-center font-medium">{{ monthLetter(formValue.month) }}</p>
-          <Right class="ml-auto h-6 w-6 cursor-pointer" @click="formValue.month++" :class="formValue.month < 11 ? 'visible' : 'invisible'" />
+
+        <div class="flex w-full p-4">
+          <AppDatePickerIos class="w-full" :items="dayOfMonth" v-model="selectedDay" :viewIndex="activeIndexDay" />
+          <AppDatePickerIos class="w-36" :items="heures" v-model="selectedHeure" :viewIndex="activeIndexHeure" />
+          <div class="h-full w-fit flex items-center">
+            <p class="h-12 border-t border-b border-gray-700 flex items-center justify-center">h</p>
+          </div>
+          <AppDatePickerIos class="w-36" :items="minutes" v-model="selectedMinute" :viewIndex="activeIndexMinute" />
         </div>
-      </div>
 
-      <div class="flex w-full p-4">
-        <AppDatePickerIos class="w-full" :items="dayOfMonth" v-model="selectedDay" :viewIndex="activeIndexDay" />
-        <AppDatePickerIos class="w-36" :items="heures" v-model="selectedHeure" :viewIndex="activeIndexHeure" />
-        <div class="h-full w-fit flex items-center">
-          <p class="h-12 border-t border-b border-gray-700 flex items-center justify-center">h</p>
+        <div class="w-full flex justify-center items-center gap-4 py-2">
+          <Arrow class="w-8 h-8 rotate-90" />
         </div>
-        <AppDatePickerIos class="w-36" :items="minutes" v-model="selectedMinute" :viewIndex="activeIndexMinute" />
-      </div>
 
-      <div class="w-full flex justify-center items-center gap-4 py-2">
-        <Arrow class="w-8 h-8 rotate-90" />
-      </div>
-
-      <div class="w-full h-full flex gap-4 px-4">
-        <div class="w-full h-fit flex flex-col">
-          <p class="px-4 pb-2 text-center uppercase font-medium">Début</p>
-          <div v-if="formValue.dateDebut" class="w-full h-28 justify-center items-center border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg" @click="updateDateDebut()">
-            <div class="h-full w-full bg-gradient-to-br from-sky-700 to-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
-              <div class="w-full h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(formValue.dateDebut).jour }}</div>
-              <div class="w-full h-full flex flex-col items-start justify-center">
-                <div class="text-base uppercase">{{ formatedDate(formValue.dateDebut).mois }}</div>
-                <div class="text-base uppercase">{{ formatedDate(formValue.dateDebut).annee }}</div>
+        <div class="w-full h-full flex gap-4 px-4">
+          <div class="w-full h-fit flex flex-col">
+            <p class="px-4 pb-2 text-center uppercase font-medium">Début</p>
+            <div v-if="formValue.dateDebut" class="w-full h-28 justify-center items-center border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg" @click="updateDateDebut()">
+              <div class="h-full w-full bg-gradient-to-br from-sky-600 to-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
+                <div class="w-full h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(formValue.dateDebut).jour }}</div>
+                <div class="w-full h-full flex flex-col items-start justify-center">
+                  <div class="text-base uppercase">{{ formatedDate(formValue.dateDebut).mois }}</div>
+                  <div class="text-base uppercase">{{ formatedDate(formValue.dateDebut).annee }}</div>
+                </div>
+              </div>
+              <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
+                <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateDebut).heure }}</p>
+                <p class="text-white text-xl font-bold">h</p>
+                <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateDebut).minute }}</p>
               </div>
             </div>
-            <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
-              <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateDebut).heure }}</p>
-              <p class="text-white text-xl font-bold">h</p>
-              <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateDebut).minute }}</p>
+            <div v-else class="w-full h-28 border border-gray-100 flex flex-col gap-2 items-center justify-center text-center p-4 rounded-lg bg-white shadow-lg cursor-pointer italic" @click="updateDateDebut()">
+              <Touch class="w-8 h-8 text-sky-500 animate__animated animate__heartBeat animate__repeat-3 animate__delay-1s" />
+
+              <p class="text-sm">Mettre à jour</p>
             </div>
           </div>
-          <div v-else class="w-full h-28 border border-gray-100 flex flex-col gap-2 items-center justify-center text-center p-4 rounded-lg bg-white shadow-lg cursor-pointer italic" @click="updateDateDebut()">
-            <Touch class="w-8 h-8 text-sky-500 animate__animated animate__heartBeat animate__repeat-3 animate__delay-1s" />
 
-            <p class="text-sm">Mettre à jour</p>
-          </div>
-        </div>
-
-        <div class="w-full h-fit flex flex-col">
-          <p class="px-4 pb-2 text-center uppercase font-medium">Fin</p>
-          <div v-if="formValue.dateFin" class="w-full h-28 justify-center items-center border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg" @click="updateDateFin()">
-            <div class="h-full w-full bg-gradient-to-br from-sky-700 to-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
-              <div class="w-full h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(formValue.dateFin).jour }}</div>
-              <div class="w-full h-full flex flex-col items-start justify-center">
-                <div class="text-base uppercase">{{ formatedDate(formValue.dateFin).mois }}</div>
-                <div class="text-base uppercase">{{ formatedDate(formValue.dateFin).annee }}</div>
+          <div class="w-full h-fit flex flex-col">
+            <p class="px-4 pb-2 text-center uppercase font-medium">Fin</p>
+            <div v-if="formValue.dateFin" class="w-full h-28 justify-center items-center border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg" @click="updateDateFin()">
+              <div class="h-full w-full bg-gradient-to-br from-sky-600 to-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
+                <div class="w-full h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(formValue.dateFin).jour }}</div>
+                <div class="w-full h-full flex flex-col items-start justify-center">
+                  <div class="text-base uppercase">{{ formatedDate(formValue.dateFin).mois }}</div>
+                  <div class="text-base uppercase">{{ formatedDate(formValue.dateFin).annee }}</div>
+                </div>
+              </div>
+              <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
+                <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateFin).heure }}</p>
+                <p class="text-white text-xl font-bold">h</p>
+                <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateFin).minute }}</p>
               </div>
             </div>
-            <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
-              <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateFin).heure }}</p>
-              <p class="text-white text-xl font-bold">h</p>
-              <p class="text-white text-xl font-bold">{{ formatedDate(formValue.dateFin).minute }}</p>
+            <div v-else class="w-full h-28 border border-gray-100 flex flex-col items-center justify-center gap-4 text-center p-4 rounded-lg bg-white shadow-lg cursor-pointer italic" @click="updateDateFin()">
+              <Touch class="w-8 h-8 text-sky-500 animate__animated animate__heartBeat animate__repeat-3 animate__delay-1s" />
+              <p class="text-sm">Mettre à jour</p>
             </div>
           </div>
-          <div v-else class="w-full h-28 border border-gray-100 flex flex-col items-center justify-center gap-4 text-center p-4 rounded-lg bg-white shadow-lg cursor-pointer italic" @click="updateDateFin()">
-            <Touch class="w-8 h-8 text-sky-500 animate__animated animate__heartBeat animate__repeat-3 animate__delay-1s" />
-            <p class="text-sm">Mettre à jour</p>
-          </div>
         </div>
+
+        <div v-if="!valideDate && formValue.dateDebut != '' && formValue.dateFin != ''" class="p-4 w-full">
+          <p class="w-full text-center bg-red-100 rounded-lg p-4 text-red-700 italic">Attention, il y a une incohérence entre la date de début et celle de fin.</p>
+        </div>
+
+        <!-- <p class="p-8 text-center">Résevertion : Jour : {{ selectedDay }} month : {{ formValue.month }} annee : {{ formValue.year }} à {{ selectedHeure }} h {{ selectedMinute }}</p> -->
       </div>
 
-      <div v-if="!valideDate && formValue.dateDebut != '' && formValue.dateFin != ''" class="p-4 w-full">
-        <p class="w-full text-center bg-red-100 rounded-lg p-4 text-red-700 italic">Attention, il y a une incohérence entre la date de début et celle de fin.</p>
+      <div v-if="etape == 3 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
+        <ResaRadioSalle :data="formValue" v-model="formValue.salle" @change="etape++" />
       </div>
 
-      <!-- <p class="p-8 text-center">Résevertion : Jour : {{ selectedDay }} month : {{ formValue.month }} annee : {{ formValue.year }} à {{ selectedHeure }} h {{ selectedMinute }}</p> -->
-    </div>
+      <div v-if="etape == 3 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center">
+        <ResaRadioVehicule :data="formValue" v-model="formValue.vehicule" @change="etape++" />
+      </div>
 
-    <div v-if="etape == 3 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
-      <ResaRadioSalle :data="formValue" v-model="formValue.salle" @change="etape++" />
-    </div>
+      <div v-if="etape == 4 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
+        <ResaRecapSalle :data="formValue" />
+      </div>
 
-    <div v-if="etape == 3 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center">
-      <ResaRadioVehicule :data="formValue" v-model="formValue.vehicule" @change="etape++" />
-    </div>
+      <div v-if="etape == 4 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center">
+        <ResaRecapVehicule :data="formValue" />
+      </div>
+    </template>
 
-    <div v-if="etape == 4 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
-      <ResaRecapSalle :data="formValue" />
-    </div>
-
-    <div v-if="etape == 4 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center">
-      <ResaRecapVehicule :data="formValue" />
-    </div>
-
-    <div class="mt-auto mb-4 px-4 flex justify-between items-center">
-      <AppButtonCarre v-if="etape > 0" class="" direction="left" @click="etape--"> </AppButtonCarre>
-      <AppButtonCarre v-if="etape == 0" :validated="validatedSecteur" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
-      <AppButtonCarre v-if="etape == 1" :validated="validatedType" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
-      <AppButtonCarre v-if="etape == 2" :validated="validatedDate" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
-      <AppButtonCarre v-if="etape == 3 && formValue.type == 0" :validated="validatedSalle" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
-      <AppButtonCarre v-if="etape == 3 && formValue.type == 1" :validated="validatedVehicule" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
-      <AppButtonValidated v-if="etape == 4 && isAuthToReserv" class="w-fit ml-auto" theme="" @click="addResa()"> <template #default> Réserver </template> </AppButtonValidated>
-      <AppButtonValidated v-if="etape == 4 && !isAuthToReserv" class="w-fit ml-auto" theme="" @click="addResa()"> <template #default> Envoyer la demande </template> </AppButtonValidated>
-    </div>
-  </section>
+    <template #footer>
+      <div class="flex justify-between items-center">
+        <AppButtonCarre v-if="etape > 0" class="" direction="left" @click="etape--"> </AppButtonCarre>
+        <AppButtonCarre v-if="etape == 0" :validated="validatedSecteur" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
+        <AppButtonCarre v-if="etape == 1" :validated="validatedType" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
+        <AppButtonCarre v-if="etape == 2" :validated="validatedDate" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
+        <AppButtonCarre v-if="etape == 3 && formValue.type == 0" :validated="validatedSalle" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
+        <AppButtonCarre v-if="etape == 3 && formValue.type == 1" :validated="validatedVehicule" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
+        <AppButtonValidated v-if="etape == 4 && isAuthToReserv" class="w-fit ml-auto px-4" theme="" @click="addResa()"> <template #default> Réserver </template> </AppButtonValidated>
+        <AppButtonValidated v-if="etape == 4 && !isAuthToReserv" class="w-fit ml-auto" theme="" @click="addResa()"> <template #default> Envoyer la demande </template> </AppButtonValidated>
+      </div>
+    </template>
+  </ResaPage>
 </template>
 
 <style scoped>
