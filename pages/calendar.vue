@@ -136,14 +136,18 @@ const formatDate = (date) => {
     day: date.getDate(),
   };
 };
+
+const validatedSecteur = computed(() => {
+  return formValue.value.secteur != "" ? true : false;
+});
 </script>
 
 <template>
-  <section class="bg-sky-500 w-full h-full text-gray-600 flex flex-col overflow-auto">
+  <section class="bg-sky-500 w-full h-full text-gray-600 flex flex-col overflow-hidden">
     <div class="fixed top-0 w-full h-16 p-4 flex items-center justify-between bg-sky-500 z-50">
       <div class="-space-y-1 text-white">
-        <p v-if="etape == 0" class="text-medium text-xl">Agenda</p>
-        <p v-if="etape == 1" class="text-medium text-xl">Agenda - {{ formValue.secteur.name }}</p>
+        <p v-if="etape == 0" class="text-bold text-xl">Agenda</p>
+        <p v-if="etape == 1" class="text-bold text-xl">Agenda - {{ formValue.secteur.name }}</p>
         <p v-if="etape == 0" class="text-sm italic">Selectionnez votre secteur</p>
         <p v-if="etape == 1" class="text-sm italic">Calendrier des réservations</p>
       </div>
@@ -151,13 +155,13 @@ const formatDate = (date) => {
       <img class="w-12" src="../assets/img/logo_sncf.png" alt="" />
     </div>
 
-    <div class="w-full h-full bg-slate-100 rounded-t-xl mt-16 pt-4 flex flex-col">
-      <div v-if="etape == 0" class="w-full h-fit flex flex-col px-4 pb-8 overflow-auto">
+    <div class="w-full h-full bg-slate-100 rounded-t-xl mt-16 pt-4 flex flex-col overflow-auto">
+      <div v-if="etape == 0" class="w-full h-fit flex flex-col px-4 pb-8">
         <ResaRadioSecteur v-model="formValue.secteur" @change="etape = 1" />
       </div>
 
-      <div v-if="etape == 1" class="text-sm">
-        <ResaCalendar :dayIsReserved="dayIsReserved" v-model="selectedDate" />
+      <div v-if="etape == 1" class="w-full h-full text-sm">
+        <ResaCalendar class="sticky top-0 z-20" :dayIsReserved="dayIsReserved" v-model="selectedDate" />
         <!-- <div v-if="selectedDate.day" class="text-center font-medium text-lg p-4 first-letter:uppercase">{{ selectedDateFormat.jourName }} {{ selectedDateFormat.jour }} {{ selectedDateFormat.mois }} {{ selectedDateFormat.annee }}</div> -->
 
         <div class="px-4 pt-4">
@@ -206,14 +210,35 @@ const formatDate = (date) => {
                 <p class="">{{ timestampToDateFr(resa.fin) }} {{ timestampToHeure(resa.fin) }}</p>
               </div>
             </div>
+
+            <div class="relative border-l-2 w-full px-2 overflow-hidden mb-2" :class="!resa.is_validated ? 'border-gray-500' : 'border-sky-500'" v-for="(resa, index) in reservationVehiculeAtDate" :key="index">
+              <!-- <div v-if="!resa.is_validated" class="absolute top-3 right-3 text-xs">?</div>
+              <div v-else class="absolute top-3 right-3">
+                <Check class="w-3 h-3 text-sky-500" />
+              </div> -->
+
+              <div class="flex justify-between gap-2 items-center text-sm">
+                <div class="flex flex-col">
+                  <p class="font-medium">{{ resa.vehicules.model }} - {{ resa.vehicules.immat }}</p>
+                  <!-- <p>{{ resa.vehicules.marque }} {{ resa.vehicules.model }}</p> -->
+                </div>
+
+                <p class="italic text-gray-500">({{ resa.profiles.nom }} {{ resa.profiles.prenom }})</p>
+              </div>
+              <div class="flex justify-start items-center gap-2 text-sm text-gray-500">
+                <p class="">{{ timestampToDateFr(resa.debut) }} {{ timestampToHeure(resa.debut) }}</p>
+                <ArrowRight class="w-4 h-4 text-gray-700" />
+                <p class="">{{ timestampToDateFr(resa.fin) }} {{ timestampToHeure(resa.fin) }}</p>
+              </div>
+            </div>
           </div>
           <div v-else class="text-sm italic">Néant</div>
         </div>
       </div>
-
-      <div class="mt-auto p-4 flex justify-between items-center">
-        <AppButtonCarre v-if="etape == 1" class="mr-auto" direction="left" @click="etape--"> </AppButtonCarre>
-      </div>
+    </div>
+    <div class="w-full bg-slate-100 p-4">
+      <AppButtonCarre v-if="etape == 0" :validated="validatedSecteur" class="ml-auto" direction="right" @click="etape++"> </AppButtonCarre>
+      <AppButtonCarre v-if="etape == 1" class="" direction="left" @click="etape--"> </AppButtonCarre>
     </div>
   </section>
 </template>
