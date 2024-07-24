@@ -3,6 +3,7 @@
   <template #title></template> 
   <template #default></template> 
   <template #footer></template> 
+    <template #modal></template> 
 </ResaPage> -->
 
 <template>
@@ -21,6 +22,11 @@
     <!-- FOOTER -->
     <div class="w-full bg-slate-100 p-4">
       <slot name="footer"></slot>
+    </div>
+
+    <!-- MODAL -->
+    <div class="">
+      <slot name="modal"></slot>
     </div>
   </section>
 </template>
