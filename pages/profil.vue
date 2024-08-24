@@ -54,6 +54,10 @@ const changeMdp = async () => {
     addToast({ type: "Error", title: "Problème lors de la modification du mot de passe.", message: err.message });
   }
 };
+
+const goToAdministration = () => {
+  navigateTo(`/administration/${userProfil.value.secteur_admin}`);
+};
 </script>
 
 <template>
@@ -85,6 +89,7 @@ const changeMdp = async () => {
       <div class="mt-auto">
         <div class="w-full border-t pt-4 text-sm flex justify-between">
           <div>
+            <p v-if="userProfil.secteur_admin" @click="goToAdministration()" class="cursor-pointer">Administration secteur</p>
             <p class="cursor-pointer" @click="showModalPassword()">Changer de mot de passe</p>
             <p class="cursor-pointer" @click="logout()">Se déconnecter</p>
           </div>

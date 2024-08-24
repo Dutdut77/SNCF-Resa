@@ -7,6 +7,7 @@ export const useResaSalles = () => {
     const allResaSallesSecteurTime = useState('allResaSallesSecteurTime', () => [])
     const allResaSallesUserActuel= useState('allResaSallesUserActuel', () => [])
     const allResaSecteurSalle= useState('allResaSecteurSalle', () => [])
+    const allSallesResaSecteurActuel= useState('allSallesResaSecteurActuel', () => [])
 
 
     const getAllResaSecteurSalle= async (id) => {
@@ -18,7 +19,7 @@ export const useResaSalles = () => {
             .eq('id_secteur', id)
            if (error) throw error;
            allResaSecteurSalle.value = data
-           .value = data
+   
         } catch (err) {
             console.log("erreurs :", err);
         //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
@@ -36,7 +37,24 @@ export const useResaSalles = () => {
             .gte('fin', now);
            if (error) throw error;
            allResaSallesUserActuel.value = data
-           .value = data
+       
+        } catch (err) {
+            console.log("erreurs :", err);
+        //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
+        }
+    }
+
+    const getAllSallesResaSecteurActuel = async (id) => {
+        try {
+            const now = Date.now()
+            const { data, error } = await supabase
+            .from('resa_salles')
+            .select('*, salles!inner(*), secteurs!inner(name)')
+            .eq('id_secteur', id)
+            .gte('fin', now);
+           if (error) throw error;
+           allSallesResaSecteurActuel.value = data
+           
         } catch (err) {
             console.log("erreurs :", err);
         //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
@@ -100,6 +118,6 @@ export const useResaSalles = () => {
      
   
   
-      return { getAllResaSecteurSalle, getAllResaSallesSecteurTime,  addResaSalles, getAllSallesResaUserActuel,deleteResaSalle, allResaSallesSecteurTime, allResaSallesUserActuel, allResaSecteurSalle}
+      return { getAllResaSecteurSalle, getAllResaSallesSecteurTime,  addResaSalles,getAllSallesResaSecteurActuel, getAllSallesResaUserActuel,deleteResaSalle, allResaSallesSecteurTime, allResaSallesUserActuel, allResaSecteurSalle, allSallesResaSecteurActuel}
       
   }

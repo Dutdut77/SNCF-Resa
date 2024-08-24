@@ -7,7 +7,7 @@ export const useResaVehicules = () => {
     const allResaSecteurTime = useState('allResaSecteurTime', () => [])  
     const allResaUserActuel= useState('allResaUserActuel', () => [])
     const allResaSecteurVehicule = useState('allResaSecteurVehicule', () => [])  
-
+    const allResaSecteurActuel = useState('allResaSecteurActuel', () => [])  
 
 
     const getAllResaSecteurVehicule = async (id) => {
@@ -26,6 +26,22 @@ export const useResaVehicules = () => {
         }
     }
 
+
+    const getAllVehiculesResaSecteurActuel = async (id) => {
+        try {
+            const now = Date.now()
+            const { data, error } = await supabase
+            .from('resa_vehicules')
+            .select('*, vehicules!inner(*), secteurs!inner(name)')
+            .eq('id_secteur', id)
+            .gte('fin', now);
+           if (error) throw error;
+           allResaSecteurActuel.value = data
+        } catch (err) {
+            console.log("erreurs :", err);
+        //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
+        }
+    }
 
 
     const getAllVehiculesResaUserActuel = async () => {
@@ -102,6 +118,6 @@ export const useResaVehicules = () => {
      
   
   
-      return {getAllResaSecteurVehicule,  getAllResaSecteurTime,  addResaVehicule, getAllVehiculesResaUserActuel ,deleteResaVehicule,  allResaSecteurTime, allResaUserActuel,allResaSecteurVehicule}
+      return {getAllResaSecteurVehicule,  getAllResaSecteurTime,  addResaVehicule, getAllVehiculesResaSecteurActuel, getAllVehiculesResaUserActuel ,deleteResaVehicule,  allResaSecteurTime, allResaUserActuel,allResaSecteurVehicule, allResaSecteurActuel}
       
   }

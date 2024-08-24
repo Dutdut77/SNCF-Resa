@@ -43,14 +43,14 @@ const validatedAnomalieVehicule = computed(() => {
 
 const sendAnomalieSalle = async () => {
   setLoader(true);
-  await addAnomalieSalle(formValue.value.salle.id, anomalieSalle.value);
+  await addAnomalieSalle(formValue.value.salle.id, anomalieSalle.value, formValue.value.secteur.id);
   navigateTo("/home");
   setLoader(false);
 };
 
 const sendAnomalieVehicule = async () => {
   setLoader(true);
-  await addAnomalieVehicule(formValue.value.vehicule.id, anomalieVehicule.value);
+  await addAnomalieVehicule(formValue.value.vehicule.id, anomalieVehicule.value, formValue.value.secteur.id);
   navigateTo("/home");
   setLoader(false);
 };

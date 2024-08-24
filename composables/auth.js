@@ -3,7 +3,8 @@ export const useAuth = () => {
     const { addToast } = useToast();
     const supabase = useSupabaseClient();
   
- 
+    const allProfiles= useState('allProfiles', () => [])
+
   
 
     const signup = async (form) => {
@@ -61,12 +62,24 @@ export const useAuth = () => {
 
 
 
+    const getAllProfiles = async (form) => {
+
+      try {
+        const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        if (error) throw error;
+        allProfiles.value = data
+
+      } catch (err) {
+        addToast({ type: "Error", title: "Problème lors du chargement des profiles.",  message: err.message  });
+      }
+    }
 
 
 
 
 
-
-      return { signup,updateProfiles, login}
+      return { signup,updateProfiles, getAllProfiles, login, allProfiles}
       
   }
