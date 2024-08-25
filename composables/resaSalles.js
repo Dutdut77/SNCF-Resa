@@ -115,9 +115,23 @@ export const useResaSalles = () => {
 
     }
   
+    const validResaSalle = async (id) => {
+        try {
+
+          const { data, error } = await supabase
+          .from('resa_salles')
+          .update({ is_validated : 1 })
+          .eq('id', id)
+          .select()
+          if (error) throw error;      
+          addToast({ type: "Success", title: "Félicitation", message: "Votre salle a correctement été validée." });
+        } catch (err) {
+          addToast({ type: "Error", title: "Problème lors de la validation.",  message: err.message  });
+        }
+      }
      
   
   
-      return { getAllResaSecteurSalle, getAllResaSallesSecteurTime,  addResaSalles,getAllSallesResaSecteurActuel, getAllSallesResaUserActuel,deleteResaSalle, allResaSallesSecteurTime, allResaSallesUserActuel, allResaSecteurSalle, allSallesResaSecteurActuel}
+      return { getAllResaSecteurSalle, getAllResaSallesSecteurTime,  addResaSalles,getAllSallesResaSecteurActuel, getAllSallesResaUserActuel,deleteResaSalle, validResaSalle, allResaSallesSecteurTime, allResaSallesUserActuel, allResaSecteurSalle, allSallesResaSecteurActuel}
       
   }

@@ -77,9 +77,89 @@ export const useAuth = () => {
     }
 
 
+    const addValideur = async (form) => {
+
+      // Convertir la chaîne en tableau d'entiers
+      let secteurArray = form.secteur_auth.split(',').map(Number);
+      // Vérifier si le chiffre 5 est déjà présent
+      if (!secteurArray.includes(Number(form.secteur))) {
+        secteurArray.push(Number(form.secteur));  // Ajouter 5 au tableau s'il n'est pas présent
+      }
+      // Reconvertir le tableau en chaîne de caractères
+      form.secteur_auth = secteurArray.join(',');
+
+      try {
+        const { error } = await supabase
+        .from('profiles')
+        .update({ secteur_auth : form.secteur_auth })
+        .eq('id', form.id)
+        .select()
+        if (error) throw error;
+        
+        addToast({ type: "Success", title: "Félicitation", message: "Enregistrement réussit." });
+      } catch (err) {
+        addToast({ type: "Error", title: "Problème lors de la modification du profil.",  message: err.message  });
+      }
+    }
+
+    const deleteValideur = async (form) => {
+
+      // Convertir la chaîne en tableau d'entiers
+      let secteurArray = form.secteur_auth.split(',').map(Number);
+
+      // Filtrer le tableau pour supprimer le chiffre 5
+      secteurArray = secteurArray.filter(num => num !== Number(form.secteur));
+
+      // Reconvertir le tableau en chaîne de caractères
+      form.secteur_auth = secteurArray.join(',');
+
+      try {
+        const { error } = await supabase
+        .from('profiles')
+        .update({ secteur_auth : form.secteur_auth })
+        .eq('id', form.id)
+        .select()
+        if (error) throw error;
+        
+        addToast({ type: "Success", title: "Félicitation", message: "Enregistrement réussit." });
+      } catch (err) {
+        addToast({ type: "Error", title: "Problème lors de la modification du profil.",  message: err.message  });
+      }
+    }
+
+    const addAdmin = async (form) => {
+            try {
+              const { error } = await supabase
+              .from('profiles')
+              .update({ secteur_admin : Number(form.secteur) })
+              .eq('id', form.id)
+              .select()
+              if (error) throw error;
+              
+              addToast({ type: "Success", title: "Félicitation", message: "Enregistrement réussit." });
+            } catch (err) {
+              addToast({ type: "Error", title: "Problème lors de la modification du profil.",  message: err.message  });
+            }
+          }
+
+    const deleteAdmin = async (form) => {
+
+      try {
+        const { error } = await supabase
+        .from('profiles')
+        .update({ secteur_admin : null })
+        .eq('id', form.id)
+        .select()
+        if (error) throw error;
+        
+        addToast({ type: "Success", title: "Félicitation", message: "Enregistrement réussit." });
+      } catch (err) {
+        addToast({ type: "Error", title: "Problème lors de la modification du profil.",  message: err.message  });
+      }
+    }
 
 
 
-      return { signup,updateProfiles, getAllProfiles, login, allProfiles}
+      return { signup,updateProfiles, getAllProfiles, addValideur,addAdmin, deleteAdmin, login,deleteValideur, allProfiles}
       
   }

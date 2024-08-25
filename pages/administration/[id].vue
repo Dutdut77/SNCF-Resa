@@ -1,6 +1,9 @@
 <script setup>
 import Check from "@/assets/svg/Check.vue";
 import Close from "@/assets/svg/Close.vue";
+import ArrowRight from "@/assets/svg/ArrowRight.vue";
+import Trash from "@/assets/svg/Trash.vue";
+import Add from "@/assets/svg/Add.vue";
 
 definePageMeta({
   requiresAuth: true,
@@ -13,17 +16,21 @@ useHead({
 
 const route = useRoute();
 const { setLoader } = useLoader();
-const { timestampToDateFr } = useFormatDate();
+const { timestampToDateFr, timestampToHeure } = useFormatDate();
 const { getAllVehiculesBySecteur, addVehicule, updateVehicule, deleteVehicule, allVehiculesSecteur } = useVehicules();
 const { getAllSallesBySecteur, addSalle, updateSalle, deleteSalle, allSallesSecteur } = useSalles();
 const { getAllAnomaliesSecteur, deleteAnomalie, allAnomaliesSecteur } = useAnomalies();
-const { getAllSallesResaSecteurActuel, allSallesResaSecteurActuel } = useResaSalles();
-const { getAllVehiculesResaSecteurActuel, allResaSecteurActuel } = useResaVehicules();
-const { getAllProfiles, allProfiles } = useAuth();
+const { getAllSallesResaSecteurActuel, deleteResaSalle, validResaSalle, allSallesResaSecteurActuel } = useResaSalles();
+const { getAllVehiculesResaSecteurActuel, deleteResaVehicule, validResaVehicule, allResaSecteurActuel } = useResaVehicules();
+const { getAllProfiles, addValideur, deleteValideur, addAdmin, deleteAdmin, allProfiles } = useAuth();
 const sideModalVehicules = ref(false);
 const sideModalSalles = ref(false);
 const sideModalAnomalieVehicule = ref(false);
 const sideModalAnomalieSalle = ref(false);
+const sideModalResaSalle = ref(false);
+const sideModalResaVehicule = ref(false);
+const sideModalValideurs = ref(false);
+const sideModalAdmin = ref(false);
 const vehiculeForm = ref({
   marque: "",
   model: "",
@@ -51,6 +58,8 @@ const salleForm = ref({
 });
 const anomalieVehiculeForm = ref({});
 const anomalieSalleForm = ref({});
+const resaSalleForm = ref({});
+const resaVehiculeForm = ref({});
 
 setLoader(true);
 await getAllVehiculesBySecteur(route.params.id);
@@ -112,6 +121,24 @@ const validatedFieldsVehicule = computed(() => {
 });
 const validatedFieldsSalles = computed(() => {
   return salleForm.value.name != "" && salleForm.value.adresse != "" && salleForm.value.capacite != "" ? true : false;
+});
+
+const nameReservationVehicule = computed(() => {
+  const found = allProfiles.value.find((user) => user.id === resaVehiculeForm.value.id_user);
+  if (found) {
+    return found; // Si l'utilisateur est trouvé, on le stocke
+  } else {
+    return ""; // Si aucun utilisateur n'est trouvé, on réinitialise
+  }
+});
+
+const nameReservationSalle = computed(() => {
+  const found = allProfiles.value.find((user) => user.id === resaSalleForm.value.id_user);
+  if (found) {
+    return found; // Si l'utilisateur est trouvé, on le stocke
+  } else {
+    return ""; // Si aucun utilisateur n'est trouvé, on réinitialise
+  }
 });
 
 // Véhicules
@@ -251,6 +278,90 @@ const supprimerAnomalie = async (id) => {
   sideModalAnomalieVehicule.value = false;
   setLoader(false);
 };
+
+// Réservations
+const showSideResaVehicule = (data) => {
+  if (data) {
+    resaVehiculeForm.value = data;
+  } else {
+    resaVehiculeForm.value = {};
+  }
+  sideModalResaVehicule.value = !sideModalResaVehicule.value;
+};
+const showSideResaSalle = (data) => {
+  if (data) {
+    resaSalleForm.value = data;
+  } else {
+    resaSalleForm.value = {};
+  }
+  sideModalResaSalle.value = !sideModalResaSalle.value;
+};
+const supprimerResaVehicule = async (id) => {
+  setLoader(true);
+  await deleteResaVehicule(id);
+  await getAllVehiculesResaSecteurActuel(route.params.id);
+  sideModalResaVehicule.value = false;
+  setLoader(false);
+};
+const supprimerResaSalle = async (id) => {
+  setLoader(true);
+  await deleteResaSalle(id);
+  await getAllSallesResaSecteurActuel(route.params.id);
+  sideModalResaSalle.value = false;
+  setLoader(false);
+};
+const validerResaVehicule = async (id) => {
+  setLoader(true);
+  await validResaVehicule(id);
+  await getAllVehiculesResaSecteurActuel(route.params.id);
+  sideModalResaVehicule.value = false;
+  setLoader(false);
+};
+const validerResaSalle = async (id) => {
+  setLoader(true);
+  await validResaSalle(id);
+  await getAllSallesResaSecteurActuel(route.params.id);
+  sideModalResaSalle.value = false;
+  setLoader(false);
+};
+
+// Valideurs
+const showSideValideurs = () => {
+  sideModalValideurs.value = !sideModalValideurs.value;
+};
+const addProfilValideur = async (data) => {
+  setLoader(true);
+  data.secteur = route.params.id;
+  await addValideur(data);
+  await getAllProfiles();
+  setLoader(false);
+};
+const deleteProfilValideur = async (data) => {
+  setLoader(true);
+  data.secteur = route.params.id;
+  await deleteValideur(data);
+  await getAllProfiles();
+  setLoader(false);
+};
+
+// Administrateur
+const showSideAdmin = () => {
+  sideModalAdmin.value = !sideModalAdmin.value;
+};
+const addProfilAdmin = async (data) => {
+  setLoader(true);
+  data.secteur = route.params.id;
+  await addAdmin(data);
+  await getAllProfiles();
+  setLoader(false);
+};
+const deleteProfilAdmin = async (data) => {
+  setLoader(true);
+  data.secteur = route.params.id;
+  await deleteAdmin(data);
+  await getAllProfiles();
+  setLoader(false);
+};
 </script>
 
 <template>
@@ -268,9 +379,9 @@ const supprimerAnomalie = async (id) => {
               <thead>
                 <tr>
                   <th class="text-left">Marque</th>
-                  <th>Model</th>
-                  <th>Immat</th>
-                  <th>Dispo</th>
+                  <th class="px-4">Model</th>
+                  <th class="w-full">Immat</th>
+                  <th class="px-4">Dispo</th>
                   <th class="text-right">#</th>
                 </tr>
               </thead>
@@ -296,8 +407,8 @@ const supprimerAnomalie = async (id) => {
             <table class="w-full">
               <thead>
                 <tr>
-                  <th class="text-left">Nom</th>
-                  <th>Dispo</th>
+                  <th class="text-left w-full">Nom</th>
+                  <th class="px-4">Dispo</th>
                   <th class="text-right">#</th>
                 </tr>
               </thead>
@@ -368,23 +479,23 @@ const supprimerAnomalie = async (id) => {
             <table class="w-full">
               <thead>
                 <tr>
-                  <th class="text-left">Immat</th>
-                  <th class="text-left">Début</th>
-                  <th class="text-left">Fin</th>
-                  <th class="">Validée</th>
+                  <th class="text-left w-full">Immat</th>
+                  <th class="px-6">Début</th>
+                  <th class="px-6">Fin</th>
+                  <th class="px-4">Validée</th>
                   <th class="text-right">#</th>
                 </tr>
               </thead>
               <tbody>
                 <tr class="cursor-default" v-for="data in allResaSecteurActuel" :key="data.id">
                   <td>{{ data.vehicules.immat }}</td>
-                  <td class="">{{ timestampToDateFr(data.debut) }}</td>
-                  <td class="">{{ timestampToDateFr(data.fin) }}</td>
+                  <td class="text-center">{{ timestampToDateFr(data.debut) }}</td>
+                  <td class="text-center">{{ timestampToDateFr(data.fin) }}</td>
                   <td class="text-center">
-                    <Check v-if="data.is_validated == 1" class="w-3 h-3 mx-auto" />
-                    <div v-else class="w-4 h-4 mx-auto text-red-500">?</div>
+                    <Check v-if="data.is_validated == 1" class="w-3 h-3 mx-auto text-green-500" />
+                    <div v-else class="w-4 h-4 mx-auto text-gray-500">?</div>
                   </td>
-                  <td class="text-right cursor-pointer">...</td>
+                  <td class="text-right cursor-pointer" @click="showSideResaVehicule(data)">...</td>
                 </tr>
               </tbody>
             </table>
@@ -399,23 +510,23 @@ const supprimerAnomalie = async (id) => {
             <table class="w-full">
               <thead>
                 <tr>
-                  <th class="text-left">Salle</th>
-                  <th class="text-left">Début</th>
-                  <th class="text-left">Fin</th>
-                  <th class="">Validée</th>
+                  <th class="w-full text-left">Salle</th>
+                  <th class="px-6">Début</th>
+                  <th class="px-6">Fin</th>
+                  <th class="px-4">Validée</th>
                   <th class="text-right">#</th>
                 </tr>
               </thead>
               <tbody>
                 <tr class="cursor-default" v-for="data in allSallesResaSecteurActuel" :key="data.id">
                   <td>{{ data.salles.name }}</td>
-                  <td class="">{{ timestampToDateFr(data.debut) }}</td>
-                  <td class="">{{ timestampToDateFr(data.fin) }}</td>
+                  <td class="text-center">{{ timestampToDateFr(data.debut) }}</td>
+                  <td class="text-center">{{ timestampToDateFr(data.fin) }}</td>
                   <td class="text-center">
-                    <Check v-if="data.is_validated == 1" class="w-3 h-3 mx-auto" />
-                    <div v-else class="w-4 h-4 mx-auto text-red-500">?</div>
+                    <Check v-if="data.is_validated == 1" class="w-3 h-3 mx-auto text-green-500" />
+                    <div v-else class="w-4 h-4 mx-auto text-gray-500">?</div>
                   </td>
-                  <td class="text-right cursor-pointer">...</td>
+                  <td class="text-right cursor-pointer" @click="showSideResaSalle(data)">...</td>
                 </tr>
               </tbody>
             </table>
@@ -425,7 +536,10 @@ const supprimerAnomalie = async (id) => {
         </ResaAdminCard>
 
         <ResaAdminCard>
-          <template #title> <p>Profiles Valideur :</p></template>
+          <template #title>
+            <p>Profils Auto-Valideur :</p>
+            <div class="h-5 w-5 bg-white border rounded-full flex items-center justify-center cursor-pointer" @click="showSideValideurs()"><p class="text-gray-500 pb-2">...</p></div></template
+          >
           <template #default>
             <table class="w-full">
               <thead>
@@ -433,15 +547,13 @@ const supprimerAnomalie = async (id) => {
                   <th class="text-left">Nom</th>
                   <th class="text-left">Prénom</th>
                   <th>Email</th>
-                  <th class="text-right">#</th>
                 </tr>
               </thead>
               <tbody>
                 <tr class="cursor-default" v-for="data in userAuth" :key="data.id">
                   <td>{{ data.nom }}</td>
-                  <td class="text-center">{{ data.prenom }}</td>
+                  <td class="text-left">{{ data.prenom }}</td>
                   <td class="text-center">{{ data.email }}</td>
-                  <td class="text-right cursor-pointer">...</td>
                 </tr>
               </tbody>
             </table>
@@ -451,7 +563,10 @@ const supprimerAnomalie = async (id) => {
         </ResaAdminCard>
 
         <ResaAdminCard>
-          <template #title> <p>Profiles Administrateur :</p></template>
+          <template #title>
+            <p>Profils Administrateur :</p>
+            <div class="h-5 w-5 bg-white border rounded-full flex items-center justify-center cursor-pointer" @click="showSideAdmin()"><p class="text-gray-500 pb-2">...</p></div>
+          </template>
           <template #default>
             <table class="w-full">
               <thead>
@@ -459,15 +574,13 @@ const supprimerAnomalie = async (id) => {
                   <th class="text-left">Nom</th>
                   <th class="text-left">Prénom</th>
                   <th>Email</th>
-                  <th class="text-right">#</th>
                 </tr>
               </thead>
               <tbody>
                 <tr class="cursor-default" v-for="data in userAdmin" :key="data.id">
                   <td>{{ data.nom }}</td>
-                  <td class="text-center">{{ data.prenom }}</td>
+                  <td class="text-left">{{ data.prenom }}</td>
                   <td class="text-center">{{ data.email }}</td>
-                  <td class="text-right cursor-pointer">...</td>
                 </tr>
               </tbody>
             </table>
@@ -628,6 +741,226 @@ const supprimerAnomalie = async (id) => {
               <div class="flex gap-2 w-full justify-end pt-6">
                 <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideAnomalieSalle()"> <template #default> Annuler </template> </AppButtonValidated>
                 <AppButtonValidated class="md:w-32 w-full" theme="" @click="supprimerAnomalie(anomalieSalleForm.id)"> <template #default> Clôturer </template> </AppButtonValidated>
+              </div>
+            </template>
+          </AppModalSideContent>
+        </template>
+      </AppModalSide>
+
+      <AppModalSide :sideModal="sideModalResaVehicule" :closeSideModal="showSideResaVehicule">
+        <template #default>
+          <AppModalSideContent v-if="sideModalResaVehicule" :closeSideModal="showSideResaVehicule">
+            <template #header>
+              <div class="text-center">
+                <div class="font-medium text-xl text-gray-700">Réservation d'un véhicule</div>
+              </div>
+            </template>
+            <template #default>
+              <div class="w-full pt-8">
+                <div class="text-gray-700">
+                  <div class="text-center">
+                    <p class="font-bold">{{ nameReservationVehicule.nom }} {{ nameReservationVehicule.prenom }}</p>
+                    <p>({{ nameReservationVehicule.email }})</p>
+                    <p class="pt-4">a réservé le véhicule suivant :</p>
+                  </div>
+                </div>
+
+                <div class="text-center py-4">
+                  <div class="font-medium text-xl text-gray-700">{{ resaVehiculeForm.vehicules.marque }} {{ resaVehiculeForm.vehicules.model }}</div>
+                  <div class="font-medium text-xl text-gray-700">{{ resaVehiculeForm.vehicules.immat }}</div>
+                </div>
+                <div class="w-full flex items-center justify-between pt-2 0">
+                  <div class="flex items-center bg-sky-500 text-white rounded-lg p-2 px-4 gap-2">{{ timestampToDateFr(resaVehiculeForm.debut) }} {{ timestampToHeure(resaVehiculeForm.debut) }}</div>
+                  <ArrowRight class="w-6 h-6 text-slate-700" />
+                  <div class="flex items-center bg-sky-500 text-white rounded-lg p-2 px-4 gap-2">{{ timestampToDateFr(resaVehiculeForm.fin) }} {{ timestampToHeure(resaVehiculeForm.fin) }}</div>
+                </div>
+                <div v-if="resaVehiculeForm.is_validated == 0" class="mt-8 pt-4 text-sm text-center border-t text-red-700">Cette réservation n'est pas validée par un administrateur. Vous devez la valider pour que le demandeur ai la confirmation de sa réservation.</div>
+              </div>
+            </template>
+            <template #footer>
+              <div class="flex gap-2 w-full justify-end pt-6">
+                <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideResaVehicule()"> <template #default> Annuler </template> </AppButtonValidated>
+                <AppButtonValidated v-if="resaVehiculeForm.is_validated == 0" class="md:w-32 w-full" theme="" @click="validerResaVehicule(resaVehiculeForm.id)"> <template #default> Valider </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full" theme="delete" @click="supprimerResaVehicule(resaVehiculeForm.id)"> <template #default> Supprimer </template> </AppButtonValidated>
+              </div>
+            </template>
+          </AppModalSideContent>
+        </template>
+      </AppModalSide>
+
+      <AppModalSide :sideModal="sideModalResaSalle" :closeSideModal="showSideResaSalle">
+        <template #default>
+          <AppModalSideContent v-if="sideModalResaSalle" :closeSideModal="showSideResaSalle">
+            <template #header>
+              <div class="text-center">
+                <div class="font-medium text-xl text-gray-700">Réservation d'une salle</div>
+              </div>
+            </template>
+            <template #default>
+              <div class="w-full h-full pt-8">
+                <div class="text-gray-700">
+                  <div class="text-center">
+                    <p class="font-bold">{{ nameReservationSalle.nom }} {{ nameReservationSalle.prenom }}</p>
+                    <p>({{ nameReservationSalle.email }})</p>
+                    <p class="pt-4">a réservé la salle suivante :</p>
+                  </div>
+                </div>
+
+                <div class="text-center py-4">
+                  <div class="font-medium text-xl text-gray-700">{{ resaSalleForm.salles.name }}</div>
+                  <div class="font-medium text-xl text-gray-700">{{ resaSalleForm.salles.adresse }}</div>
+                </div>
+                <div class="w-full flex items-center justify-between pt-2 0">
+                  <div class="flex items-center bg-sky-500 text-white rounded-lg p-2 px-4 gap-2">{{ timestampToDateFr(resaSalleForm.debut) }} {{ timestampToHeure(resaSalleForm.debut) }}</div>
+                  <ArrowRight class="w-6 h-6 text-slate-700" />
+                  <div class="flex items-center bg-sky-500 text-white rounded-lg p-2 px-4 gap-2">{{ timestampToDateFr(resaSalleForm.fin) }} {{ timestampToHeure(resaSalleForm.fin) }}</div>
+                </div>
+                <div v-if="resaSalleForm.is_validated == 0" class="mt-8 pt-4 text-sm text-center border-t text-red-700">Cette réservation n'est pas validée par un administrateur. Vous devez la valider pour que le demandeur ai la confirmation de sa réservation.</div>
+              </div>
+            </template>
+            <template #footer>
+              <div class="flex gap-2 w-full justify-end pt-6">
+                <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideResaSalle()"> <template #default> Annuler </template> </AppButtonValidated>
+                <AppButtonValidated v-if="resaSalleForm.is_validated == 0" class="md:w-32 w-full" theme="" @click="validerResaSalle(resaSalleForm.id)"> <template #default> Valider </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full" theme="delete" @click="supprimerResaSalle(resaSalleForm.id)"> <template #default> Supprimer </template> </AppButtonValidated>
+              </div>
+            </template>
+          </AppModalSideContent>
+        </template>
+      </AppModalSide>
+
+      <AppModalSide :sideModal="sideModalValideurs" :closeSideModal="showSideValideurs">
+        <template #default>
+          <AppModalSideContent v-if="sideModalValideurs" :closeSideModal="showSideValideurs">
+            <template #header>
+              <div class="text-center">
+                <div class="font-medium text-xl text-gray-700">Profils Auto-Valideur</div>
+              </div>
+            </template>
+            <template #default>
+              <div class="w-full">
+                <div class="pt-4 uppercase text-sm text-gray-600 font-medium py-2 border-b text-left">Profils autorisé :</div>
+                <div class="mt-3 text-sm text-gray-700 w-full">
+                  <table class="w-full">
+                    <thead>
+                      <tr>
+                        <th class="text-left">Nom</th>
+                        <th class="px-6">Prénom</th>
+                        <th class="px-6 w-full">Mail</th>
+                        <th class="text-right"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="cursor-default" v-for="data in userAuth" :key="data.id">
+                        <td>{{ data.nom }}</td>
+                        <td class="text-center">{{ data.prenom }}</td>
+                        <td class="text-center">{{ data.email }}</td>
+                        <td class="cursor-pointer" @click="deleteProfilValideur(data)">
+                          <Trash class="w-4 h-4 text-red-500" />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="w-full pt-8">
+                <div class="pt-4 uppercase text-sm text-gray-600 font-medium py-2 border-b text-left">Ajouter un profil :</div>
+                <div class="mt-3 text-sm text-gray-700 w-full">
+                  <table class="w-full">
+                    <thead>
+                      <tr>
+                        <th class="text-left">Nom</th>
+                        <th class="px-6">Prénom</th>
+                        <th class="px-6 w-full">Mail</th>
+                        <th class="text-right"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="cursor-default" v-for="data in allProfiles" :key="data.id">
+                        <td>{{ data.nom }}</td>
+                        <td class="text-center">{{ data.prenom }}</td>
+                        <td class="text-center">{{ data.email }}</td>
+                        <td class="cursor-pointer" @click="addProfilValideur(data)">
+                          <Add class="w-4 h-4 text-sky-500" />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </template>
+            <template #footer>
+              <div class="flex gap-2 w-full justify-end pt-6">
+                <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideValideurs()"> <template #default> Retour </template> </AppButtonValidated>
+              </div>
+            </template>
+          </AppModalSideContent>
+        </template>
+      </AppModalSide>
+
+      <AppModalSide :sideModal="sideModalAdmin" :closeSideModal="showSideAdmin">
+        <template #default>
+          <AppModalSideContent v-if="sideModalAdmin" :closeSideModal="showSideAdmin">
+            <template #header>
+              <div class="text-center">
+                <div class="font-medium text-xl text-gray-700">Profils Administrateur</div>
+              </div>
+            </template>
+            <template #default>
+              <div class="w-full">
+                <div class="pt-4 uppercase text-sm text-gray-600 font-medium py-2 border-b text-left">Profils Administrateur :</div>
+                <div class="mt-3 text-sm text-gray-700 w-full">
+                  <table class="w-full">
+                    <thead>
+                      <tr>
+                        <th class="text-left">Nom</th>
+                        <th class="px-6">Prénom</th>
+                        <th class="px-6 w-full">Mail</th>
+                        <th class="text-right"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="cursor-default" v-for="data in userAdmin" :key="data.id">
+                        <td>{{ data.nom }}</td>
+                        <td class="text-center">{{ data.prenom }}</td>
+                        <td class="text-center">{{ data.email }}</td>
+                        <td class="cursor-pointer" @click="deleteProfilAdmin(data)">
+                          <Trash class="w-4 h-4 text-red-500" />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="w-full pt-8">
+                <div class="pt-4 uppercase text-sm text-gray-600 font-medium py-2 border-b text-left">Ajouter un profil :</div>
+                <div class="mt-3 text-sm text-gray-700 w-full">
+                  <table class="w-full">
+                    <thead>
+                      <tr>
+                        <th class="text-left">Nom</th>
+                        <th class="px-6">Prénom</th>
+                        <th class="px-6 w-full">Mail</th>
+                        <th class="text-right"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="cursor-default" v-for="data in allProfiles" :key="data.id">
+                        <td>{{ data.nom }}</td>
+                        <td class="text-center">{{ data.prenom }}</td>
+                        <td class="text-center">{{ data.email }}</td>
+                        <td class="cursor-pointer" @click="addProfilAdmin(data)">
+                          <Add class="w-4 h-4 text-sky-500" />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </template>
+            <template #footer>
+              <div class="flex gap-2 w-full justify-end pt-6">
+                <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideAdmin()"> <template #default> Retour </template> </AppButtonValidated>
               </div>
             </template>
           </AppModalSideContent>

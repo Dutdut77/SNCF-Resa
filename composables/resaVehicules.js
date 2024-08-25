@@ -115,9 +115,23 @@ export const useResaVehicules = () => {
 
     }
   
+    const validResaVehicule = async (id) => {
+        try {
+    
+          const { data, error } = await supabase
+          .from('resa_vehicules')
+          .update({ is_validated : 1 })
+          .eq('id', id)
+          .select()
+          if (error) throw error;      
+          addToast({ type: "Success", title: "Félicitation", message: "Votre véhicule a correctement été validé." });
+        } catch (err) {
+          addToast({ type: "Error", title: "Problème lors de la validation.",  message: err.message  });
+        }
+      }
      
   
   
-      return {getAllResaSecteurVehicule,  getAllResaSecteurTime,  addResaVehicule, getAllVehiculesResaSecteurActuel, getAllVehiculesResaUserActuel ,deleteResaVehicule,  allResaSecteurTime, allResaUserActuel,allResaSecteurVehicule, allResaSecteurActuel}
+      return {getAllResaSecteurVehicule,  getAllResaSecteurTime,  addResaVehicule, getAllVehiculesResaSecteurActuel, getAllVehiculesResaUserActuel ,deleteResaVehicule, validResaVehicule, allResaSecteurTime, allResaUserActuel,allResaSecteurVehicule, allResaSecteurActuel}
       
   }
