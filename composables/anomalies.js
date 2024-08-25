@@ -132,10 +132,22 @@ export const useAnomalies = () => {
       }
 
 
-
+      const deleteAnomalie = async (id) => {
+        try {
+          const { error } = await supabase
+          .from('anomalies')
+          .delete()
+          .eq('id', id)
+          if (error) throw error; 
+          addToast({ type: "Success", title: "Félicitation", message: "Votre anomalie a correctement été supprimée." });
+        } catch (err) {
+          addToast({ type: "Error", title: "Problème lors de la suppression de l'anomalie.",  message: err.message  });
+        }
+      }
+    
 
 
   
-      return { getAllAnomaliesSalle, getAllAnomaliesVehicule,addAnomalieSalle, getAllAnomaliesSecteur, addAnomalieVehicule, anomalies, allAnomaliesSecteur}
+      return { getAllAnomaliesSalle, getAllAnomaliesVehicule,addAnomalieSalle, getAllAnomaliesSecteur, addAnomalieVehicule,deleteAnomalie, anomalies, allAnomaliesSecteur}
       
   }

@@ -9,7 +9,7 @@
 <template>
   <section class="bg-white w-full text-gray-600 flex flex-col overflow-hidden rounded-md shadow-lg">
     <!-- TITLE -->
-    <div class="text-sm font-medium bg-sky-500 text-white p-2">
+    <div class="text-sm font-medium bg-gray-400 text-white p-2 flex justify-between">
       <slot name="title"></slot>
     </div>
 

@@ -1,6 +1,6 @@
 export const useVehicules = () => {
 
-    // const { addToast } = useToast();
+    const { addToast } = useToast();
     const supabase = useSupabaseClient();
   
     const vehicules = useState('vehicules', () => [])
@@ -39,10 +39,57 @@ export const useVehicules = () => {
         //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
         }
       }
+
+
+    const addVehicule = async (form) => {
+        try {
+        const { data : tache, error } = await supabase
+        .from('vehicules')
+        .insert([
+            { is_dispo : form.is_dispo, id_secteur : form.secteur, capacite : form.capacite, immat : form.immat, marque : form.marque, model: form.model, autres : form.autres, id_carburant : form.id_carburant, vitesse : form.vitesse}
+        ])
+        .select() 
+        .single() 
+        if (error) throw error;
+            addToast({ type: "Success", title: "Félicitation", message: "Votre véhicule a correctement été ajouté." });
+        } catch (err) {
+        addToast({ type: "Error", title: "Problème lors de l'ajout d'un véhicule.",  message: err.message  });
+        }
+    }
+
+    const updateVehicule = async (form) => {
+        try {
+    
+          const { data, error } = await supabase
+          .from('vehicules')
+          .update({ is_dispo : form.is_dispo, capacite : form.capacite, immat : form.immat, marque : form.marque, model: form.model, autres : form.autres, id_carburant : form.id_carburant, vitesse : form.vitesse })
+          .eq('id', form.id)
+          .select()
+          if (error) throw error;      
+          addToast({ type: "Success", title: "Félicitation", message: "Votre véhicule a correctement été modifié." });
+        } catch (err) {
+          addToast({ type: "Error", title: "Problème lors de la modification d'un véhicule.",  message: err.message  });
+        }
+      }
+
+      const deleteVehicule = async (id) => {
+        try {
+          const { error } = await supabase
+          .from('vehicules')
+          .delete()
+          .eq('id', id)
+          if (error) throw error; 
+          addToast({ type: "Success", title: "Félicitation", message: "Votre véhicule a correctement été supprimé." });
+        } catch (err) {
+          addToast({ type: "Error", title: "Problème lors de la suppression du véhicule.",  message: err.message  });
+        }
+      }
+    
+
       
   
   
   
-      return { getAllSecteurDispo, getAllVehiculesBySecteur, vehicules,allVehiculesSecteur}
+      return { getAllSecteurDispo, getAllVehiculesBySecteur,addVehicule,updateVehicule,deleteVehicule, vehicules, allVehiculesSecteur}
       
   }
