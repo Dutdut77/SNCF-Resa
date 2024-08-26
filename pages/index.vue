@@ -8,13 +8,10 @@ useHead({
   title: "Resa - Login",
   description: "Réservation salles - Véhicules",
 });
-const { setLoader } = useLoader();
 
-const goToHome = async () => {
-  setLoader(true);
+const goToHome = () => {
   window.navigator.vibrate(200);
-  await navigateTo("/home");
-  setLoader(false);
+  navigateTo("/home");
 };
 </script>
 <template>
@@ -28,7 +25,7 @@ const goToHome = async () => {
       <img class="w-12 h-full ml-auto" src="@/assets/img/logo_sncf.png" alt="" />
     </div>
 
-    <div class="w-full h-full bg-slate-100 rounded-t-xl mt-16 pt-4 flex flex-col overflow-auto" @click="goToHome()">
+    <div class="w-full h-full bg-slate-100 rounded-t-xl mt-16 pt-4 flex flex-col overflow-auto cursor-pointer" @click="goToHome()">
       <div class="h-full w-full flex flex-col items-center justify-center gap-8">
         <div class="relative w-[250px] h-[250px] flex justify-center items-center">
           <span class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-sky-700 to-sky-500 rotate-45 rounded-[38%_62%_63%_37%_/_41%_44%_56%_59%]"></span>
