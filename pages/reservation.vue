@@ -185,11 +185,11 @@ const addResa = async () => {
 
     <template #default>
       <div v-if="etape == 0" class="w-full h-fit flex flex-col px-4 pb-8 overflow-auto">
-        <ResaRadioSecteur v-model="formValue.secteur" @change="etape++" />
+        <ResaRadioSecteur v-model="formValue.secteur" />
       </div>
 
       <div v-if="etape == 1" class="w-full h-full flex flex-col overflow-auto">
-        <ResaType v-model="formValue.type" @change="etape++" />
+        <ResaType v-model="formValue.type" />
       </div>
 
       <div v-if="etape == 2" class="w-full h-fit flex flex-col justify-center">
@@ -223,7 +223,7 @@ const addResa = async () => {
           <div class="w-full h-fit flex flex-col">
             <p class="px-4 pb-2 text-center uppercase font-medium">Début</p>
             <div v-if="formValue.dateDebut" class="w-full h-28 justify-center items-center border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg" @click="updateDateDebut()">
-              <div class="h-full w-full bg-gradient-to-br from-sky-600 to-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
+              <div class="h-full w-full bg-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
                 <div class="w-full h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(formValue.dateDebut).jour }}</div>
                 <div class="w-full h-full flex flex-col items-start justify-center">
                   <div class="text-base uppercase">{{ formatedDate(formValue.dateDebut).mois }}</div>
@@ -246,7 +246,7 @@ const addResa = async () => {
           <div class="w-full h-fit flex flex-col">
             <p class="px-4 pb-2 text-center uppercase font-medium">Fin</p>
             <div v-if="formValue.dateFin" class="w-full h-28 justify-center items-center border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg" @click="updateDateFin()">
-              <div class="h-full w-full bg-gradient-to-br from-sky-600 to-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
+              <div class="h-full w-full bg-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
                 <div class="w-full h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(formValue.dateFin).jour }}</div>
                 <div class="w-full h-full flex flex-col items-start justify-center">
                   <div class="text-base uppercase">{{ formatedDate(formValue.dateFin).mois }}</div>
@@ -274,11 +274,11 @@ const addResa = async () => {
       </div>
 
       <div v-if="etape == 3 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
-        <ResaRadioSalle :data="formValue" v-model="formValue.salle" @change="etape++" />
+        <ResaRadioSalle :data="formValue" v-model="formValue.salle" />
       </div>
 
       <div v-if="etape == 3 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center">
-        <ResaRadioVehicule :data="formValue" v-model="formValue.vehicule" @change="etape++" />
+        <ResaRadioVehicule :data="formValue" v-model="formValue.vehicule" />
       </div>
 
       <div v-if="etape == 4 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">

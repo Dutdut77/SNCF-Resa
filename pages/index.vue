@@ -8,9 +8,13 @@ useHead({
   title: "Resa - Login",
   description: "Réservation salles - Véhicules",
 });
+const { setLoader } = useLoader();
 
 const goToHome = async () => {
+  setLoader(true);
+  window.navigator.vibrate(200);
   await navigateTo("/home");
+  setLoader(false);
 };
 </script>
 <template>

@@ -80,18 +80,18 @@ const sendAnomalieVehicule = async () => {
       </div>
 
       <div v-if="etape == 1" class="w-full h-fit flex flex-col px-4 pb-8 overflow-auto">
-        <ResaRadioSecteur v-model="formValue.secteur" @change="etape++" />
+        <ResaRadioSecteur v-model="formValue.secteur" />
       </div>
 
       <div v-if="etape == 2" class="w-full h-full flex flex-col overflow-auto">
-        <ResaType v-model="formValue.type" @change="etape++" />
+        <ResaType v-model="formValue.type" />
       </div>
 
       <div v-if="etape == 3 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
-        <ResaRadioAllSalles :data="formValue" v-model="formValue.salle" @change="etape++" />
+        <ResaRadioAllSalles :data="formValue" v-model="formValue.salle" />
       </div>
       <div v-if="etape == 3 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center">
-        <ResaRadioAllVehicules :data="formValue" v-model="formValue.vehicule" @change="etape++" />
+        <ResaRadioAllVehicules :data="formValue" v-model="formValue.vehicule" />
       </div>
 
       <div v-if="etape == 4 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
@@ -112,7 +112,7 @@ const sendAnomalieVehicule = async () => {
         </div>
 
         <div class="px-4 pt-8">
-          <textarea class="w-full border rounded-lg p-4 text-sm text-gray-700" name="" id="" cols="30" rows="10" v-model="anomalieVehicule"></textarea>
+          <textarea class="w-full border rounded-lg p-4 text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-transparent" name="" id="" cols="30" rows="10" v-model="anomalieVehicule"></textarea>
         </div>
       </div>
     </template>

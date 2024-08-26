@@ -368,7 +368,7 @@ const deleteProfilAdmin = async (data) => {
   <ResaPage>
     <template #title> Administration </template>
     <template #default>
-      <div class="px-4 pt-1 pb-4 flex flex-col gap-4">
+      <div class="px-4 pt-1 pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <ResaAdminCard>
           <template #title>
             <p>Véhicules :</p>

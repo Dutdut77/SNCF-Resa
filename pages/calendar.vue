@@ -155,7 +155,7 @@ const validatedSecteur = computed(() => {
 
     <template #default>
       <div v-if="etape == 0" class="w-full h-fit flex flex-col px-4 pb-8">
-        <ResaRadioSecteur v-model="formValue.secteur" @change="etape = 1" />
+        <ResaRadioSecteur v-model="formValue.secteur" />
       </div>
 
       <div v-if="etape == 1" class="w-full h-full text-sm">

@@ -4,7 +4,23 @@ export const useVehicules = () => {
     const supabase = useSupabaseClient();
   
     const vehicules = useState('vehicules', () => [])
-    const allVehiculesSecteur = useState('vehicules', () => [])
+    const allVehiculesSecteur = useState('allVehiculesSecteur', () => [])
+    const allVehicules = useState('allVehicules', () => [])
+
+    const getAllVehicules = async () => {
+      try {
+          const { data, error } = await supabase
+          .from('vehicules')
+          .select('*' )
+         if (error) throw error;
+         allVehicules.value = data
+          // addToast({ type: "Success", title: "Félicitation", message: "Votre catégorie a correctement été ajoutée." });
+      } catch (err) {
+          console.log("erreurs :", err);
+      //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
+      }
+    }
+
 
     const getAllSecteurDispo = async (id) => {
         try {
@@ -90,6 +106,6 @@ export const useVehicules = () => {
   
   
   
-      return { getAllSecteurDispo, getAllVehiculesBySecteur,addVehicule,updateVehicule,deleteVehicule, vehicules, allVehiculesSecteur}
+      return { getAllSecteurDispo,getAllVehicules, getAllVehiculesBySecteur,addVehicule,updateVehicule,deleteVehicule, vehicules, allVehiculesSecteur, allVehicules}
       
   }
