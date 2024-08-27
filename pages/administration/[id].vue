@@ -71,17 +71,16 @@ await getAllProfiles();
 setLoader(false);
 
 const userAuth = computed(() => {
-  console.log(allProfiles.value);
-  const result = allProfiles.value.filter((user) => user.secteur_auth.split(",").includes(route.params.id));
-  return result;
-});
-
-const userAdmin = computed(() => {
-  // const result = allProfiles.value.filter((user) => user.secteur_admin == route.params.id);
+  // const result = allProfiles.value.filter((user) => user.secteur_auth.split(",").includes(route.params.id));
   // return result;
   const result = allProfiles.value.filter((user) => {
     return user.secteur_auth && typeof user.secteur_auth === "string" && user.secteur_auth.split(",").includes(route.params.id);
   });
+});
+
+const userAdmin = computed(() => {
+  const result = allProfiles.value.filter((user) => user.secteur_admin == route.params.id);
+  return result;
 });
 
 const anomaliesVehicules = computed(() => {
