@@ -73,15 +73,24 @@ const goToAdministration = () => {
       <div class="h-full flex flex-col gap-4 px-4">
         <AppInput name="prenom" type="text" title="Prénom : " v-model="userProfil.prenom" />
         <AppInput name="nom" type="text" title="Nom : " v-model="userProfil.nom" />
+        <div class="mt-auto flex justify-between">
+          <AppButtonValidated v-if="userProfil.secteur_admin" class="w-fit px-4" theme="cancel" @click="goToAdministration()">
+            <template #default>
+              <div class="flex gap-2">
+                <p>Espace Admin</p>
+              </div>
+            </template>
+          </AppButtonValidated>
 
-        <AppButtonValidated class="w-fit px-4 mt-auto ml-auto" theme="" @click="updateProfil()">
-          <template #default>
-            <div class="flex gap-2">
-              <Save class="w-6 h-6 cursor-pointer" />
-              <p>Enregistrer</p>
-            </div>
-          </template>
-        </AppButtonValidated>
+          <AppButtonValidated class="w-fit px-4 ml-auto" theme="" @click="updateProfil()">
+            <template #default>
+              <div class="flex gap-2">
+                <Save class="w-6 h-6 cursor-pointer" />
+                <p>Enregistrer</p>
+              </div>
+            </template>
+          </AppButtonValidated>
+        </div>
       </div>
     </template>
 
@@ -89,7 +98,7 @@ const goToAdministration = () => {
       <div class="mt-auto">
         <div class="w-full border-t pt-4 text-sm flex justify-between">
           <div>
-            <p v-if="userProfil.secteur_admin" @click="goToAdministration()" class="cursor-pointer">Administration secteur</p>
+            <!-- <p v-if="userProfil.secteur_admin" @click="goToAdministration()" class="cursor-pointer">Administration secteur</p> -->
             <p class="cursor-pointer" @click="showModalPassword()">Changer de mot de passe</p>
             <p class="cursor-pointer" @click="logout()">Se déconnecter</p>
           </div>

@@ -375,7 +375,7 @@ const deleteProfilAdmin = async (data) => {
             <div class="h-5 w-5 bg-white border rounded-full flex items-center justify-center cursor-pointer" @click="showSideVehicules()"><p class="text-gray-500 pb-0.5">+</p></div>
           </template>
           <template #default>
-            <table class="w-full">
+            <table v-if="allVehiculesSecteur.length > 0" class="w-full">
               <thead>
                 <tr>
                   <th class="text-left">Marque</th>
@@ -395,6 +395,7 @@ const deleteProfilAdmin = async (data) => {
                 </tr>
               </tbody>
             </table>
+            <div class="italic" v-else>Aucun véhicule d'enregistré !</div>
           </template>
         </ResaAdminCard>
 
@@ -404,7 +405,7 @@ const deleteProfilAdmin = async (data) => {
             <div class="h-5 w-5 bg-white border rounded-full flex items-center justify-center cursor-pointer" @click="showSideSalles()"><p class="text-gray-500 pb-0.5">+</p></div>
           </template>
           <template #default>
-            <table class="w-full">
+            <table v-if="allSallesSecteur.length > 0" class="w-full">
               <thead>
                 <tr>
                   <th class="text-left w-full">Nom</th>
@@ -420,6 +421,7 @@ const deleteProfilAdmin = async (data) => {
                 </tr>
               </tbody>
             </table>
+            <div class="italic" v-else>Aucune salle d'enregistrée !</div>
           </template>
           <template #footer></template>
           <template #modal></template>
@@ -428,7 +430,7 @@ const deleteProfilAdmin = async (data) => {
         <ResaAdminCard>
           <template #title> <p>Anomalies Véhicules :</p></template>
           <template #default>
-            <table class="w-full">
+            <table v-if="anomaliesVehicules.length > 0" class="w-full">
               <thead>
                 <tr>
                   <th class="text-left">Immat</th>
@@ -444,6 +446,7 @@ const deleteProfilAdmin = async (data) => {
                 </tr>
               </tbody>
             </table>
+            <div class="italic" v-else>Aucune anomalie !</div>
           </template>
           <template #footer></template>
           <template #modal></template>
@@ -452,7 +455,7 @@ const deleteProfilAdmin = async (data) => {
         <ResaAdminCard>
           <template #title> <p>Anomalies Salles :</p></template>
           <template #default>
-            <table class="w-full">
+            <table v-if="anomaliesSalles.length > 0" class="w-full">
               <thead>
                 <tr>
                   <th class="text-left">Nom</th>
@@ -468,6 +471,7 @@ const deleteProfilAdmin = async (data) => {
                 </tr>
               </tbody>
             </table>
+            <div class="italic" v-else>Aucune anomalie !</div>
           </template>
           <template #footer></template>
           <template #modal></template>
@@ -476,7 +480,7 @@ const deleteProfilAdmin = async (data) => {
         <ResaAdminCard>
           <template #title> <p>Réservations Véhicules :</p></template>
           <template #default>
-            <table class="w-full">
+            <table v-if="allResaSecteurActuel.length > 0" class="w-full">
               <thead>
                 <tr>
                   <th class="text-left w-full">Immat</th>
@@ -499,6 +503,7 @@ const deleteProfilAdmin = async (data) => {
                 </tr>
               </tbody>
             </table>
+            <div class="italic" v-else>Aucune réservation !</div>
           </template>
           <template #footer></template>
           <template #modal></template>
@@ -507,7 +512,7 @@ const deleteProfilAdmin = async (data) => {
         <ResaAdminCard>
           <template #title> <p>Réservations Salles :</p></template>
           <template #default>
-            <table class="w-full">
+            <table v-if="allSallesResaSecteurActuel.length > 0" class="w-full">
               <thead>
                 <tr>
                   <th class="w-full text-left">Salle</th>
@@ -530,6 +535,7 @@ const deleteProfilAdmin = async (data) => {
                 </tr>
               </tbody>
             </table>
+            <div class="italic" v-else>Aucune réservation !</div>
           </template>
           <template #footer></template>
           <template #modal></template>
@@ -541,7 +547,7 @@ const deleteProfilAdmin = async (data) => {
             <div class="h-5 w-5 bg-white border rounded-full flex items-center justify-center cursor-pointer" @click="showSideValideurs()"><p class="text-gray-500 pb-2">...</p></div></template
           >
           <template #default>
-            <table class="w-full">
+            <table v-if="userAuth.length > 0" class="w-full">
               <thead>
                 <tr>
                   <th class="text-left">Nom</th>
@@ -557,6 +563,7 @@ const deleteProfilAdmin = async (data) => {
                 </tr>
               </tbody>
             </table>
+            <div class="italic" v-else>Néant !</div>
           </template>
           <template #footer></template>
           <template #modal></template>
@@ -774,7 +781,7 @@ const deleteProfilAdmin = async (data) => {
                   <ArrowRight class="w-6 h-6 text-slate-700" />
                   <div class="flex items-center bg-sky-500 text-white rounded-lg p-2 px-4 gap-2">{{ timestampToDateFr(resaVehiculeForm.fin) }} {{ timestampToHeure(resaVehiculeForm.fin) }}</div>
                 </div>
-                <div v-if="resaVehiculeForm.is_validated == 0" class="mt-8 pt-4 text-sm text-center border-t text-red-700">Cette réservation n'est pas validée par un administrateur. Vous devez la valider pour que le demandeur ai la confirmation de sa réservation.</div>
+                <div v-if="resaVehiculeForm.is_validated == 0" class="mt-8 pt-4 text-sm text-center border-t text-sky-700">Cette réservation n'est pas validée. Il faut la valider pour qu'elle soit prise en compte. Un email de confirmation sera envoyé au demandeur.</div>
               </div>
             </template>
             <template #footer>
@@ -841,12 +848,12 @@ const deleteProfilAdmin = async (data) => {
               <div class="w-full">
                 <div class="pt-4 uppercase text-sm text-gray-600 font-medium py-2 border-b text-left">Profils autorisé :</div>
                 <div class="mt-3 text-sm text-gray-700 w-full">
-                  <table class="w-full">
+                  <table v-if="userAuth.length > 0" class="w-full">
                     <thead>
                       <tr>
                         <th class="text-left">Nom</th>
                         <th class="px-6">Prénom</th>
-                        <th class="px-6 w-full">Mail</th>
+                        <!-- <th class="px-6 w-full">Mail</th> -->
                         <th class="text-right"></th>
                       </tr>
                     </thead>
@@ -854,13 +861,14 @@ const deleteProfilAdmin = async (data) => {
                       <tr class="cursor-default" v-for="data in userAuth" :key="data.id">
                         <td>{{ data.nom }}</td>
                         <td class="text-center">{{ data.prenom }}</td>
-                        <td class="text-center">{{ data.email }}</td>
+                        <!-- <td class="text-center">{{ data.email }}</td> -->
                         <td class="cursor-pointer" @click="deleteProfilValideur(data)">
                           <Trash class="w-4 h-4 text-red-500" />
                         </td>
                       </tr>
                     </tbody>
                   </table>
+                  <div class="italic" v-else>Néant !</div>
                 </div>
               </div>
               <div class="w-full pt-8">
@@ -871,7 +879,7 @@ const deleteProfilAdmin = async (data) => {
                       <tr>
                         <th class="text-left">Nom</th>
                         <th class="px-6">Prénom</th>
-                        <th class="px-6 w-full">Mail</th>
+                        <!-- <th class="px-6 w-full">Mail</th> -->
                         <th class="text-right"></th>
                       </tr>
                     </thead>
@@ -879,7 +887,7 @@ const deleteProfilAdmin = async (data) => {
                       <tr class="cursor-default" v-for="data in allProfiles" :key="data.id">
                         <td>{{ data.nom }}</td>
                         <td class="text-center">{{ data.prenom }}</td>
-                        <td class="text-center">{{ data.email }}</td>
+                        <!-- <td class="text-center">{{ data.email }}</td> -->
                         <td class="cursor-pointer" @click="addProfilValideur(data)">
                           <Add class="w-4 h-4 text-sky-500" />
                         </td>
