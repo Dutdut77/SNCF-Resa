@@ -19,6 +19,7 @@ const { addResaVehicule } = useResaVehicules();
 const { addResaSalles } = useResaSalles();
 const { formatedDate, monthLetter } = useFormatDate();
 const { sendEmail } = useEmail();
+const { getAllProfiles, allProfiles } = useAuth();
 const userProfil = useState("userProfil");
 
 const etape = ref(0);
@@ -52,6 +53,10 @@ const activeIndexMinute = computed(() => {
 
   return index;
 });
+
+setLoader(true);
+await getAllProfiles();
+setLoader(false);
 
 const dayOfMonth = computed(() => {
   // Initialise le premier jour du mois
@@ -89,13 +94,19 @@ const validatedVehicule = computed(() => {
   return formValue.value.vehicule != "" ? true : false;
 });
 const isAuthToReserv = computed(() => {
-  if (formValue.value.secteur.sect_admin_id_user == null || !formValue.value.secteur.sect_admin_id_user) {
-    return false;
+  if (userProfil.value.secteur_auth) {
+    const array = userProfil.value.secteur_auth.split(",").map(Number);
+    return array.includes(formValue.value.secteur.id);
   } else {
-    const array = formValue.value.secteur.sect_admin_id_user.split(",");
-    return array.includes(userProfil.value.id);
+    return false;
   }
 });
+
+// const listSecteurAdmin = computed(() => {
+//   const emails = allProfiles.value.filter((user) => user.secteur_admin === formValue.value.secteur.id).map((user) => user.email);
+
+//   return emails;
+// });
 
 const updateDateDebut = () => {
   const day = selectedDay.value.split(" ")[1];
@@ -121,7 +132,7 @@ const addResa = async () => {
   if (formValue.value.type == 0) {
     setLoader(true);
     if (!isAuthToReserv.value) {
-      const listes = await getMailSuperviseursSecteur(formValue.value.secteur.superviseurs);
+      const listes = await getMailSuperviseursSecteur(formValue.value.secteur.id);
       await sendEmail(listes, userProfil.value, formValue.value);
     }
 
@@ -131,7 +142,7 @@ const addResa = async () => {
   } else {
     setLoader(true);
     if (!isAuthToReserv.value) {
-      const listes = await getMailSuperviseursSecteur(formValue.value.secteur.superviseurs);
+      const listes = await getMailSuperviseursSecteur(formValue.value.secteur.id);
       await sendEmail(listes, userProfil.value, formValue.value);
     }
 

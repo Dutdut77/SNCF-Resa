@@ -51,6 +51,7 @@ export const useResaVehicules = () => {
             .from('resa_vehicules')
             .select('*, vehicules!inner(*), secteurs!inner(name)')
             .eq('id_user', userProfil.value.id)
+            .eq('is_validated', 1)
             .gte('fin', now);
            if (error) throw error;
            allResaUserActuel.value = data
@@ -66,6 +67,7 @@ export const useResaVehicules = () => {
             .from('resa_vehicules')
             .select()
             .eq('id_secteur', secteur)
+            .eq('is_validated', 1)
             .gt('fin', dateDebut)
             .lt('debut', dateFin);
            if (error) throw error;

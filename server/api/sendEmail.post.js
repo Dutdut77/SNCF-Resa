@@ -7,15 +7,18 @@ export default defineEventHandler(async (event) => {
   
     const body = await readBody(event)
 
-    
-    const data = await resend.emails.send({
-      from: body.from,
-      to: body.to,
-      subject: body.subject,
-      html: body.html,
-    });
 
-    return data;
+    // const data = await resend.emails.send({
+    //   from: body.from,
+    //   to: body.to,
+    //   subject: body.subject,
+    //   html: body.html,
+    // });
+
+    // return data;
+
+console.log("simulation Envoi Email");
+return true
 
   } catch (error) {
     return { error };

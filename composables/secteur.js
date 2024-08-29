@@ -20,22 +20,18 @@ export const useSecteurs = () => {
         }
       }
   
-      const getMailSuperviseursSecteur = async (liste) => {
+      const getMailSuperviseursSecteur = async (secteur) => {
         try {
             const { data, error } = await supabase
             .from('profiles')
             .select('id, email, nom, prenom')
-
-            let idsListe = liste.split(',').map(id => id.trim());
-
-            let emails = data
-            .filter(obj => idsListe.includes(obj.id))
-            .map(obj => obj.email);
-            
+            .eq('secteur_admin', secteur)
+           
      
 
         if (error) throw error;
-           return emails
+        const result = data.map((user) => user.email)
+           return result
             // addToast({ type: "Success", title: "Félicitation", message: "Votre catégorie a correctement été ajoutée." });
         } catch (err) {
             console.log("erreurs :", err);

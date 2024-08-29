@@ -34,6 +34,7 @@ export const useResaSalles = () => {
             .from('resa_salles')
             .select('*, salles!inner(*), secteurs!inner(name)')
             .eq('id_user', userProfil.value.id)
+            .eq('is_validated', 1)
             .gte('fin', now);
            if (error) throw error;
            allResaSallesUserActuel.value = data
@@ -68,6 +69,7 @@ export const useResaSalles = () => {
             .select()
             .eq('id_secteur', secteur)
             .gt('fin', dateDebut)
+            .eq('is_validated', 1)
             .lt('debut', dateFin);
            if (error) throw error;
            allResaSallesSecteurTime.value = data
