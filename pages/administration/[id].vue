@@ -23,6 +23,8 @@ const { getAllAnomaliesSecteur, deleteAnomalie, allAnomaliesSecteur } = useAnoma
 const { getAllSallesResaSecteurActuel, deleteResaSalle, validResaSalle, allSallesResaSecteurActuel } = useResaSalles();
 const { getAllVehiculesResaSecteurActuel, deleteResaVehicule, validResaVehicule, allResaSecteurActuel } = useResaVehicules();
 const { getAllProfiles, addValideur, deleteValideur, addAdmin, deleteAdmin, allProfiles } = useAuth();
+const { sendEmailValidationVehicule, sendEmailValidationSalle, sendEmailRefusVehicule, sendEmailRefusSalle } = useEmail();
+
 const sideModalVehicules = ref(false);
 const sideModalSalles = ref(false);
 const sideModalAnomalieVehicule = ref(false);
@@ -296,31 +298,35 @@ const showSideResaSalle = (data) => {
   }
   sideModalResaSalle.value = !sideModalResaSalle.value;
 };
-const supprimerResaVehicule = async (id) => {
+const supprimerResaVehicule = async (data) => {
   setLoader(true);
-  await deleteResaVehicule(id);
+  await deleteResaVehicule(data.id);
   await getAllVehiculesResaSecteurActuel(route.params.id);
+  await sendEmailRefusVehicule(data);
   sideModalResaVehicule.value = false;
   setLoader(false);
 };
-const supprimerResaSalle = async (id) => {
+const supprimerResaSalle = async (data) => {
   setLoader(true);
-  await deleteResaSalle(id);
+  await deleteResaSalle(data.id);
   await getAllSallesResaSecteurActuel(route.params.id);
+  await sendEmailRefusSalle(data);
   sideModalResaSalle.value = false;
   setLoader(false);
 };
-const validerResaVehicule = async (id) => {
+const validerResaVehicule = async (data) => {
   setLoader(true);
-  await validResaVehicule(id);
+  await validResaVehicule(data.id);
   await getAllVehiculesResaSecteurActuel(route.params.id);
+  await sendEmailValidationVehicule(data);
   sideModalResaVehicule.value = false;
   setLoader(false);
 };
-const validerResaSalle = async (id) => {
+const validerResaSalle = async (data) => {
   setLoader(true);
-  await validResaSalle(id);
+  await validResaSalle(data.id);
   await getAllSallesResaSecteurActuel(route.params.id);
+  await sendEmailValidationSalle(data);
   sideModalResaSalle.value = false;
   setLoader(false);
 };
@@ -366,9 +372,9 @@ const deleteProfilAdmin = async (data) => {
 
 <template>
   <ResaPage>
-    <template #title> Administration </template>
+    <template #title> <p class="font-bold text-xl">Administration</p> </template>
     <template #default>
-      <div class="px-4 pt-1 pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 gap-4">
         <ResaAdminCard>
           <template #title>
             <p>Véhicules :</p>
@@ -505,8 +511,6 @@ const deleteProfilAdmin = async (data) => {
             </table>
             <div class="italic" v-else>Aucune réservation !</div>
           </template>
-          <template #footer></template>
-          <template #modal></template>
         </ResaAdminCard>
 
         <ResaAdminCard>
@@ -537,8 +541,6 @@ const deleteProfilAdmin = async (data) => {
             </table>
             <div class="italic" v-else>Aucune réservation !</div>
           </template>
-          <template #footer></template>
-          <template #modal></template>
         </ResaAdminCard>
 
         <ResaAdminCard>
@@ -565,8 +567,6 @@ const deleteProfilAdmin = async (data) => {
             </table>
             <div class="italic" v-else>Néant !</div>
           </template>
-          <template #footer></template>
-          <template #modal></template>
         </ResaAdminCard>
 
         <ResaAdminCard>
@@ -592,8 +592,6 @@ const deleteProfilAdmin = async (data) => {
               </tbody>
             </table>
           </template>
-          <template #footer></template>
-          <template #modal></template>
         </ResaAdminCard>
       </div>
 
@@ -787,8 +785,8 @@ const deleteProfilAdmin = async (data) => {
             <template #footer>
               <div class="flex gap-2 w-full justify-end pt-6">
                 <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideResaVehicule()"> <template #default> Annuler </template> </AppButtonValidated>
-                <AppButtonValidated v-if="resaVehiculeForm.is_validated == 0" class="md:w-32 w-full" theme="" @click="validerResaVehicule(resaVehiculeForm.id)"> <template #default> Valider </template> </AppButtonValidated>
-                <AppButtonValidated class="md:w-32 w-full" theme="delete" @click="supprimerResaVehicule(resaVehiculeForm.id)"> <template #default> Supprimer </template> </AppButtonValidated>
+                <AppButtonValidated v-if="resaVehiculeForm.is_validated == 0" class="md:w-32 w-full" theme="" @click="validerResaVehicule(resaVehiculeForm)"> <template #default> Valider </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full" theme="delete" @click="supprimerResaVehicule(resaVehiculeForm)"> <template #default> Supprimer </template> </AppButtonValidated>
               </div>
             </template>
           </AppModalSideContent>
@@ -828,8 +826,8 @@ const deleteProfilAdmin = async (data) => {
             <template #footer>
               <div class="flex gap-2 w-full justify-end pt-6">
                 <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideResaSalle()"> <template #default> Annuler </template> </AppButtonValidated>
-                <AppButtonValidated v-if="resaSalleForm.is_validated == 0" class="md:w-32 w-full" theme="" @click="validerResaSalle(resaSalleForm.id)"> <template #default> Valider </template> </AppButtonValidated>
-                <AppButtonValidated class="md:w-32 w-full" theme="delete" @click="supprimerResaSalle(resaSalleForm.id)"> <template #default> Supprimer </template> </AppButtonValidated>
+                <AppButtonValidated v-if="resaSalleForm.is_validated == 0" class="md:w-32 w-full" theme="" @click="validerResaSalle(resaSalleForm)"> <template #default> Valider </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full" theme="delete" @click="supprimerResaSalle(resaSalleForm)"> <template #default> Supprimer </template> </AppButtonValidated>
               </div>
             </template>
           </AppModalSideContent>

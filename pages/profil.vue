@@ -74,7 +74,7 @@ const goToAdministration = () => {
         <AppInput name="prenom" type="text" title="Prénom : " v-model="userProfil.prenom" />
         <AppInput name="nom" type="text" title="Nom : " v-model="userProfil.nom" />
         <div class="mt-auto flex justify-between">
-          <AppButtonValidated v-if="userProfil.secteur_admin" class="w-fit px-4" theme="cancel" @click="goToAdministration()">
+          <AppButtonValidated v-if="userProfil.secteur_admin" class="w-fit px-4" theme="" @click="goToAdministration()">
             <template #default>
               <div class="flex gap-2">
                 <p>Espace Admin</p>

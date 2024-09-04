@@ -32,7 +32,7 @@ export const useResaVehicules = () => {
             const now = Date.now()
             const { data, error } = await supabase
             .from('resa_vehicules')
-            .select('*, vehicules!inner(*), secteurs!inner(name)')
+            .select('*, vehicules!inner(*), secteurs!inner(name), profiles!inner(*)')
             .eq('id_secteur', id)
             .gte('fin', now);
            if (error) throw error;
@@ -51,7 +51,7 @@ export const useResaVehicules = () => {
             .from('resa_vehicules')
             .select('*, vehicules!inner(*), secteurs!inner(name)')
             .eq('id_user', userProfil.value.id)
-            .eq('is_validated', 1)
+            // .eq('is_validated', 1)
             .gte('fin', now);
            if (error) throw error;
            allResaUserActuel.value = data

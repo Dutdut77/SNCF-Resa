@@ -67,14 +67,17 @@ const sendResetMdp = async () => {
     <img class="absolute top-12 right-8 w-14" src="../assets/img/logo.png" alt="" />
 
     <p class="font-bold text-2xl text-gray-700 px-8">Authentification</p>
-    <div class="flex flex-col gap-4 pt-10 px-8">
-      <AppInput name="email" type="email" title="Email : " placeholder="Entrez votre email professionel" v-model="formValue.email" />
-      <div class="flex flex-col">
-        <AppInput name="password" type="password" title="Mot de passe : " placeholder="" v-model="formValue.password" />
-        <p class="text-xs ml-auto pt-2.5 text-gray-700 cursor-pointer" @click="showModalPassword()">Mot de passe oublié ?</p>
+
+    <form class="mb-0 space-y-6" @submit.prevent="signIn()">
+      <div class="flex flex-col gap-4 pt-10 px-8">
+        <AppInput name="email" type="email" title="Email : " placeholder="Entrez votre email professionel" v-model="formValue.email" />
+        <div class="flex flex-col">
+          <AppInput name="password" type="password" title="Mot de passe : " placeholder="" v-model="formValue.password" />
+          <p class="text-xs ml-auto pt-2.5 text-gray-700 cursor-pointer" @click="showModalPassword()">Mot de passe oublié ?</p>
+        </div>
+        <AppButtonCarre class="ml-auto my-4" direction="" :validated="validated" type="submit"> <template #default> Se connecter </template> </AppButtonCarre>
       </div>
-      <AppButtonCarre class="ml-auto my-4" direction="" :validated="validated" @click="signIn()"> <template #default> Se connecter </template> </AppButtonCarre>
-    </div>
+    </form>
     <div class="relative mt-auto">
       <svg class="absolute bottom-14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
         <path fill="#0284c7" fill-opacity="1" d="M0,32L48,32C96,32,192,32,288,80C384,128,480,224,576,245.3C672,267,768,213,864,208C960,203,1056,245,1152,234.7C1248,224,1344,160,1392,128L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
