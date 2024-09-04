@@ -374,7 +374,7 @@ const deleteProfilAdmin = async (data) => {
   <ResaPage>
     <template #title> <p class="font-bold text-xl">Administration</p> </template>
     <template #default>
-      <div class="grid grid-cols-1 gap-4">
+      <div class="grid grid-cols-1 gap-4 px-4">
         <ResaAdminCard>
           <template #title>
             <p>Véhicules :</p>
@@ -631,13 +631,13 @@ const deleteProfilAdmin = async (data) => {
             </template>
             <template #footer>
               <div v-if="!vehiculeForm.id" class="flex gap-4 w-full justify-end pt-6">
-                <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideVehicules()"> <template #default> Annuler </template> </AppButtonValidated>
-                <AppButtonValidated :validated="validatedFieldsVehicule" class="md:w-32 w-full" theme="" @click="ajouterVehicule()"> <template #default> Enregistrer </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideVehicules()"> <template #default> Annuler </template> </AppButtonValidated>
+                <AppButtonValidated :validated="validatedFieldsVehicule" class="md:w-32 w-full text-sm" theme="" @click="ajouterVehicule()"> <template #default> Enregistrer </template> </AppButtonValidated>
               </div>
               <div v-else class="flex gap-2 w-full justify-end pt-6">
-                <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideVehicules()"> <template #default> Annuler </template> </AppButtonValidated>
-                <AppButtonValidated :validated="validatedFieldsVehicule" class="md:w-32 w-full" theme="" @click="modifierVehicule()"> <template #default> Modifier </template> </AppButtonValidated>
-                <AppButtonValidated class="md:w-32 w-full" theme="delete" @click="supprimerVehicule()"> <template #default> Supprimer </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideVehicules()"> <template #default> Annuler </template> </AppButtonValidated>
+                <AppButtonValidated :validated="validatedFieldsVehicule" class="md:w-32 w-full text-sm" theme="" @click="modifierVehicule()"> <template #default> Modifier </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="delete" @click="supprimerVehicule()"> <template #default> Supprimer </template> </AppButtonValidated>
               </div>
             </template>
           </AppModalSideContent>
@@ -685,13 +685,13 @@ const deleteProfilAdmin = async (data) => {
             </template>
             <template #footer>
               <div v-if="!salleForm.id" class="flex gap-4 w-full justify-end pt-6">
-                <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideSalles()"> <template #default> Annuler </template> </AppButtonValidated>
-                <AppButtonValidated :validated="validatedFieldsSalles" class="md:w-32 w-full" theme="" @click="ajouterSalle()"> <template #default> Enregistrer </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideSalles()"> <template #default> Annuler </template> </AppButtonValidated>
+                <AppButtonValidated :validated="validatedFieldsSalles" class="md:w-32 w-full text-sm" theme="" @click="ajouterSalle()"> <template #default> Enregistrer </template> </AppButtonValidated>
               </div>
               <div v-else class="flex gap-2 w-full justify-end pt-6">
-                <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideSalles()"> <template #default> Annuler </template> </AppButtonValidated>
-                <AppButtonValidated :validated="validatedFieldsSalles" class="md:w-32 w-full" theme="" @click="modifierSalle()"> <template #default> Modifier </template> </AppButtonValidated>
-                <AppButtonValidated class="md:w-32 w-full" theme="delete" @click="supprimerSalle()"> <template #default> Supprimer </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideSalles()"> <template #default> Annuler </template> </AppButtonValidated>
+                <AppButtonValidated :validated="validatedFieldsSalles" class="md:w-32 w-full text-sm" theme="" @click="modifierSalle()"> <template #default> Modifier </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="delete" @click="supprimerSalle()"> <template #default> Supprimer </template> </AppButtonValidated>
               </div>
             </template>
           </AppModalSideContent>
@@ -717,8 +717,8 @@ const deleteProfilAdmin = async (data) => {
             </template>
             <template #footer>
               <div class="flex gap-2 w-full justify-end pt-6">
-                <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideAnomalieVehicule()"> <template #default> Annuler </template> </AppButtonValidated>
-                <AppButtonValidated class="md:w-32 w-full" theme="" @click="supprimerAnomalie(anomalieVehiculeForm.id)"> <template #default> Clôturer </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideAnomalieVehicule()"> <template #default> Annuler </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="" @click="supprimerAnomalie(anomalieVehiculeForm.id)"> <template #default> Clôturer </template> </AppButtonValidated>
               </div>
             </template>
           </AppModalSideContent>
@@ -744,8 +744,8 @@ const deleteProfilAdmin = async (data) => {
             </template>
             <template #footer>
               <div class="flex gap-2 w-full justify-end pt-6">
-                <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideAnomalieSalle()"> <template #default> Annuler </template> </AppButtonValidated>
-                <AppButtonValidated class="md:w-32 w-full" theme="" @click="supprimerAnomalie(anomalieSalleForm.id)"> <template #default> Clôturer </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideAnomalieSalle()"> <template #default> Annuler </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="" @click="supprimerAnomalie(anomalieSalleForm.id)"> <template #default> Clôturer </template> </AppButtonValidated>
               </div>
             </template>
           </AppModalSideContent>
@@ -774,19 +774,19 @@ const deleteProfilAdmin = async (data) => {
                   <div class="font-medium text-xl text-gray-700">{{ resaVehiculeForm.vehicules.marque }} {{ resaVehiculeForm.vehicules.model }}</div>
                   <div class="font-medium text-xl text-gray-700">{{ resaVehiculeForm.vehicules.immat }}</div>
                 </div>
-                <div class="w-full flex items-center justify-between pt-2 0">
-                  <div class="flex items-center bg-sky-500 text-white rounded-lg p-2 px-4 gap-2">{{ timestampToDateFr(resaVehiculeForm.debut) }} {{ timestampToHeure(resaVehiculeForm.debut) }}</div>
-                  <ArrowRight class="w-6 h-6 text-slate-700" />
-                  <div class="flex items-center bg-sky-500 text-white rounded-lg p-2 px-4 gap-2">{{ timestampToDateFr(resaVehiculeForm.fin) }} {{ timestampToHeure(resaVehiculeForm.fin) }}</div>
+                <div class="w-full flex items-center justify-between pt-2 gap-2">
+                  <div class="w-full text-center bg-sky-500 text-white rounded-lg p-2 px-2 gap-2 text-sm">{{ timestampToDateFr(resaVehiculeForm.debut) }} {{ timestampToHeure(resaVehiculeForm.debut) }}</div>
+                  <ArrowRight class="w-4 h-4 flex-none text-slate-700" />
+                  <div class="w-full text-center bg-sky-500 text-white rounded-lg p-2 px-2 gap-2 text-sm">{{ timestampToDateFr(resaVehiculeForm.fin) }} {{ timestampToHeure(resaVehiculeForm.fin) }}</div>
                 </div>
-                <div v-if="resaVehiculeForm.is_validated == 0" class="mt-8 pt-4 text-sm text-center border-t text-sky-700">Cette réservation n'est pas validée. Il faut la valider pour qu'elle soit prise en compte. Un email de confirmation sera envoyé au demandeur.</div>
+                <div v-if="resaVehiculeForm.is_validated == 0" class="mt-8 pt-4 text-sm text-center border-t text-red-700">Cette réservation n'est pas validée. Il faut la valider pour qu'elle soit prise en compte. Un email de confirmation sera envoyé au demandeur.</div>
               </div>
             </template>
             <template #footer>
               <div class="flex gap-2 w-full justify-end pt-6">
-                <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideResaVehicule()"> <template #default> Annuler </template> </AppButtonValidated>
-                <AppButtonValidated v-if="resaVehiculeForm.is_validated == 0" class="md:w-32 w-full" theme="" @click="validerResaVehicule(resaVehiculeForm)"> <template #default> Valider </template> </AppButtonValidated>
-                <AppButtonValidated class="md:w-32 w-full" theme="delete" @click="supprimerResaVehicule(resaVehiculeForm)"> <template #default> Supprimer </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideResaVehicule()"> <template #default> Annuler </template> </AppButtonValidated>
+                <AppButtonValidated v-if="resaVehiculeForm.is_validated == 0" class="md:w-32 w-full text-sm" theme="" @click="validerResaVehicule(resaVehiculeForm)"> <template #default> Valider </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="delete" @click="supprimerResaVehicule(resaVehiculeForm)"> <template #default> Supprimer </template> </AppButtonValidated>
               </div>
             </template>
           </AppModalSideContent>
@@ -825,9 +825,9 @@ const deleteProfilAdmin = async (data) => {
             </template>
             <template #footer>
               <div class="flex gap-2 w-full justify-end pt-6">
-                <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideResaSalle()"> <template #default> Annuler </template> </AppButtonValidated>
-                <AppButtonValidated v-if="resaSalleForm.is_validated == 0" class="md:w-32 w-full" theme="" @click="validerResaSalle(resaSalleForm)"> <template #default> Valider </template> </AppButtonValidated>
-                <AppButtonValidated class="md:w-32 w-full" theme="delete" @click="supprimerResaSalle(resaSalleForm)"> <template #default> Supprimer </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideResaSalle()"> <template #default> Annuler </template> </AppButtonValidated>
+                <AppButtonValidated v-if="resaSalleForm.is_validated == 0" class="md:w-32 w-full text-sm" theme="" @click="validerResaSalle(resaSalleForm)"> <template #default> Valider </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="delete" @click="supprimerResaSalle(resaSalleForm)"> <template #default> Supprimer </template> </AppButtonValidated>
               </div>
             </template>
           </AppModalSideContent>
@@ -897,7 +897,7 @@ const deleteProfilAdmin = async (data) => {
             </template>
             <template #footer>
               <div class="flex gap-2 w-full justify-end pt-6">
-                <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideValideurs()"> <template #default> Retour </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideValideurs()"> <template #default> Retour </template> </AppButtonValidated>
               </div>
             </template>
           </AppModalSideContent>
@@ -966,7 +966,7 @@ const deleteProfilAdmin = async (data) => {
             </template>
             <template #footer>
               <div class="flex gap-2 w-full justify-end pt-6">
-                <AppButtonValidated class="md:w-32 w-full" theme="cancel" @click="showSideAdmin()"> <template #default> Retour </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideAdmin()"> <template #default> Retour </template> </AppButtonValidated>
               </div>
             </template>
           </AppModalSideContent>

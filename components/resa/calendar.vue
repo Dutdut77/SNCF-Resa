@@ -66,19 +66,6 @@ const selectDay = (selectedDay) => {
 
 <template>
   <div>
-    <!-- <div class="flex items-center justify-center gap-4 pb-4 px-4">
-      <div class="w-1/2 flex justify-center items-center gap-2 bg-white rounded-lg py-2 px-2 shadow-lg">
-        <Left class="mr-auto h-6 w-6 cursor-pointer" @click="year--" />
-        <p class="text-center font-medium">{{ year }}</p>
-        <Right class="ml-auto h-6 w-6 cursor-pointer" @click="year++" />
-      </div>
-      <div class="w-1/2 flex justify-center items-center gap-2 bg-white shadow-lg rounded-lg py-2 px-2">
-        <Left class="mr-auto h-6 w-6 cursor-pointer" @click="month--" :class="month > 0 ? 'visible' : 'invisible'" />
-        <p class="text-center font-medium">{{ months[month] }}</p>
-        <Right class="ml-auto h-6 w-6 cursor-pointer" @click="month++" :class="month < 11 ? 'visible' : 'invisible'" />
-      </div>
-    </div> -->
-
     <div class="w-full content-center px-4">
       <div class="bg-white rounded-lg shadow-lg">
         <div class="text-center font-medium text-lg px-4 pt-4 pb-2 first-letter:uppercase">{{ selectedDateFormat.jourName }} {{ selectedDateFormat.jour }} {{ selectedDateFormat.mois }} {{ selectedDateFormat.annee }}</div>

@@ -207,8 +207,8 @@ const annulationVehicule = async (id) => {
         </template>
         <template #footer>
           <div class="w-full flex justify-end gap-2 p-2 text-sm">
-            <AppButtonValidated class="w-fit px-4" theme="cancel" @click="showModalSalle()"> <template #default> Fermer </template> </AppButtonValidated>
-            <AppButtonValidated class="w-fit px-4" theme="delete" @click="annulationSalle(salle.id)"> <template #default> Annuler la réservation </template> </AppButtonValidated>
+            <AppButtonValidated class="w-fit px-4 text-sm" theme="cancel" @click="showModalSalle()"> <template #default> Fermer </template> </AppButtonValidated>
+            <AppButtonValidated class="w-fit px-4 text-sm" theme="delete" @click="annulationSalle(salle.id)"> <template #default> Annuler la réservation </template> </AppButtonValidated>
           </div>
         </template>
       </AppModal>
@@ -256,8 +256,8 @@ const annulationVehicule = async (id) => {
         </template>
         <template #footer>
           <div class="w-full flex justify-end gap-2 p-2 text-sm">
-            <AppButtonValidated class="w-fit px-4" theme="cancel" @click="showModalVehicule()"> <template #default> Fermer </template> </AppButtonValidated>
-            <AppButtonValidated class="w-fit px-4" theme="delete" @click="annulationVehicule(vehicule.id)"> <template #default> Annuler la réservation </template> </AppButtonValidated>
+            <AppButtonValidated class="w-fit px-4 text-sm" theme="cancel" @click="showModalVehicule()"> <template #default> Fermer </template> </AppButtonValidated>
+            <AppButtonValidated class="w-fit px-4 text-sm" theme="delete" @click="annulationVehicule(vehicule.id)"> <template #default> Annuler la réservation </template> </AppButtonValidated>
           </div>
         </template>
       </AppModal>

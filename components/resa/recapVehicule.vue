@@ -50,34 +50,40 @@ setLoader(false);
 
     <p class="text-xl font-bold pt-4">Période :</p>
 
-    <div class="w-full flex justify-between items-center gap-4">
-      <div class="w-full h-28 border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg">
-        <div class="h-full w-full bg-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
-          <div class="w-full h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(props.data.dateDebut).jour }}</div>
-          <div class="w-full h-full flex flex-col items-start justify-center">
-            <div class="text-base uppercase">{{ formatedDate(props.data.dateDebut).mois }}</div>
-            <div class="text-base uppercase">{{ formatedDate(props.data.dateDebut).annee }}</div>
+    <div class="w-full flex justify-between items-center gap-2">
+      <div class="w-full">
+        <p class="px-4 pb-2 text-center uppercase font-medium">Début</p>
+        <div class="w-full h-28 border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg">
+          <div class="h-full w-full bg-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
+            <div class="w-fitl h-full text-5xl font-traverse flex items-center justify-center pt-2">{{ formatedDate(props.data.dateDebut).jour }}</div>
+            <div class="w-fit h-full flex flex-col items-start justify-center">
+              <div class="text-base uppercase">{{ formatedDate(props.data.dateDebut).mois }}</div>
+              <div class="text-base uppercase">{{ formatedDate(props.data.dateDebut).annee }}</div>
+            </div>
           </div>
-        </div>
-        <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
-          <p class="text-white text-xl font-bold">{{ formatedDate(props.data.dateDebut).heure }}</p>
-          <p class="text-white text-xl font-bold">h</p>
-          <p class="text-white text-xl font-bold">{{ formatedDate(props.data.dateDebut).minute }}</p>
+          <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
+            <p class="text-white text-xl font-bold">{{ formatedDate(props.data.dateDebut).heure }}</p>
+            <p class="text-white text-xl font-bold">h</p>
+            <p class="text-white text-xl font-bold">{{ formatedDate(props.data.dateDebut).minute }}</p>
+          </div>
         </div>
       </div>
-      <ArrowRight class="w-14 h-14" />
-      <div class="w-full h-28 border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg">
-        <div class="h-full w-full bg-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
-          <div class="w-full h-full text-5xl font-traverse flex items-center justify-end pt-2">{{ formatedDate(props.data.dateFin).jour }}</div>
-          <div class="w-full h-full flex flex-col items-start justify-center">
-            <div class="text-base uppercase">{{ formatedDate(props.data.dateFin).mois }}</div>
-            <div class="text-base uppercase">{{ formatedDate(props.data.dateFin).annee }}</div>
+      <!-- <ArrowRight class="w-14 h-14" /> -->
+      <div class="w-full">
+        <p class="px-4 pb-2 text-center uppercase font-medium">Fin</p>
+        <div class="w-full h-28 border border-slate-300 cursor-pointer flex flex-col rounded-lg overflow-hidden shadow-lg">
+          <div class="h-full w-full bg-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
+            <div class="w-fit h-full text-5xl font-traverse flex items-center justify-center pt-2">{{ formatedDate(props.data.dateFin).jour }}</div>
+            <div class="w-fit h-full flex flex-col items-start justify-center">
+              <div class="text-base uppercase">{{ formatedDate(props.data.dateFin).mois }}</div>
+              <div class="text-base uppercase">{{ formatedDate(props.data.dateFin).annee }}</div>
+            </div>
           </div>
-        </div>
-        <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
-          <p class="text-white text-xl font-bold">{{ formatedDate(props.data.dateFin).heure }}</p>
-          <p class="text-white text-xl font-bold">h</p>
-          <p class="text-white text-xl font-bold">{{ formatedDate(props.data.dateFin).minute }}</p>
+          <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
+            <p class="text-white text-xl font-bold">{{ formatedDate(props.data.dateFin).heure }}</p>
+            <p class="text-white text-xl font-bold">h</p>
+            <p class="text-white text-xl font-bold">{{ formatedDate(props.data.dateFin).minute }}</p>
+          </div>
         </div>
       </div>
     </div>

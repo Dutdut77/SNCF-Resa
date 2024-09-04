@@ -165,7 +165,7 @@ const validatedSecteur = computed(() => {
         <div class="px-4 pt-4">
           <p class="font-bold text-base">Réservations salles :</p>
           <div class="pt-2 pl-2" v-if="reservationSalleAtDate.length > 0">
-            <div class="relative border-l-2 w-full px-2 overflow-hidden mb-2" :class="!resa.is_validated ? 'border-gray-500' : 'border-sky-500'" v-for="(resa, index) in reservationSalleAtDate" :key="index">
+            <div class="relative border-l-2 w-full px-2 overflow-hidden mb-2" :class="!resa.is_validated ? 'border-red-500' : 'border-sky-500'" v-for="(resa, index) in reservationSalleAtDate" :key="index">
               <div class="flex justify-between gap-2 items-center text-sm">
                 <p class="font-medium">{{ resa.salles.name }}</p>
                 <p class="italic text-gray-500">({{ resa.profiles.nom }} {{ resa.profiles.prenom }})</p>
@@ -175,6 +175,7 @@ const validatedSecteur = computed(() => {
                 <ArrowRight class="w-4 h-4 text-gray-500" />
                 <p class="">{{ timestampToDateFr(resa.fin) }} {{ timestampToHeure(resa.fin) }}</p>
               </div>
+              <p v-if="!resa.is_validated" class="ml-auto text-red-500 italic">En attente de validation</p>
             </div>
           </div>
           <div v-else class="text-sm italic">Néant</div>
@@ -183,7 +184,7 @@ const validatedSecteur = computed(() => {
         <div class="px-4 pt-2">
           <p class="font-bold text-base">Réservations véhicules :</p>
           <div class="pt-2 pl-2" v-if="reservationVehiculeAtDate.length > 0">
-            <div class="relative border-l-2 w-full px-2 overflow-hidden mb-2" :class="!resa.is_validated ? 'border-gray-300' : 'border-sky-500'" v-for="(resa, index) in reservationVehiculeAtDate" :key="index">
+            <div class="relative border-l-2 w-full px-2 overflow-hidden mb-2" :class="!resa.is_validated ? 'border-red-500' : 'border-sky-500'" v-for="(resa, index) in reservationVehiculeAtDate" :key="index">
               <div class="flex justify-between gap-2 items-center text-sm">
                 <div class="flex flex-col">
                   <p class="font-medium">{{ resa.vehicules.model }} - {{ resa.vehicules.immat }}</p>
@@ -195,8 +196,8 @@ const validatedSecteur = computed(() => {
                 <p class="">{{ timestampToDateFr(resa.debut) }} {{ timestampToHeure(resa.debut) }}</p>
                 <ArrowRight class="w-4 h-4 text-gray-700" />
                 <p class="">{{ timestampToDateFr(resa.fin) }} {{ timestampToHeure(resa.fin) }}</p>
-                <p v-if="!resa.is_validated" class="ml-auto text-red-500">En attente de validation</p>
               </div>
+              <p v-if="!resa.is_validated" class="ml-auto text-red-500 italic">En attente de validation</p>
             </div>
           </div>
           <div v-else class="text-sm italic">Néant</div>

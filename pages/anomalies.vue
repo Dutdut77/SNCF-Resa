@@ -135,8 +135,8 @@ const sendAnomalieVehicule = async () => {
         <AppButtonCarre v-if="etape == 4 && formValue.type == 0" class="" direction="left" @click="etape--, (formValue.salle = '')"> </AppButtonCarre>
         <AppButtonCarre v-if="etape == 4 && formValue.type == 1" class="" direction="left" @click="etape--, (formValue.vehicule = '')"> </AppButtonCarre>
 
-        <AppButtonValidated v-if="etape == 4 && formValue.type == 0" :validated="validatedAnomalieSalle" class="w-32 ml-auto" theme="" @click="sendAnomalieSalle()"> <template #default> Envoyer </template> </AppButtonValidated>
-        <AppButtonValidated v-if="etape == 4 && formValue.type == 1" :validated="validatedAnomalieVehicule" class="w-32 ml-auto" theme="" @click="sendAnomalieVehicule()"> <template #default> Envoyer </template> </AppButtonValidated>
+        <AppButtonValidated v-if="etape == 4 && formValue.type == 0" :validated="validatedAnomalieSalle" class="w-32 ml-auto text-sm" theme="" @click="sendAnomalieSalle()"> <template #default> Envoyer </template> </AppButtonValidated>
+        <AppButtonValidated v-if="etape == 4 && formValue.type == 1" :validated="validatedAnomalieVehicule" class="w-32 ml-auto text-sm" theme="" @click="sendAnomalieVehicule()"> <template #default> Envoyer </template> </AppButtonValidated>
       </div>
     </template>
     <template #modal></template>
