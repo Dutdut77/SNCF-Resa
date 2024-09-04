@@ -15,7 +15,7 @@
     </div>
 
     <!-- DEFAULT -->
-    <div class="w-full h-full bg-slate-100 xl:bg-white rounded-t-xl mt-16 p-4 flex flex-col overflow-auto">
+    <div class="w-full h-full bg-slate-100 xl:bg-white rounded-t-xl mt-16 py-4 flex flex-col overflow-auto">
       <slot name="default"></slot>
     </div>
 
