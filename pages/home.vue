@@ -97,7 +97,7 @@ const annulationVehicule = async (id) => {
 
         <div v-if="allResaSallesUserActuel.length > 0" class="w-full flex flex-col gap-2 pt-4 text-sm">
           <div v-for="(salle, index) in allResaSallesUserActuel" :key="index" class="relative w-full bg-white border rounded-lg p-4 flex flex-col cursor-pointer overflow-hidden" @click="showModalSalle(salle)">
-            <div v-if="!salle.is_validated" class="text-center text-xs text-red-600">En attente de validation</div>
+            <div v-if="!salle.is_validated" class="text-center text-sm text-red-600">En attente de validation</div>
             <div v-else class="absolute top-3 right-3">
               <Check class="w-3 h-3 text-sky-500" />
             </div>
@@ -123,7 +123,7 @@ const annulationVehicule = async (id) => {
 
         <div v-if="allResaUserActuel.length > 0" class="w-full flex flex-col gap-2 pt-4 text-sm">
           <div v-for="(vehicule, index) in allResaUserActuel" :key="index" class="relative w-full bg-white border rounded-lg p-4 flex flex-col cursor-pointer overflow-hidden" @click="showModalVehicule(vehicule)">
-            <div v-if="!vehicule.is_validated" class="text-center text-xs text-red-600">En attente de validation</div>
+            <div v-if="!vehicule.is_validated" class="text-center text-sm text-red-600">En attente de validation</div>
             <div v-else class="absolute top-3 right-3">
               <Check class="w-3 h-3 text-sky-500" />
             </div>
