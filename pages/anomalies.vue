@@ -70,7 +70,7 @@ const sendAnomalieVehicule = async () => {
       </div>
     </template>
     <template #default>
-      <div v-if="etape == 0" class="px-4 text-justify flex flex-col gap-4">
+      <div v-if="etape == 0" class="px-4 text-justify flex flex-col gap-4 py-6">
         <p>Vous avez accès ici à une interface vous permettant de signaler une anomalie sur un véhicule ou dans une salle.</p>
         <div class="pl-4">
           <p class="underline underline-offset-2 font-medium">Exemple :</p>
@@ -79,7 +79,7 @@ const sendAnomalieVehicule = async () => {
         <p>Votre demande sera envoyé au référent du secteur concerné.</p>
       </div>
 
-      <div v-if="etape == 1" class="w-full h-fit flex flex-col px-4 pb-8 overflow-auto">
+      <div v-if="etape == 1" class="w-full h-fit flex flex-col px-4 py-6 overflow-auto">
         <ResaRadioSecteur v-model="formValue.secteur" />
       </div>
 
@@ -87,14 +87,14 @@ const sendAnomalieVehicule = async () => {
         <ResaType v-model="formValue.type" />
       </div>
 
-      <div v-if="etape == 3 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
+      <div v-if="etape == 3 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center py-6">
         <ResaRadioAllSalles :data="formValue" v-model="formValue.salle" />
       </div>
-      <div v-if="etape == 3 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center">
+      <div v-if="etape == 3 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center py-6">
         <ResaRadioAllVehicules :data="formValue" v-model="formValue.vehicule" />
       </div>
 
-      <div v-if="etape == 4 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
+      <div v-if="etape == 4 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center py-6">
         <div class="text-lg font-medium text-center">
           <p>{{ formValue.secteur.name }}</p>
           <p>Salle {{ formValue.salle.name }}</p>
@@ -105,7 +105,7 @@ const sendAnomalieVehicule = async () => {
         </div>
       </div>
 
-      <div v-if="etape == 4 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center">
+      <div v-if="etape == 4 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center py-6">
         <div class="text-lg font-medium text-center">
           <p>{{ formValue.secteur.name }}</p>
           <p>{{ formValue.vehicule.immat }} - {{ formValue.vehicule.marque }} {{ formValue.vehicule.model }}</p>

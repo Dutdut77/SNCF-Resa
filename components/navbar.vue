@@ -8,9 +8,9 @@ import Add from "@/assets/svg/Add.vue";
 </script>
 
 <template>
-  <section class="w-full max-w-2xl h-20 xl:h-full xl:w-fit bg-slate-100 xl:bg-transparent">
-    <div class="w-full h-20 xl:h-full pb-6 xl:p-8 xl:w-fit flex xl:flex-col xl:gap-8 justify-around items-center text-gray-500 border-t border-gray-300 rounded-t-xl bg-white xl:rounded-xl">
-      <div class="font-bold uppercase text-gray-600 hidden xl:block">Menu</div>
+  <section class="w-full h-20 lg:h-full lg:w-fit bg-slate-100 lg:bg-transparent">
+    <div class="w-full h-20 lg:h-full pb-6 lg:p-8 lg:w-fit flex lg:flex-col lg:gap-8 justify-around items-center text-gray-500 border-t border-gray-300 rounded-t-xl bg-white lg:rounded-xl">
+      <div class="font-bold uppercase text-gray-600 hidden lg:block">Menu</div>
       <NuxtLink to="/home" class="relative group flex flex-col items-center flex-1 h-full justify-center">
         <!-- <div class="h-[3px] bg-sky-500 absolute -top-0.5 left-0 right-0 group-hover:w-full group-hover:duration-500 duration-200 rounded-full" :class="'/home' === $route.path ? 'w-full' : 'w-0'"></div> -->
         <Home class="h-6 w-6 group-hover:text-sky-500 duration-200" :class="'/home' === $route.path ? 'text-sky-500' : ''" />

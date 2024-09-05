@@ -67,7 +67,7 @@ const selectDay = (selectedDay) => {
 <template>
   <div>
     <div class="w-full content-center px-4">
-      <div class="bg-white rounded-lg shadow-lg">
+      <div class="bg-white border rounded-lg shadow-lg">
         <div class="text-center font-medium text-lg px-4 pt-4 pb-2 first-letter:uppercase">{{ selectedDateFormat.jourName }} {{ selectedDateFormat.jour }} {{ selectedDateFormat.mois }} {{ selectedDateFormat.annee }}</div>
 
         <div class="flex items-center justify-center gap-4 pb-4">

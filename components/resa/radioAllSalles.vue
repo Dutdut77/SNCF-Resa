@@ -37,7 +37,7 @@ const formRadio = computed({
 </script>
 
 <template>
-  <div class="w-full h-fit flex flex-col gap-2 px-4">
+  <div class="w-full h-fit grid grid-cols-1 lg:grid-cols-2 gap-2 px-4">
     <div v-if="allSallesSecteur.length > 0" class="relative w-full h-fit" v-for="(salle, index) in allSallesSecteur" :key="index">
       <input :id="salle.id" type="radio" v-model="formRadio" :value="salle" class="hidden peer" />
       <label :for="salle.id" class="rounded-lg shadow-lg overflow-hidden flex flex-col items-center border justify-center bg-white hover:bg-opacity-75 peer-checked:text-white cursor-pointer transition">

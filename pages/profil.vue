@@ -70,7 +70,7 @@ const goToAdministration = () => {
     </template>
 
     <template #default>
-      <div class="h-full flex flex-col gap-4 px-4">
+      <div class="h-full flex flex-col gap-4 px-4 py-6">
         <AppInput name="prenom" type="text" title="Prénom : " v-model="userProfil.prenom" />
         <AppInput name="nom" type="text" title="Nom : " v-model="userProfil.nom" />
         <div class="mt-auto flex justify-between">
@@ -103,8 +103,8 @@ const goToAdministration = () => {
             <p class="cursor-pointer" @click="logout()">Se déconnecter</p>
           </div>
           <div>
-            <p class="cursor-pointer text-right">Contact</p>
-            <p class="cursor-pointer text-right" @click="showModalMentions()">Mentions légales</p>
+            <p class="cursor-pointer text-right" @click="showModalMentions()">Contact</p>
+            <!-- <p class="cursor-pointer text-right" @click="showModalMentions()">Mentions légales</p> -->
           </div>
         </div>
       </div>
@@ -131,7 +131,7 @@ const goToAdministration = () => {
 
       <AppModal v-if="modalMentions" :closeModal="showModalMentions">
         <template #title>
-          <span class="text-xl text-gray-700 font-bold uppercase">Mentions Légales</span>
+          <span class="text-xl text-gray-700 font-bold uppercase">Contactez-nous</span>
         </template>
         <template #default>
           <div class="w-full">a venir...</div>

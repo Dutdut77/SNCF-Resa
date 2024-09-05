@@ -154,17 +154,17 @@ const validatedSecteur = computed(() => {
     </template>
 
     <template #default>
-      <div v-if="etape == 0" class="w-full h-fit flex flex-col px-4 pb-8">
+      <div v-if="etape == 0" class="w-full h-fit flex flex-col px-4 py-6">
         <ResaRadioSecteur v-model="formValue.secteur" />
       </div>
 
-      <div v-if="etape == 1" class="w-full h-full text-sm">
+      <div v-if="etape == 1" class="w-full h-full text-sm py-6">
         <ResaCalendar class="sticky top-0 z-20" :dayIsReserved="dayIsReserved" v-model="selectedDate" />
         <!-- <div v-if="selectedDate.day" class="text-center font-medium text-lg p-4 first-letter:uppercase">{{ selectedDateFormat.jourName }} {{ selectedDateFormat.jour }} {{ selectedDateFormat.mois }} {{ selectedDateFormat.annee }}</div> -->
 
         <div class="px-4 pt-4">
           <p class="font-bold text-base">Réservations salles :</p>
-          <div class="pt-2 pl-2" v-if="reservationSalleAtDate.length > 0">
+          <div class="pt-2 pl-2 grid grid-cols-1 lg:grid-cols-2 gap-4" v-if="reservationSalleAtDate.length > 0">
             <div class="relative border-l-2 w-full px-2 overflow-hidden mb-2" :class="!resa.is_validated ? 'border-red-500' : 'border-sky-500'" v-for="(resa, index) in reservationSalleAtDate" :key="index">
               <div class="flex justify-between gap-2 items-center text-sm">
                 <p class="font-medium">{{ resa.salles.name }}</p>
@@ -178,12 +178,12 @@ const validatedSecteur = computed(() => {
               <p v-if="!resa.is_validated" class="ml-auto text-red-500 italic">En attente de validation</p>
             </div>
           </div>
-          <div v-else class="text-sm italic">Néant</div>
+          <div v-else class="text-sm italic pl-2">Néant</div>
         </div>
 
         <div class="px-4 pt-2">
           <p class="font-bold text-base">Réservations véhicules :</p>
-          <div class="pt-2 pl-2" v-if="reservationVehiculeAtDate.length > 0">
+          <div class="pt-2 pl-2 grid grid-cols-1 lg:grid-cols-2 gap-4" v-if="reservationVehiculeAtDate.length > 0">
             <div class="relative border-l-2 w-full px-2 overflow-hidden mb-2" :class="!resa.is_validated ? 'border-red-500' : 'border-sky-500'" v-for="(resa, index) in reservationVehiculeAtDate" :key="index">
               <div class="flex justify-between gap-2 items-center text-sm">
                 <div class="flex flex-col">
@@ -200,7 +200,7 @@ const validatedSecteur = computed(() => {
               <p v-if="!resa.is_validated" class="ml-auto text-red-500 italic">En attente de validation</p>
             </div>
           </div>
-          <div v-else class="text-sm italic">Néant</div>
+          <div v-else class="text-sm italic pl-2">Néant</div>
         </div>
       </div>
     </template>

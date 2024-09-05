@@ -195,7 +195,7 @@ const addResa = async () => {
     </template>
 
     <template #default>
-      <div v-if="etape == 0" class="w-full h-fit flex flex-col px-4 pb-8 overflow-auto">
+      <div v-if="etape == 0" class="w-full h-fit flex flex-col px-4 py-6 overflow-auto">
         <ResaRadioSecteur v-model="formValue.secteur" />
       </div>
 
@@ -203,7 +203,7 @@ const addResa = async () => {
         <ResaType v-model="formValue.type" />
       </div>
 
-      <div v-if="etape == 2" class="w-full h-fit flex flex-col justify-center">
+      <div v-if="etape == 2" class="w-full h-fit flex flex-col justify-center py-6">
         <div class="flex items-center justify-center gap-4 pb-4 px-4">
           <div class="w-1/2 flex justify-center items-center gap-2 bg-white rounded-lg py-2 px-2 shadow-lg">
             <Left class="mr-auto h-6 w-6 cursor-pointer" @click="formValue.year--" />
@@ -284,19 +284,19 @@ const addResa = async () => {
         <!-- <p class="p-8 text-center">Résevertion : Jour : {{ selectedDay }} month : {{ formValue.month }} annee : {{ formValue.year }} à {{ selectedHeure }} h {{ selectedMinute }}</p> -->
       </div>
 
-      <div v-if="etape == 3 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
+      <div v-if="etape == 3 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center py-6">
         <ResaRadioSalle :data="formValue" v-model="formValue.salle" />
       </div>
 
-      <div v-if="etape == 3 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center">
+      <div v-if="etape == 3 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center py-6">
         <ResaRadioVehicule :data="formValue" v-model="formValue.vehicule" />
       </div>
 
-      <div v-if="etape == 4 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center">
+      <div v-if="etape == 4 && formValue.type == 0" class="w-full h-fit flex flex-col justify-center py-6">
         <ResaRecapSalle :data="formValue" />
       </div>
 
-      <div v-if="etape == 4 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center">
+      <div v-if="etape == 4 && formValue.type == 1" class="w-full h-fit flex flex-col justify-center py-6">
         <ResaRecapVehicule :data="formValue" />
       </div>
     </template>

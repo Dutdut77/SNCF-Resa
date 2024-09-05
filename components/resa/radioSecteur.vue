@@ -41,7 +41,7 @@ const nbSalles = (id) => {
 </script>
 
 <template>
-  <div class="w-full h-full grid grid-cols-1 gap-2">
+  <div class="w-full h-full grid grid-cols-1 lg:grid-cols-2 gap-2">
     <div class="relative w-full h-fit" v-for="(secteur, index) in secteurs" :key="index">
       <input :id="secteur.id" type="radio" v-model="formRadio" :value="secteur" class="hidden peer" />
 

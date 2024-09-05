@@ -95,8 +95,8 @@ const annulationVehicule = async (id) => {
           <div class="w-full h-[1px] bg-slate-300 mt-2"></div>
         </div>
 
-        <div v-if="allResaSallesUserActuel.length > 0" class="w-full flex flex-col gap-2 pt-4 text-sm">
-          <div v-for="(salle, index) in allResaSallesUserActuel" :key="index" class="relative w-full bg-white border rounded-lg p-4 flex flex-col cursor-pointer overflow-hidden" @click="showModalSalle(salle)">
+        <div v-if="allResaSallesUserActuel.length > 0" class="w-full grid grid-cols-1 lg:grid-cols-2 gap-2 pt-4 text-sm">
+          <div v-for="(salle, index) in allResaSallesUserActuel" :key="index" class="relative w-full bg-white border rounded-lg p-4 flex flex-col cursor-pointer overflow-hidden shadow-xl" @click="showModalSalle(salle)">
             <div v-if="!salle.is_validated" class="text-center text-sm text-red-600">En attente de validation</div>
             <div v-else class="absolute top-3 right-3">
               <Check class="w-3 h-3 text-sky-500" />
@@ -121,8 +121,8 @@ const annulationVehicule = async (id) => {
           <div class="w-full h-[1px] bg-slate-300 mt-2"></div>
         </div>
 
-        <div v-if="allResaUserActuel.length > 0" class="w-full flex flex-col gap-2 pt-4 text-sm">
-          <div v-for="(vehicule, index) in allResaUserActuel" :key="index" class="relative w-full bg-white border rounded-lg p-4 flex flex-col cursor-pointer overflow-hidden" @click="showModalVehicule(vehicule)">
+        <div v-if="allResaUserActuel.length > 0" class="w-full grid grid-cols-1 lg:grid-cols-2 gap-2 pt-4 text-sm">
+          <div v-for="(vehicule, index) in allResaUserActuel" :key="index" class="relative w-full bg-white border rounded-lg p-4 flex flex-col cursor-pointer overflow-hidden shadow-xl" @click="showModalVehicule(vehicule)">
             <div v-if="!vehicule.is_validated" class="text-center text-sm text-red-600">En attente de validation</div>
             <div v-else class="absolute top-3 right-3">
               <Check class="w-3 h-3 text-sky-500" />
@@ -141,7 +141,6 @@ const annulationVehicule = async (id) => {
         <div v-else class="py-2 text-xs italic">Aucune réservation pour le moment</div>
       </div>
     </template>
-    <template #footer></template>
 
     <template #modal>
       <AppModal v-if="modalSalle" :closeModal="showModalSalle">
