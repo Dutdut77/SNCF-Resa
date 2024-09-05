@@ -374,7 +374,7 @@ const deleteProfilAdmin = async (data) => {
   <ResaPage>
     <template #title> <p class="font-bold text-xl">Administration</p> </template>
     <template #default>
-      <div class="grid grid-cols-1 gap-4 px-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 px-4 py-6">
         <ResaAdminCard>
           <template #title>
             <p>Véhicules :</p>
@@ -618,10 +618,10 @@ const deleteProfilAdmin = async (data) => {
               <AppInput class="pt-4" name="model" type="text" title="Model : " v-model="vehiculeForm.model" />
               <AppInput class="pt-4" name="immat" type="text" title="Immatriculation : " v-model="vehiculeForm.immat" />
               <AppInput class="pt-4" name="capa" type="text" title="Nb de sièges : " v-model="vehiculeForm.capacite" />
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-3 text-sm text-gray-700">
+              <div class="grid grid-cols-1 gap-8 mt-3 text-sm text-gray-700">
                 <AppRadio :name="['auto', 'manuel']" :value="[0, 1]" :radioTitle="['Automatique', 'Manuel']" title="Transmission :" v-model="vehiculeForm.vitesse" />
               </div>
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-3 text-sm text-gray-700">
+              <div class="grid grid-cols-1 gap-8 mt-3 text-sm text-gray-700">
                 <AppRadio :name="['elec', 'gazoil', 'essence']" :value="[1, 2, 3]" :radioTitle="['Electrique', 'Gazoil', 'Essence']" title="Carburant :" v-model="vehiculeForm.id_carburant" />
               </div>
               <div class="pt-4">
