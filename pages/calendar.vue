@@ -158,12 +158,12 @@ const validatedSecteur = computed(() => {
         <ResaRadioSecteur v-model="formValue.secteur" />
       </div>
 
-      <div v-if="etape == 1" class="w-full h-full text-sm py-6 flex flex-col gap-1 lg:flex-row lg:items-center">
-        <ResaCalendar class="sticky top-0 z-20" :dayIsReserved="dayIsReserved" v-model="selectedDate" />
+      <div v-if="etape == 1" class="w-full h-full text-sm py-6 flex flex-col lg:flex-row lg:py-4">
+        <ResaCalendar class="sticky top-6 z-20" :dayIsReserved="dayIsReserved" v-model="selectedDate" />
         <!-- <div v-if="selectedDate.day" class="text-center font-medium text-lg p-4 first-letter:uppercase">{{ selectedDateFormat.jourName }} {{ selectedDateFormat.jour }} {{ selectedDateFormat.mois }} {{ selectedDateFormat.annee }}</div> -->
 
         <div class="flex flex-col gap-4">
-          <div class="px-4 pt-4">
+          <div class="px-4 pt-4 lg:pt-0">
             <p class="font-bold text-base">Réservations salles :</p>
             <div class="pt-2 pl-2 grid grid-cols-1 lg:grid-cols-1 gap-4" v-if="reservationSalleAtDate.length > 0">
               <div class="relative border-l-2 w-full px-2 overflow-hidden mb-2" :class="!resa.is_validated ? 'border-red-500' : 'border-sky-500'" v-for="(resa, index) in reservationSalleAtDate" :key="index">
