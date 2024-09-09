@@ -839,12 +839,12 @@ const deleteProfilAdmin = async (data) => {
           <AppModalSideContent v-if="sideModalValideurs" :closeSideModal="showSideValideurs">
             <template #header>
               <div class="text-center">
-                <div class="font-medium text-xl text-gray-700">Profils Auto-Valideur</div>
+                <div class="font-medium text-xl text-gray-700">Profil Auto-Valideur</div>
               </div>
             </template>
             <template #default>
               <div class="w-full">
-                <div class="pt-4 uppercase text-sm text-gray-600 font-medium py-2 border-b text-left">Profils autorisé :</div>
+                <div class="pt-4 uppercase text-sm text-gray-600 font-medium py-2 border-b text-left">Profils autorisés :</div>
                 <div class="mt-3 text-sm text-gray-700 w-full">
                   <table v-if="userAuth.length > 0" class="w-full">
                     <thead>
@@ -909,12 +909,12 @@ const deleteProfilAdmin = async (data) => {
           <AppModalSideContent v-if="sideModalAdmin" :closeSideModal="showSideAdmin">
             <template #header>
               <div class="text-center">
-                <div class="font-medium text-xl text-gray-700">Profils Administrateur</div>
+                <div class="font-medium text-xl text-gray-700">Profil Administrateur</div>
               </div>
             </template>
             <template #default>
               <div class="w-full">
-                <div class="pt-4 uppercase text-sm text-gray-600 font-medium py-2 border-b text-left">Profils Administrateur :</div>
+                <div class="pt-4 uppercase text-sm text-gray-600 font-medium py-2 border-b text-left">Profils Administrateurs :</div>
                 <div class="mt-3 text-sm text-gray-700 w-full">
                   <table class="w-full">
                     <thead>
