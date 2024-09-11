@@ -1,49 +1,42 @@
 <script setup>
-import Home from "@/assets/svg/Home.vue";
-import Calendar from "@/assets/svg/Calendar.vue";
 import User from "@/assets/svg/User.vue";
-import Bandage from "@/assets/svg/Bandage.vue";
-import Resa from "@/assets/svg/Resa.vue";
-import Add from "@/assets/svg/Add.vue";
+import Right from "@/assets/svg/Right.vue";
+
+const route = useRoute();
+
+const secteurs = useState("secteurs");
+const showSubmenuSecteurs = ref(false);
+
+const secteurActive = computed(() => {
+  const result = secteurs.value.find((obj) => obj.id == route.params.id);
+  return result;
+});
 </script>
 
 <template>
-  <section class="w-full h-20 lg:h-full lg:w-fit bg-slate-100 lg:bg-transparent">
-    <div class="w-full h-20 lg:h-full pb-6 lg:p-8 lg:w-fit flex lg:flex-col lg:gap-8 justify-around items-center text-gray-500 border-t border-gray-300 rounded-t-xl bg-white lg:rounded-xl">
-      <div class="font-bold uppercase text-gray-600 hidden lg:block">Menu</div>
-      <NuxtLink to="/home" class="relative group flex flex-col items-center flex-1 h-full justify-center">
-        <!-- <div class="h-[3px] bg-sky-500 absolute -top-0.5 left-0 right-0 group-hover:w-full group-hover:duration-500 duration-200 rounded-full" :class="'/home' === $route.path ? 'w-full' : 'w-0'"></div> -->
-        <Home class="h-6 w-6 group-hover:text-sky-500 duration-200" :class="'/home' === $route.path ? 'text-sky-500' : ''" />
-        <p class="text-xs pt-0.5 group-hover:text-sky-500 duration-200" :class="'/home' === $route.path ? 'text-sky-500 font-medium' : ''">Accueil</p>
-      </NuxtLink>
+  <section class="w-full h-16 border-b flex items-center bg-white text-gray-700">
+    <div class="h-full w-20 pl-4 uppercase font-bold flex flex-col justify-center -mt-0.5">
+      <div class="font-traverse text-xl text-sky-700 text-center tracking-widest">résa</div>
+      <div class="text-sm bg-sky-700 px-4 text-white rounded w-fit -mt-1">pro</div>
+    </div>
 
-      <NuxtLink to="/calendar" class="relative group flex flex-col items-center flex-1 h-full justify-center">
-        <!-- <div class="h-[3px] bg-sky-500 absolute -top-0.5 left-0 right-0 group-hover:w-full group-hover:duration-500 duration-200 rounded-full" :class="'/calendar' === $route.path ? 'w-full' : 'w-0'"></div> -->
-        <Calendar class="h-6 w-6 group-hover:text-sky-500 duration-200" :class="'/calendar' === $route.path ? 'text-sky-500' : ''" />
-        <p class="text-xs pt-0.5 group-hover:text-sky-500 duration-200" :class="'/calendar' === $route.path ? 'text-sky-500 font-medium' : ''">Agenda</p>
-      </NuxtLink>
+    <div class="relative w-full h-full flex flex-col items-center justify-center">
+      <div class="relative w-fit h-full flex flex-col items-center justify-center cursor-pointer" @click="showSubmenuSecteurs = !showSubmenuSecteurs">
+        <div class="font-bold">{{ secteurActive.name }}</div>
+        <Right class="absolute bottom-0 size-6 rotate-90" />
 
-      <NuxtLink to="/reservation" class="relative group flex flex-col items-center flex-1 h-full justify-center">
-        <!-- <div class="h-[3px] bg-sky-500 absolute -top-0.5 left-0 right-0 group-hover:w-full group-hover:duration-500 duration-200 rounded-full" :class="'/reservation' === $route.path ? 'w-full' : 'w-0'"></div> -->
-        <Resa class="h-6 w-6 group-hover:text-sky-500 duration-200" :class="'/reservation' === $route.path ? 'text-sky-500' : ''" />
-        <p class="text-xs pt-0.5 group-hover:text-sky-500 duration-200" :class="'/reservation' === $route.path ? 'text-sky-500 font-medium' : ''">Réservation</p>
-      </NuxtLink>
+        <div v-if="showSubmenuSecteurs" class="absolute -bottom-44 z-40 p-4 w-72 bg-white border rounded-lg grid grid-cols-2 gap-1 shadow-lg">
+          <NuxtLink :to="`/calendrier/${secteur.id}`" class="px-2 py-1 border bg-sky-500 text-white rounded-lg text-center text-sm" v-for="(secteur, index) in secteurs" :key="index">
+            {{ secteur.name }}
+          </NuxtLink>
+        </div>
+      </div>
+    </div>
 
-      <!-- <NuxtLink to="/reservation" class="w-10 h-10 flex justify-center items-center rounded-full bg-gradient-to-br from-sky-700 to-sky-500 mx-2 hover:shadow-xl shadow-black duration-200">
-        <Add class="h-6 w-6 text-white" />
-      </NuxtLink> -->
-
-      <NuxtLink to="/profil" class="relative group flex flex-col items-center flex-1 h-full justify-center">
-        <!-- <div class="h-[3px] bg-sky-500 absolute -top-0.5 left-0 right-0 group-hover:w-full group-hover:duration-500 duration-200 rounded-full" :class="'/profil' === $route.path ? 'w-full' : 'w-0'"></div> -->
-        <User class="h-6 w-6 group-hover:text-sky-500 duration-200" :class="'/profil' === $route.path ? 'text-sky-500' : ''" />
-        <p class="text-xs pt-0.5 group-hover:text-sky-500 duration-200" :class="'/profil' === $route.path ? 'text-sky-500 font-medium' : ''">Profil</p>
-      </NuxtLink>
-
-      <NuxtLink to="/anomalies" class="relative group flex flex-col items-center flex-1 h-full justify-center">
-        <!-- <div class="h-[3px] bg-sky-500 absolute -top-0.5 left-0 right-0 group-hover:w-full group-hover:duration-500 duration-200 rounded-full" :class="'/anomalies' === $route.path ? 'w-full' : 'w-0'"></div> -->
-        <Bandage class="h-6 w-6 group-hover:text-sky-500 duration-200" :class="'/anomalies' === $route.path ? 'text-sky-500' : ''" />
-        <p class="text-xs pt-0.5 group-hover:text-sky-500 duration-200" :class="'/anomalies' === $route.path ? 'text-sky-500 font-medium' : ''">Anomalies</p>
-      </NuxtLink>
+    <div class="h-full w-20 pr-4 flex items-center justify-end">
+      <div class="h-10 w-10 bg-gray-200 border rounded-full flex justify-center items-center">
+        <User class="w-6 h-6 text-gray-600" />
+      </div>
     </div>
   </section>
 </template>

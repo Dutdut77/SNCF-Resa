@@ -1,12 +1,12 @@
 <script setup></script>
 <template>
-  <div class="h-dvh w-full flex gap-8 bg-gradient-to-b from-sky-600 to-sky-500 relative lg:p-16">
+  <div class="relative h-dvh w-full bg-slate-100">
     <!-- START : NAVBAR -->
-    <navbar class="fixed lg:relative bottom-0 z-50" />
+    <navbar class="fixed left-0 right-0 z-50 top-0" />
     <!-- END : NAVBAR -->
 
     <!-- START : PAGE -->
-    <div class="w-full h-full overflow-auto pb-20 lg:pb-0">
+    <div class="w-full h-dvh overflow-hidden pt-16">
       <slot />
     </div>
 
