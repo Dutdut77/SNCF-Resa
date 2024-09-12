@@ -44,7 +44,7 @@ const datesInMonth = computed(() => {
 
 const colorOption = (num) => {
   if (year.value == props.modelValue.year && month.value == props.modelValue.month && day.value == num) {
-    return "bg-sky-500 text-white font-medium  ";
+    return "bg-sncf-primary text-white font-medium  ";
   }
 };
 
@@ -67,7 +67,7 @@ const selectDay = (selectedDay) => {
 <template>
   <div>
     <div class="w-full content-center text-sm text-gray-700">
-      <div class="bg-white border rounded-xl">
+      <div class="bg-slate-50 border rounded-xl">
         <!-- <div class="text-center font-medium text-base px-4 pt-4 pb-2 first-letter:uppercase">{{ selectedDateFormat.jourName }} {{ selectedDateFormat.jour }} {{ selectedDateFormat.mois }} {{ selectedDateFormat.annee }}</div> -->
 
         <div class="flex items-center justify-center pb-2 pt-2">

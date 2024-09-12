@@ -11,9 +11,9 @@ export default defineNuxtConfig({
   supabase: {
     redirect : false
   },
-      build: {
+  build: {
         transpile: ['@vuepic/vue-datepicker']
-    },
+  },
   app: {
     head: {
         title: 'Réservation - Infrapôle Paris-Est',
@@ -45,8 +45,9 @@ export default defineNuxtConfig({
       theme: {
         extend: {
           colors : {
-
-            
+            'sncf-primary' : '#65a30d',
+            'sncf-primary-light' : '#a3e635',
+      
           }
         },
         fontFamily: {

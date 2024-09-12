@@ -1,13 +1,7 @@
 export const useFormatDate = () => {
+ 
 
-  
-    // const test = useState('test', () => ({
-    //     test : "test"
-    // }))
-  
-  
-
-// A partir d'un timestamp, récupére un objet contenant le nom du jour, numéro, mois, annee, heure, minute
+    // A partir d'un timestamp, récupére un objet contenant le nom du jour, numéro, mois, annee, heure, minute
     const formatedDate = (timestamp) => {
         const result = {};
         // Créer une nouvelle date à partir du timestamp
@@ -41,7 +35,7 @@ export const useFormatDate = () => {
         return result;
       };
       
-// Convertir le numéro du mois en lettre. 0 étant le mois de Janvier      
+    // Convertir le numéro du mois en lettre. 0 étant le mois de Janvier      
     const monthLetter = (month) => {
         if (month == 0) return "Janvier";
         if (month == 1) return "Février";
@@ -68,17 +62,67 @@ export const useFormatDate = () => {
         return `${day}/${month}/${year}`
     }; 
 
-        // Convertir un timestamp en 10h30 
-        const timestampToHeure = (timestamp) => {
-            const data = parseInt(timestamp, 10);
-            const date = new Date(data);
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-          
-            return `${hours}h${minutes}`;
-        }; 
+    // Convertir un timestamp en 10h30 
+    const timestampToHeure = (timestamp) => {
+        const data = parseInt(timestamp, 10);
+        const date = new Date(data);
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        
+        return `${hours}h${minutes}`;
+    }; 
+
+    // Permet de récupérer le numéro du jour de l'année. Exemple : 255ème jour de 2024
+    const getYearDay = (date) => {
+
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const day = date.getDate();
+     
+        const offset = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+     
+        const bissextile = (month < 2) ? 0 : (year % 400 === 0 || (year % 4 === 0 && year % 100 !== 0));
+    
+        return parseInt(day + offset[month] + bissextile);
+      };
+
+    //   Permet de recupérer la date du lundi de la semaine sélectionnée.
+    const getMonday = (date) => {
+    const offset = (date.getDay() + 6) % 7;
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() - offset);
+    };
+
+    // Permet de récupérer le numéro de la semaine. Exemple : Semaine 34
+    const getWeek = (date) => {
+        const year = date.getFullYear();
+        let week;
+     
+        const lastMonday = getMonday(new Date(year, 11, 31));
+     
+        if (date >= lastMonday && lastMonday.getDate() > 28) {
+          week = 1;
+        } else {
+          let firstMonday = getMonday(new Date(year, 0, 1));
+     
+          if (firstMonday.getFullYear() < year) {
+            firstMonday = getMonday(new Date(year, 0, 8));
+          }
+     
+          const days = getYearDay(date) - getYearDay(firstMonday);
+     
+          if (days < 0) {
+            week = getWeek(new Date(year, date.getMonth(), date.getDate() + days));
+          } else {
+            week = 1 + parseInt(days / 7);
+            const lastYearLastMonday = getMonday(new Date(year - 1, 11, 31));
+            week += (lastYearLastMonday.getDate() > 28);
+          }
+        }
+     
+        return parseInt(week);
+      };
   
   
-      return { formatedDate, monthLetter,timestampToDateFr, timestampToHeure}
+      return { formatedDate, monthLetter,timestampToDateFr, timestampToHeure, getYearDay, getMonday, getWeek}
       
   }

@@ -25,7 +25,7 @@ useHead({
 
 const route = useRoute();
 const userProfil = useState("userProfil");
-const { formatedDate } = useFormatDate();
+const { formatedDate, getWeek } = useFormatDate();
 
 const { setLoader } = useLoader();
 const { getAllVehiculesBySecteur, allVehiculesSecteur } = useVehicules();
@@ -42,6 +42,7 @@ const selectedVehicule = ref("");
 const selectedSalle = ref("");
 const listeVehiculesSelected = ref([]);
 const listeSallesSelected = ref([]);
+const typeSelected = ref(1);
 
 setLoader(true);
 await getAllSallesBySecteur(route.params.id);
@@ -72,26 +73,13 @@ const selectedDateFormated = computed(() => {
   return formatedDate(dateObject.getTime());
 });
 
-const getWeekNumber = computed(() => {
-  const currentDate = new Date(selectedDate.value.year, selectedDate.value.month, selectedDate.value.day);
+const weekNumber = computed(() => {
+  const date = new Date(selectedDate.value.year, selectedDate.value.month, selectedDate.value.day);
+  return getWeek(date);
+});
 
-  // Calculer le premier jour de l'année
-  const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
-  const startOfYearDayOfWeek = startOfYear.getDay();
-
-  // Ajuster si le 1er janvier n'est pas un lundi
-  const startOffset = startOfYearDayOfWeek === 4 ? 6 : startOfYearDayOfWeek - 1;
-  const firstMonday = new Date(startOfYear);
-  firstMonday.setDate(startOfYear.getDate() + ((7 - startOffset) % 7));
-
-  console.log(firstMonday);
-
-  // Calculer le nombre de semaines écoulées
-  const diffInTime = currentDate - firstMonday;
-  const diffInDays = Math.ceil(diffInTime / (1000 * 60 * 60 * 24));
-  const weekNumber = Math.ceil(diffInDays / 7) + 1;
-
-  return weekNumber;
+const dateIso = computed(() => {
+  return new Date(selectedDate.value.year, selectedDate.value.month, selectedDate.value.day);
 });
 </script>
 
@@ -99,9 +87,20 @@ const getWeekNumber = computed(() => {
   <section class="w-full h-full flex flex-col lg:flex-row gap-4 p-4 text-sm text-gray-700 overflow-auto">
     <!-- PARTIE GAUCHE -->
     <div class="w-full lg:w-72 flex-none h-fit lg:h-full flex flex-col gap-4">
+      <div class="flex gap-4">
+        <div class="w-full p-2 h-24 border flex flex-col justify-center gap-2 items-center rounded-xl cursor-pointer uppercase text-xl font-bold" :class="typeSelected == 1 ? 'text-white bg-gradient-to-br from-slate-600 to-slate-900 ' : 'bg-white text-gray-400'" @click="typeSelected = 1">
+          <p>Véhicules</p>
+          <div class="font-traverse text-xl rounded-xl w-full text-center pt-1" :class="typeSelected == 1 ? 'text-white bg-gradient-to-br from-sncf-primary-light to-sncf-primary border-0 ' : 'bg-white text-gray-400 border'">{{ allVehiculesSecteur.length }}</div>
+        </div>
+        <div class="w-full p-2 h-24 border flex flex-col justify-center gap-2 items-center rounded-xl cursor-pointer uppercase text-xl font-bold" :class="typeSelected == 2 ? 'text-white bg-gradient-to-br from-slate-600 to-slate-900 ' : 'bg-white text-gray-400'" @click="typeSelected = 2">
+          <p>Salles</p>
+          <div class="font-traverse text-xl rounded-xl w-full text-center pt-1" :class="typeSelected == 2 ? 'text-white bg-gradient-to-br from-sncf-primary-light to-sncf-primary border-0 ' : 'bg-white text-gray-400 border'">{{ allSallesSecteur.length }}</div>
+        </div>
+      </div>
+
       <ResaCalendar class="w-full" v-model="selectedDate" />
 
-      <div class="w-full bg-white rounded-xl flex flex-col gap-2 border py-4">
+      <div v-if="typeSelected == 1" class="w-full bg-slate-50 rounded-xl flex flex-col gap-2 border py-4">
         <p class="font-bold text-base px-4 cursor-default">Véhicules</p>
         <div v-if="allVehiculesSecteur.length > 0">
           <div class="w-full flex px-4 cursor-pointer pb-1" v-for="vehicule in allVehiculesSecteur" :key="vehicule.id">
@@ -124,7 +123,7 @@ const getWeekNumber = computed(() => {
         <div class="italic px-4" v-else>Aucun véhicule.</div>
       </div>
 
-      <div class="w-full bg-white rounded-xl flex flex-col gap-2 border py-4">
+      <div v-if="typeSelected == 2" class="w-full bg-slate-50 rounded-xl flex flex-col gap-2 border py-4">
         <p class="font-bold text-base px-4 cursor-default">Salles</p>
         <div v-if="allSallesSecteur.length > 0">
           <div class="w-full flex px-4 cursor-pointer pb-1" v-for="salle in allSallesSecteur" :key="salle.id">
@@ -153,16 +152,18 @@ const getWeekNumber = computed(() => {
     </div>
 
     <!-- PARTIE DROITE -->
-    <div class="w-full h-full">
-      <div class="font-bold text-xl flex items-center gap-4">
-        <div class="first-letter:uppercase">{{ selectedDateFormated.jourName }} {{ selectedDateFormated.jour }} {{ selectedDateFormated.mois }} {{ selectedDateFormated.annee }}</div>
-        <div class="bg-white px-2 text-sm rounded-full border text-gray-500">Semaine {{ getWeekNumber }}</div>
-        <AppButtonValidated class="w-fit px-4 text-sm ml-auto font-normal" theme="" @click=""> <template #default> Nouvelle Réservation </template> </AppButtonValidated>
+    <div class="w-full h-full flex flex-col gap-4">
+      <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4">
+        <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-4 py-2">
+          <div class="font-medium text-gray-50">{{ selectedDateFormated.jourName }} {{ selectedDateFormated.jour }} {{ selectedDateFormated.mois }} {{ selectedDateFormated.annee }}</div>
+        </div>
+        <div class="bg-slate-50 px-2 text-sm rounded-full border border-gray-400 text-gray-600">Semaine {{ weekNumber }}</div>
+        <AppButtonValidated class="w-fit px-4 text-sm lg:ml-auto font-normal" theme="" @click=""> <template #default> Nouvelle Réservation </template> </AppButtonValidated>
       </div>
-      <div>Date : {{ selectedDate }}</div>
-      <!-- <div>Date : {{ selectedDate }}</div>
-      <div>Selected Vehicule : {{ listeVehiculesSelected }}</div>
-      <div>Selected Salle : {{ listeSallesSelected }}</div> -->
+
+      <div class="w-full h-full border rounded-xl bg-slate-50 p-4 overflow-auto">
+        <ResaSemaine :startDate="dateIso" />
+      </div>
     </div>
 
     <AppModal v-if="modalSalle" :closeModal="showModalSalle">
@@ -177,7 +178,7 @@ const getWeekNumber = computed(() => {
             <p class="font-bold text-slate-700 underline underline-offset-4 text-sm">Adresse :</p>
             <p class="text-sm pt-1 text-slate-700">{{ selectedSalle.adresse }}</p>
           </div>
-          <div class="bg-sky-500 p-4 rounded-lg border text-white text-sm">
+          <div class="bg-gradient-to-br from-slate-600 to-slate-900 p-4 rounded-lg border text-white text-sm">
             <div class="grid grid-cols-3 gap-2">
               <div class="flex gap-1">
                 <Group class="w-4 h-4" />
@@ -230,7 +231,7 @@ const getWeekNumber = computed(() => {
       </template>
       <template #default>
         <div class="px-2 w-full">
-          <div class="w-full flex flex-col gap-3 p-4 text-white bg-sky-500 rounded-lg border">
+          <div class="w-full flex flex-col gap-3 p-4 text-white bg-gradient-to-br from-slate-600 to-slate-900 rounded-lg border">
             <div class="flex justify-center gap-4">
               <div class="flex gap-1 items-center text-sm"><Group class="w-4 h-4" />{{ selectedVehicule.capacite }}</div>
               <div v-if="selectedVehicule.id_carburant == 1" class="flex gap-1 items-center text-sm">
