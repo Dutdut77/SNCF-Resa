@@ -29,7 +29,9 @@ const { formatedDate, getWeek } = useFormatDate();
 
 const { setLoader } = useLoader();
 const { getAllVehiculesBySecteur, allVehiculesSecteur } = useVehicules();
+const { getAllResaSecteurVehicule, allResaSecteurVehicule } = useResaVehicules();
 const { getAllSallesBySecteur, allSallesSecteur } = useSalles();
+const { getAllResaSecteurSalle, allResaSecteurSalle } = useResaSalles();
 
 const selectedDate = ref({
   year: new Date().getFullYear(),
@@ -47,6 +49,8 @@ const typeSelected = ref(1);
 setLoader(true);
 await getAllSallesBySecteur(route.params.id);
 await getAllVehiculesBySecteur(route.params.id);
+await getAllResaSecteurVehicule(route.params.id);
+await getAllResaSecteurSalle(route.params.id);
 setLoader(false);
 
 const showModalVehicule = (data) => {
@@ -80,6 +84,17 @@ const weekNumber = computed(() => {
 
 const dateIso = computed(() => {
   return new Date(selectedDate.value.year, selectedDate.value.month, selectedDate.value.day);
+});
+
+const filteredReservations = computed(() => {
+  if (typeSelected.value == 1) {
+    const result = allResaSecteurVehicule.value.filter((reservation) => listeVehiculesSelected.value.includes(reservation.id_vehicule));
+    return result;
+  }
+  if (typeSelected.value == 2) {
+    const result = allResaSecteurSalle.value.filter((reservation) => listeSallesSelected.value.includes(reservation.id_salle));
+    return result;
+  }
 });
 </script>
 
@@ -152,6 +167,14 @@ const dateIso = computed(() => {
     </div>
 
     <!-- PARTIE DROITE -->
+
+    <!-- Véhicules : {{ listeVehiculesSelected }} <br /><br />
+    Salles : {{ listeSallesSelected }}<br /><br />
+    AllréseaVehicules : {{ allResaSecteurVehicule }}<br /><br />
+    AllRésaSalles : {{ allResaSecteurSalle }}<br /><br />
+
+    FiltreRéservation : {{ filteredReservations }}<br /><br /> -->
+
     <div class="w-full h-full flex flex-col gap-4">
       <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4">
         <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-4 py-2">
@@ -161,8 +184,8 @@ const dateIso = computed(() => {
         <AppButtonValidated class="w-fit px-4 text-sm lg:ml-auto font-normal" theme="" @click=""> <template #default> Nouvelle Réservation </template> </AppButtonValidated>
       </div>
 
-      <div class="w-full h-full border rounded-xl bg-slate-50 p-4 overflow-auto">
-        <ResaSemaine :startDate="dateIso" />
+      <div class="w-full h-full border rounded-xl bg-slate-50 overflow-hidden p-4">
+        <ResaSemaine :startDate="dateIso" :allReservations="filteredReservations" class="overflow-auto h-full" />
       </div>
     </div>
 
