@@ -171,9 +171,9 @@ const filteredReservations = computed(() => {
     <!-- Véhicules : {{ listeVehiculesSelected }} <br /><br />
     Salles : {{ listeSallesSelected }}<br /><br />
     AllréseaVehicules : {{ allResaSecteurVehicule }}<br /><br />
-    AllRésaSalles : {{ allResaSecteurSalle }}<br /><br />
+    AllRésaSalles : {{ allResaSecteurSalle }}<br /><br /> -->
 
-    FiltreRéservation : {{ filteredReservations }}<br /><br /> -->
+    <!-- FiltreRéservation : {{ filteredReservations }}<br /><br /> -->
 
     <div class="w-full h-full flex flex-col gap-4">
       <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4">
@@ -185,7 +185,7 @@ const filteredReservations = computed(() => {
       </div>
 
       <div class="w-full h-full border rounded-xl bg-slate-50 overflow-hidden p-4">
-        <ResaSemaine :startDate="dateIso" :allReservations="filteredReservations" class="overflow-auto h-full" />
+        <ResaSemaine :startDate="dateIso" :allReservations="filteredReservations" class="overflow-auto" />
       </div>
     </div>
 

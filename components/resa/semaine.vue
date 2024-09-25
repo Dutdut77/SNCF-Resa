@@ -1,12 +1,71 @@
 <script setup>
-// Date de départ
 const props = defineProps(["startDate", "allReservations"]);
 const days = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+const hours = [
+  "00h00",
+  "00h30",
+  "01h00",
+  "01h30",
+  "02h00",
+  "02h30",
+  "03h00",
+  "03h30",
+  "04h00",
+  "04h30",
+  "05h00",
+  "05h30",
+  "06h00",
+  "06h30",
+  "07h00",
+  "07h30",
+  "08h00",
+  "08h30",
+  "09h00",
+  "09h30",
+  "10h00",
+  "10h30",
+  "11h00",
+  "11h30",
+  "12h00",
+  "12h30",
+  "13h00",
+  "13h30",
+  "14h00",
+  "14h30",
+  "15h00",
+  "15h30",
+  "16h00",
+  "16h30",
+  "17h00",
+  "17h30",
+  "18h00",
+  "18h30",
+  "19h00",
+  "19h30",
+  "20h00",
+  "20h30",
+  "21h00",
+  "21h30",
+  "22h00",
+  "22h30",
+  "23h00",
+  "23h30",
+];
+
+// Exemples de rendez-vous
+const rendezVous = ref([
+  { id: 1, titre: "Réunion équipe", debut: 1727244000000, fin: 1727267400000 }, // Sur plusieurs jours
+  { id: 2, titre: "Appel client", debut: 1727353800000, fin: 1727420400000 }, // 14:30 à 09:00 (Sur deux jours)
+  { id: 3, titre: "Autre", debut: 1727244000000, fin: 1727260217000 }, // Sur plusieurs jours
+  { id: 4, titre: "Début Journée", debut: 1727226000000, fin: 1727229600000 }, // Sur plusieurs jours
+  { id: 5, titre: "3eme rang", debut: 1727253017000, fin: 1727258417000 }, // Sur plusieurs jours
+  { id: 6, titre: "2eme rang double", debut: 1727262017000, fin: 1727276417000 }, // Sur plusieurs jours
+]);
 
 // Fonction pour obtenir le premier jour de la semaine (lundi)
 const getStartOfWeek = (date) => {
   const dayOfWeek = date.getDay(); // Jour actuel (0 = dimanche, 1 = lundi, etc.)
-  const diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Ajuster si dimanche
+  const diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Ajuster si dimanched
   return new Date(date.setDate(diff));
 };
 
@@ -25,103 +84,146 @@ const weekDays = computed(() => {
   return result;
 });
 
-// Heures de la journée
-const hours = ref([...Array(24).keys()]); // Tableau de 0 à 24
+const getEventStyle = (e, events, j) => {
+  const start = new Date(e.debut);
+  const end = new Date(e.fin);
+  const jourJ = weekDays.value[j].getDate();
+  const index = events.findIndex((subArray) => subArray.some((event) => event.id === e.id));
 
-// Fonction pour vérifier si une réservation est dans une cellule donnée (jour/heure)
-const isReservationInCell = (day, hour, reservation) => {
-  const debutDate = new Date(parseInt(reservation.debut)); // Convertir le timestamp en Date
-  const finDate = new Date(parseInt(reservation.fin));
+  const startMinutes = start.getHours() * 60 + start.getMinutes();
+  const endMinutes = end.getHours() * 60 + end.getMinutes();
 
-  const isSameDayAsDebut = day.getDate() === debutDate.getDate() && day.getMonth() === debutDate.getMonth() && day.getFullYear() === debutDate.getFullYear();
-  const isSameDayAsFin = day.getDate() === finDate.getDate() && day.getMonth() === finDate.getMonth() && day.getFullYear() === finDate.getFullYear();
-  const isBetweenDays = day > debutDate && day < finDate;
-
-  // La réservation doit apparaître sur la cellule entière ou partiellement
-  if (isSameDayAsDebut && isSameDayAsFin) {
-    return hour >= debutDate.getHours() && hour <= finDate.getHours();
-  } else if (isSameDayAsDebut) {
-    return hour >= debutDate.getHours();
-  } else if (isSameDayAsFin) {
-    return hour <= finDate.getHours();
-  } else if (isBetweenDays) {
-    return true;
+  // Calcul le top
+  let top = 0;
+  if (start.getDate() == jourJ) {
+    top = (startMinutes / 1440) * 100; // 1440 = 24h * 60min
+  } else {
+    top = 0;
   }
 
-  return false;
+  // Calcul de la hauteur
+  let height = 1;
+  if (end.getDate() == start.getDate()) {
+    height = ((endMinutes - startMinutes - 1) / 1440) * 100; // En pourcentage le - moins 1 c'est pour l'arorndi en bas qu'il soit visible
+  } else if (end.getDate() == jourJ) {
+    height = (endMinutes / 1440) * 100; // En pourcentage le - moins 1 c'est pour l'arorndi en bas qu'il soit visible
+  } else {
+    height = 100 - top;
+  }
+
+  // Calcul de la largeur en fonction du nombre d'événements qui se chevauchent
+  let width = 100;
+  if (e.superpose > 0) {
+    width = 100 - (100 / events.length) * index - (100 / events.length) * (e.superpose - index);
+  }
+  console.log(width);
+
+  // Calcul de left
+  const left = (100 / events.length) * index;
+
+  return {
+    top: `${top}%`,
+    height: `${height}%`,
+    width: `${width}%`,
+    left: `${left}%`,
+  };
 };
 
-// Vérifie si la réservation commence à la demi-heure
-const startsAtHalfHour = (reservation) => {
-  const debutDate = new Date(parseInt(reservation.debut));
-  return debutDate.getMinutes() === 30;
+const estSuperpose = (chantier1, chantier2) => {
+  return chantier1.debut <= chantier2.fin && chantier1.fin >= chantier2.debut;
+};
+// Fonction pour cloner un objet chantier
+const cloneChantier = (chantier) => {
+  return { ...chantier };
 };
 
-// Vérifie si la réservation finit à la demi-heure
-const endsAtHalfHour = (reservation) => {
-  const finDate = new Date(parseInt(reservation.fin));
-  return finDate.getMinutes() === 30;
-};
+const chantiersParJour = computed(() => {
+  const result = weekDays.value.map((jour) => {
+    const jourTimestamp = jour.getTime();
+    const finJour = jourTimestamp + 24 * 60 * 60 * 1000 - 1;
+
+    // Filtrer les chantiers pour cette journée
+    const chantiersDuJour = rendezVous.value.filter((chantier) => chantier.debut <= finJour && chantier.fin >= jourTimestamp).map(cloneChantier); // Cloner chaque chantier
+
+    chantiersDuJour.sort((a, b) => a.debut - b.debut);
+
+    if (chantiersDuJour.length === 0) return [];
+
+    const sousSousArrays = []; // Array pour stocker les sous-sous-array
+
+    chantiersDuJour.forEach((chantier) => {
+      let placed = false;
+
+      for (let sousArray of sousSousArrays) {
+        let superpose = false;
+
+        for (let chantierExist of sousArray) {
+          if (estSuperpose(chantier, chantierExist)) {
+            superpose = true;
+            break;
+          }
+        }
+
+        if (!superpose) {
+          sousArray.push(chantier);
+          placed = true;
+          break;
+        }
+      }
+
+      if (!placed) {
+        sousSousArrays.push([chantier]);
+      }
+    });
+
+    return sousSousArrays;
+  });
+
+  // Ajout de la clé "superpose" en fonction des sous-sous-arrays pour chaque journée
+  result.forEach((sousSousArrays) => {
+    sousSousArrays.forEach((sousArray) => {
+      sousArray.forEach((chantier) => {
+        chantier.superpose = 0; // Initialiser la clé superpose
+
+        // Comparer avec les autres chantiers uniquement dans le même jour
+        sousSousArrays.forEach((otherSousArray) => {
+          otherSousArray.forEach((otherChantier) => {
+            if (chantier !== otherChantier && estSuperpose(chantier, otherChantier)) {
+              chantier.superpose++;
+            }
+          });
+        });
+      });
+    });
+  });
+
+  return result;
+});
 </script>
 
 <template>
-  <div class="grid" :style="{ gridTemplateColumns: 'auto repeat(7, 1fr)' }">
-    <!-- En-tête des jours -->
-    <div class="sticky top-0 bg-slate-50 z-30"></div>
-    <!-- Colonne vide pour les heures -->
-    <div v-for="(day, index) in weekDays" :key="index" class="border-r text-center font-bold sticky top-0 bg-slate-50 z-30 p-2">
+  <!-- {{ chantiersParJour[2] }} -->
+  <div class="w-full h-full grid" :style="{ gridTemplateColumns: 'auto repeat(7, 1fr)' }">
+    <div class=""></div>
+    <div v-for="(day, index) in weekDays" :key="index" class="flex flex-col pb-4 border-b border-sncf-primary-light text-center sticky top-0 bg-slate-50 z-40">
       <div class="uppercase text-sm text-gray-400 font-normal">{{ days[index] }}</div>
       <div class="text-xl font-bold text-gray-600">{{ day.getDate() }}</div>
     </div>
 
-    <div class="h-4"></div>
-    <div class="h-4 border-b"></div>
-    <div class="h-4 border-b"></div>
-    <div class="h-4 border-b"></div>
-    <div class="h-4 border-b"></div>
-    <div class="h-4 border-b"></div>
-    <div class="h-4 border-b"></div>
-    <div class="h-4 border-b"></div>
+    <!-- Colonne des heures -->
+    <div class="flex flex-col w-fit px-4">
+      <div v-for="hour in hours" :key="hour" class="h-6 border-gray-300 even:invisible">
+        <div class="-mt-2.5">{{ hour }}</div>
+      </div>
+    </div>
 
-    <!-- Corps du calendrier : affichage des heures et cellules pour chaque jour -->
-    <div v-for="hour in hours" :key="hour" class="contents">
-      <!-- Colonne des heures avec bordure droite alignée en haut -->
-      <div class="text-center px-2 flex items-start -mt-2.5">{{ hour }}:00</div>
-      <!-- Colonnes des jours de la semaine -->
-      <div v-for="(day, index) in weekDays" :key="index" class="border-b border-r min-h-[50px] px-1 relative">
-        <!-- Contenu cellulaire -->
-
-        <div v-for="reservation in props.allReservations" :key="reservation.id" class="h-full">
-          <template v-if="isReservationInCell(day, hour, reservation)">
-            <!-- Cas de la cellule de début -->
-            <template v-if="day.getDate() === new Date(parseInt(reservation.debut)).getDate() && hour === new Date(parseInt(reservation.debut)).getHours()">
-              <div
-                :class="{
-                  'bg-blue-500 text-white p-2 rounded absolute inset-0': true,
-                  'h-1/2 top-1/2': startsAtHalfHour(reservation),
-                }"
-              >
-                {{ reservation.vehicules.model }} - {{ reservation.profiles.prenom }} {{ reservation.profiles.nom }}
-              </div>
-            </template>
-
-            <!-- Cas de la cellule de fin -->
-            <template v-else-if="day.getDate() === new Date(parseInt(reservation.fin)).getDate() && hour === new Date(parseInt(reservation.fin)).getHours()">
-              <div
-                :class="{
-                  'bg-red-500 text-white p-2 rounded absolute inset-0': true,
-                  'h-1/2 bottom-1/2': endsAtHalfHour(reservation),
-                }"
-              >
-                {{ reservation.vehicules.model }} - {{ reservation.profiles.prenom }} {{ reservation.profiles.nom }}
-              </div>
-            </template>
-
-            <!-- Cas des cellules intermédiaires -->
-            <template v-else-if="(day > new Date(parseInt(reservation.debut)) || (day.getDate() === new Date(parseInt(reservation.debut)).getDate() && hour > new Date(parseInt(reservation.debut)).getHours())) && (day < new Date(parseInt(reservation.fin)) || (day.getDate() === new Date(parseInt(reservation.fin)).getDate() && hour < new Date(parseInt(reservation.fin)).getHours()))">
-              <div class="bg-blue-500 text-white p-2 rounded absolute inset-0">x</div>
-            </template>
-          </template>
+    <div v-for="(events, index) in chantiersParJour" :key="index" class="flex flex-col relative border">
+      <div v-for="hour in hours" :key="hour" class="h-6 border-b border-gray-300"></div>
+      <div v-for="event in events" :key="event">
+        <div v-for="e in event" :key="e">
+          <div class="absolute pr-1 cursor-pointer top-0" :style="getEventStyle(e, events, index)">
+            <div class="bg-sncf-primary-light rounded-r-lg w-full h-full hover:bg-sncf-primary">{{ e.superpose }}<br />{{ e.titre }}</div>
+          </div>
         </div>
       </div>
     </div>
