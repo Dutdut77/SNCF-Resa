@@ -45,6 +45,8 @@ const selectedSalle = ref("");
 const listeVehiculesSelected = ref([]);
 const listeSallesSelected = ref([]);
 const typeSelected = ref(1);
+const selectedResa = ref("");
+const sideModal = ref(false);
 
 setLoader(true);
 await getAllSallesBySecteur(route.params.id);
@@ -96,6 +98,16 @@ const filteredReservations = computed(() => {
     return result;
   }
 });
+
+const showSideModal = (e) => {
+  if (e) {
+    selectedResa.value = e;
+    sideModal.value = true;
+  } else {
+    selectedResa.value = "";
+    sideModal.value = false;
+  }
+};
 </script>
 
 <template>
@@ -183,9 +195,9 @@ const filteredReservations = computed(() => {
         <div class="bg-slate-50 px-2 text-sm rounded-full border border-gray-400 text-gray-600">Semaine {{ weekNumber }}</div>
         <AppButtonValidated class="w-fit px-4 text-sm lg:ml-auto font-normal" theme="" @click=""> <template #default> Nouvelle Réservation </template> </AppButtonValidated>
       </div>
-
+      {{ selectedResa }}
       <div class="w-full h-full border rounded-xl bg-slate-50 overflow-hidden p-4">
-        <ResaSemaine :startDate="dateIso" :allReservations="filteredReservations" class="overflow-auto" />
+        <ResaSemaine :startDate="dateIso" :allReservations="filteredReservations" class="overflow-auto" @selectedResa="showSideModal" />
       </div>
     </div>
 
@@ -282,5 +294,18 @@ const filteredReservations = computed(() => {
         </div>
       </template>
     </AppModal>
+    <AppModalSide :sideModal="sideModal" :closeSideModal="showSideModal">
+      <template #default>
+        <AppModalSideContent v-if="sideModal" :closeSideModal="showSideModal">
+          <template #header> Header </template>
+          <template #default>
+            {{ selectedResa }}
+          </template>
+          <template #footer>
+            <AppButtonValidated class="w-full md:w-32" theme="cancel" @click="showSideModal()"> <template #default> Annuler </template> </AppButtonValidated>
+          </template>
+        </AppModalSideContent>
+      </template>
+    </AppModalSide>
   </section>
 </template>

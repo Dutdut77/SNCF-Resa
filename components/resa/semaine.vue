@@ -1,5 +1,6 @@
 <script setup>
 const props = defineProps(["startDate", "allReservations"]);
+const emits = defineEmits(["selectedResa"]);
 const days = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 const hours = [
   "00h00",
@@ -51,6 +52,7 @@ const hours = [
   "23h00",
   "23h30",
 ];
+const hoveredCard = ref(null);
 
 // Exemples de rendez-vous
 const rendezVous = ref([
@@ -112,11 +114,8 @@ const getEventStyle = (e, events, j) => {
   }
 
   // Calcul de la largeur en fonction du nombre d'événements qui se chevauchent
-  let width = 100;
-  if (e.superpose > 0) {
-    width = 100 - (100 / events.length) * index - (100 / events.length) * (e.superpose - index);
-  }
-  console.log(width);
+
+  const width = calculateWidths(events);
 
   // Calcul de left
   const left = (100 / events.length) * index;
@@ -124,9 +123,38 @@ const getEventStyle = (e, events, j) => {
   return {
     top: `${top}%`,
     height: `${height}%`,
-    width: `${width}%`,
+    width: e.width,
     left: `${left}%`,
   };
+};
+
+const calculateWidths = (events) => {
+  const numberOfSubArrays = events.length;
+  const baseWidth = 100 / numberOfSubArrays;
+  events.forEach((subArray, subIndex) => {
+    subArray.forEach((event) => {
+      let width = baseWidth;
+
+      // Vérifier les sous-tableaux suivants
+      for (let nextIndex = subIndex + 1; nextIndex < numberOfSubArrays; nextIndex++) {
+        const nextSubArray = events[nextIndex];
+
+        // Vérification de superposition avec au moins un événement dans le sous-tableau suivant
+        const hasOverlap = nextSubArray.some((nextEvent) => estSuperpose(event, nextEvent));
+
+        // Si aucun chevauchement, on ajoute à la largeur
+        if (!hasOverlap) {
+          width += baseWidth;
+        } else {
+          // Si chevauchement, on arrête
+          break;
+        }
+      }
+
+      // Ajouter la propriété largeur à l'objet
+      event.width = `${width}%`;
+    });
+  });
 };
 
 const estSuperpose = (chantier1, chantier2) => {
@@ -179,50 +207,51 @@ const chantiersParJour = computed(() => {
     return sousSousArrays;
   });
 
-  // Ajout de la clé "superpose" en fonction des sous-sous-arrays pour chaque journée
-  result.forEach((sousSousArrays) => {
-    sousSousArrays.forEach((sousArray) => {
-      sousArray.forEach((chantier) => {
-        chantier.superpose = 0; // Initialiser la clé superpose
-
-        // Comparer avec les autres chantiers uniquement dans le même jour
-        sousSousArrays.forEach((otherSousArray) => {
-          otherSousArray.forEach((otherChantier) => {
-            if (chantier !== otherChantier && estSuperpose(chantier, otherChantier)) {
-              chantier.superpose++;
-            }
-          });
-        });
-      });
-    });
-  });
-
   return result;
 });
+
+const handleMouseEnter = (id) => {
+  hoveredCard.value = id;
+};
+
+const handleMouseLeave = () => {
+  hoveredCard.value = null;
+};
+
+const isHovered = (data) => {
+  const separate = data.split("-");
+  const id = separate[1];
+  if (hoveredCard.value == id) {
+    return true;
+  }
+};
+
+const sendResa = (e) => {
+  emits("selectedResa", e);
+};
 </script>
 
 <template>
-  <!-- {{ chantiersParJour[2] }} -->
   <div class="w-full h-full grid" :style="{ gridTemplateColumns: 'auto repeat(7, 1fr)' }">
     <div class=""></div>
-    <div v-for="(day, index) in weekDays" :key="index" class="flex flex-col pb-4 border-b border-sncf-primary-light text-center sticky top-0 bg-slate-50 z-40">
+    <div v-for="(day, index) in weekDays" :key="index" class="flex flex-col pb-4 border-b border-gray-300 text-center sticky top-0 bg-slate-50 z-40">
       <div class="uppercase text-sm text-gray-400 font-normal">{{ days[index] }}</div>
       <div class="text-xl font-bold text-gray-600">{{ day.getDate() }}</div>
     </div>
 
     <!-- Colonne des heures -->
     <div class="flex flex-col w-fit px-4">
-      <div v-for="hour in hours" :key="hour" class="h-6 border-gray-300 even:invisible">
+      <div v-for="hour in hours" :key="hour" class="h-5 border-gray-300 even:invisible">
         <div class="-mt-2.5">{{ hour }}</div>
       </div>
     </div>
 
     <div v-for="(events, index) in chantiersParJour" :key="index" class="flex flex-col relative border">
-      <div v-for="hour in hours" :key="hour" class="h-6 border-b border-gray-300"></div>
+      <div v-for="hour in hours" :key="hour" class="h-5 border-b border-gray-300 odd:border-dashed odd:border-gray-200"></div>
       <div v-for="event in events" :key="event">
         <div v-for="e in event" :key="e">
-          <div class="absolute pr-1 cursor-pointer top-0" :style="getEventStyle(e, events, index)">
-            <div class="bg-sncf-primary-light rounded-r-lg w-full h-full hover:bg-sncf-primary">{{ e.superpose }}<br />{{ e.titre }}</div>
+          <div class="absolute pr-1 cursor-pointer top-0" :style="getEventStyle(e, events, index)" @mouseenter="handleMouseEnter(e.id)" @mouseleave="handleMouseLeave" @click="sendResa(e)">
+            <div :id="`id_${index}-${e.id}`" class="rounded-r-lg w-full text-white h-full p-2 break-words overflow-hidden" :class="isHovered(`id_${index}-${e.id}`) ? 'bg-sncf-primary' : 'bg-sncf-primary-light'">{{ e.titre }}</div>
           </div>
         </div>
       </div>

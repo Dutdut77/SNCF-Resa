@@ -45,8 +45,8 @@ export default defineNuxtConfig({
       theme: {
         extend: {
           colors : {
-            'sncf-primary' : '#65a30d',
-            'sncf-primary-light' : '#a3e635',
+            'sncf-primary' : '#0369a1',
+            'sncf-primary-light' : '#0ea5e9',
       
           }
         },
