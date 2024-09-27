@@ -54,15 +54,17 @@ const hours = [
 ];
 const hoveredCard = ref(null);
 
+const { formatedDate, getWeek } = useFormatDate();
+
 // Exemples de rendez-vous
-const rendezVous = ref([
-  { id: 1, titre: "Réunion équipe", debut: 1727244000000, fin: 1727267400000 }, // Sur plusieurs jours
-  { id: 2, titre: "Appel client", debut: 1727353800000, fin: 1727420400000 }, // 14:30 à 09:00 (Sur deux jours)
-  { id: 3, titre: "Autre", debut: 1727244000000, fin: 1727260217000 }, // Sur plusieurs jours
-  { id: 4, titre: "Début Journée", debut: 1727226000000, fin: 1727229600000 }, // Sur plusieurs jours
-  { id: 5, titre: "3eme rang", debut: 1727253017000, fin: 1727258417000 }, // Sur plusieurs jours
-  { id: 6, titre: "2eme rang double", debut: 1727262017000, fin: 1727276417000 }, // Sur plusieurs jours
-]);
+// const rendezVous = ref([
+//   { id: 1, titre: "Réunion équipe", debut: 1727244000000, fin: 1727267400000 }, // Sur plusieurs jours
+//   { id: 2, titre: "Appel client", debut: 1727353800000, fin: 1727420400000 }, // 14:30 à 09:00 (Sur deux jours)
+//   { id: 3, titre: "Autre", debut: 1727244000000, fin: 1727260217000 }, // Sur plusieurs jours
+//   { id: 4, titre: "Début Journée", debut: 1727226000000, fin: 1727229600000 }, // Sur plusieurs jours
+//   { id: 5, titre: "3eme rang", debut: 1727253017000, fin: 1727258417000 }, // Sur plusieurs jours
+//   { id: 6, titre: "2eme rang double", debut: 1727262017000, fin: 1727276417000 }, // Sur plusieurs jours
+// ]);
 
 // Fonction pour obtenir le premier jour de la semaine (lundi)
 const getStartOfWeek = (date) => {
@@ -87,8 +89,8 @@ const weekDays = computed(() => {
 });
 
 const getEventStyle = (e, events, j) => {
-  const start = new Date(e.debut);
-  const end = new Date(e.fin);
+  const start = new Date(Number(e.debut));
+  const end = new Date(Number(e.fin));
   const jourJ = weekDays.value[j].getDate();
   const index = events.findIndex((subArray) => subArray.some((event) => event.id === e.id));
 
@@ -171,7 +173,7 @@ const chantiersParJour = computed(() => {
     const finJour = jourTimestamp + 24 * 60 * 60 * 1000 - 1;
 
     // Filtrer les chantiers pour cette journée
-    const chantiersDuJour = rendezVous.value.filter((chantier) => chantier.debut <= finJour && chantier.fin >= jourTimestamp).map(cloneChantier); // Cloner chaque chantier
+    const chantiersDuJour = props.allReservations.filter((chantier) => chantier.debut <= finJour && chantier.fin >= jourTimestamp).map(cloneChantier); // Cloner chaque chantier
 
     chantiersDuJour.sort((a, b) => a.debut - b.debut);
 
@@ -233,7 +235,7 @@ const sendResa = (e) => {
 
 <template>
   <div class="w-full h-full grid" :style="{ gridTemplateColumns: 'auto repeat(7, 1fr)' }">
-    <div class=""></div>
+    <div class="sticky top-0 bg-slate-50 z-40"></div>
     <div v-for="(day, index) in weekDays" :key="index" class="flex flex-col pb-4 border-b border-gray-300 text-center sticky top-0 bg-slate-50 z-40">
       <div class="uppercase text-sm text-gray-400 font-normal">{{ days[index] }}</div>
       <div class="text-xl font-bold text-gray-600">{{ day.getDate() }}</div>
@@ -242,7 +244,7 @@ const sendResa = (e) => {
     <!-- Colonne des heures -->
     <div class="flex flex-col w-fit px-4">
       <div v-for="hour in hours" :key="hour" class="h-5 border-gray-300 even:invisible">
-        <div class="-mt-2.5">{{ hour }}</div>
+        <div class="">{{ hour }}</div>
       </div>
     </div>
 
@@ -251,7 +253,14 @@ const sendResa = (e) => {
       <div v-for="event in events" :key="event">
         <div v-for="e in event" :key="e">
           <div class="absolute pr-1 cursor-pointer top-0" :style="getEventStyle(e, events, index)" @mouseenter="handleMouseEnter(e.id)" @mouseleave="handleMouseLeave" @click="sendResa(e)">
-            <div :id="`id_${index}-${e.id}`" class="rounded-r-lg w-full text-white h-full p-2 break-words overflow-hidden" :class="isHovered(`id_${index}-${e.id}`) ? 'bg-sncf-primary' : 'bg-sncf-primary-light'">{{ e.titre }}</div>
+            <div :id="`id_${index}-${e.id}`" class="rounded-r-lg w-full text-white h-full p-2 break-words overflow-hidden border-l-4 border-sncf-primary" :class="isHovered(`id_${index}-${e.id}`) ? 'bg-sncf-primary' : 'bg-sncf-primary-light/80'">
+              <div class="w-full h-full text-xs flex flex-col">
+                <div v-if="e.salles">{{ e.salles.names }}</div>
+                <div v-if="e.vehicules.immat">{{ e.vehicules.immat }}</div>
+                <div>{{ e.profiles.nom }} {{ e.profiles.prenom }}</div>
+                <div class="mt-auto ml-auto">{{ formatedDate(Number(e.debut)).heure }}h{{ formatedDate(Number(e.debut)).minute }} - {{ formatedDate(Number(e.fin)).heure }}h{{ formatedDate(Number(e.fin)).minute }}</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

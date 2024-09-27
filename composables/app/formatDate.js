@@ -24,11 +24,15 @@ export const useFormatDate = () => {
         // Tableau des noms des jours et mois en français
         const dayNames = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
         const monthNames = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+        const smallMonthNames = ["jan", "fév", "mars", "avr", "mai", "juin", "juil", "août", "sept", "oct", "nov", "déc"];
       
         result.jourName = dayNames[dayOfWeek];
         result.jour = day;
         result.mois = monthNames[date.getMonth()];
+        result.smallMois = smallMonthNames[date.getMonth()];
+        result.moisNb = (date.getMonth() + 1).toString().padStart(2, '0');
         result.annee = year;
+        result.smallannee = year.toString().slice(-2)
         result.heure = hours;
         result.minute = minutes;
       

@@ -180,13 +180,6 @@ const showSideModal = (e) => {
 
     <!-- PARTIE DROITE -->
 
-    <!-- Véhicules : {{ listeVehiculesSelected }} <br /><br />
-    Salles : {{ listeSallesSelected }}<br /><br />
-    AllréseaVehicules : {{ allResaSecteurVehicule }}<br /><br />
-    AllRésaSalles : {{ allResaSecteurSalle }}<br /><br /> -->
-
-    <!-- FiltreRéservation : {{ filteredReservations }}<br /><br /> -->
-
     <div class="w-full h-full flex flex-col gap-4">
       <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4">
         <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-4 py-2">
@@ -195,7 +188,7 @@ const showSideModal = (e) => {
         <div class="bg-slate-50 px-2 text-sm rounded-full border border-gray-400 text-gray-600">Semaine {{ weekNumber }}</div>
         <AppButtonValidated class="w-fit px-4 text-sm lg:ml-auto font-normal" theme="" @click=""> <template #default> Nouvelle Réservation </template> </AppButtonValidated>
       </div>
-      {{ selectedResa }}
+
       <div class="w-full h-full border rounded-xl bg-slate-50 overflow-hidden p-4">
         <ResaSemaine :startDate="dateIso" :allReservations="filteredReservations" class="overflow-auto" @selectedResa="showSideModal" />
       </div>
