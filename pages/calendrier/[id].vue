@@ -26,6 +26,7 @@ useHead({
 const route = useRoute();
 const userProfil = useState("userProfil");
 const { formatedDate, getWeek } = useFormatDate();
+const secteurs = useState("secteurs");
 
 const { setLoader } = useLoader();
 const { getAllVehiculesBySecteur, allVehiculesSecteur } = useVehicules();
@@ -47,6 +48,41 @@ const listeSallesSelected = ref([]);
 const typeSelected = ref(1);
 const selectedResa = ref("");
 const sideModal = ref(false);
+const colors = [
+  "#0284c7", // Sky-600
+  "#9333ea", // purple-600
+  "#e11d48", // rose-600
+  "#ea580c", // orange-600
+  "#dc2626", // red-600
+  "#0d9488", // teal-600
+  "#16a34a", // green-600
+  "#0891b2", // cyan-600
+];
+const formValue = ref({
+  secteur: route.params.id,
+  type: typeSelected.value,
+  dateDebut: "",
+  dateFin: "",
+  year: new Date().getFullYear(),
+  month: new Date().getMonth(),
+  day: new Date().getDate(),
+  vehicule: "",
+  salle: "",
+});
+const formDateDebut = ref({
+  year: new Date().getFullYear(),
+  month: new Date().getMonth(),
+  day: new Date().getDate(),
+  heures: "",
+  minutes: "",
+});
+const formDateFin = ref({
+  year: new Date().getFullYear(),
+  month: new Date().getMonth(),
+  day: new Date().getDate(),
+  heures: "",
+  minutes: "",
+});
 
 setLoader(true);
 await getAllSallesBySecteur(route.params.id);
@@ -74,6 +110,27 @@ const showModalSalle = (data) => {
   }
 };
 
+const secteurActive = computed(() => {
+  const result = secteurs.value.find((obj) => obj.id == route.params.id);
+  return result;
+});
+
+const allVehiculesWithColors = computed(() => {
+  // Ajouter la clé color à chaque véhicule
+  allVehiculesSecteur.value.forEach((vehicle, index) => {
+    vehicle.color = colors[index % colors.length];
+  });
+  return allVehiculesSecteur.value;
+});
+
+const allSallesWithColors = computed(() => {
+  // Ajouter la clé color à chaque véhicule
+  allSallesSecteur.value.forEach((vehicle, index) => {
+    vehicle.color = colors[index % colors.length];
+  });
+  return allSallesSecteur.value;
+});
+
 const selectedDateFormated = computed(() => {
   const dateObject = new Date(selectedDate.value.year, selectedDate.value.month, selectedDate.value.day);
   return formatedDate(dateObject.getTime());
@@ -91,11 +148,35 @@ const dateIso = computed(() => {
 const filteredReservations = computed(() => {
   if (typeSelected.value == 1) {
     const result = allResaSecteurVehicule.value.filter((reservation) => listeVehiculesSelected.value.includes(reservation.id_vehicule));
-    return result;
+    // Ajouter la couleur associée à chaque réservation
+    const resultWithColors = result.map((reservation) => {
+      // Trouver le véhicule correspondant à l'ID du véhicule dans la réservation
+      const vehicle = allVehiculesWithColors.value.find((v) => v.id === reservation.id_vehicule);
+
+      // Ajouter la couleur au résultat, ou null si non trouvé
+      return {
+        ...reservation,
+        color: vehicle ? vehicle.color : null,
+      };
+    });
+
+    return resultWithColors;
   }
   if (typeSelected.value == 2) {
     const result = allResaSecteurSalle.value.filter((reservation) => listeSallesSelected.value.includes(reservation.id_salle));
-    return result;
+    // Ajouter la couleur associée à chaque réservation
+    const resultWithColors = result.map((reservation) => {
+      // Trouver le véhicule correspondant à l'ID du véhicule dans la réservation
+      const salle = allSallesWithColors.value.find((v) => v.id === reservation.id_salle);
+
+      // Ajouter la couleur au résultat, ou null si non trouvé
+      return {
+        ...reservation,
+        color: salle ? salle.color : null,
+      };
+    });
+
+    return resultWithColors;
   }
 });
 
@@ -105,7 +186,7 @@ const showSideModal = (e) => {
     sideModal.value = true;
   } else {
     selectedResa.value = "";
-    sideModal.value = false;
+    sideModal.value = !sideModal.value;
   }
 };
 </script>
@@ -115,13 +196,13 @@ const showSideModal = (e) => {
     <!-- PARTIE GAUCHE -->
     <div class="w-full lg:w-72 flex-none h-fit lg:h-full flex flex-col gap-4">
       <div class="flex gap-4">
-        <div class="w-full p-2 h-24 border flex flex-col justify-center gap-2 items-center rounded-xl cursor-pointer uppercase text-xl font-bold" :class="typeSelected == 1 ? 'text-white bg-gradient-to-br from-slate-600 to-slate-900 ' : 'bg-white text-gray-400'" @click="typeSelected = 1">
+        <div class="w-full p-2 h-24 border flex flex-col justify-center gap-2 items-center rounded-xl cursor-pointer uppercase text-xl font-bold" :class="typeSelected == 1 ? 'text-white bg-gradient-to-br from-slate-600 to-slate-900 ' : 'bg-white text-gray-400'" @click="(typeSelected = 1), (formValue.type = 1)">
           <p>Véhicules</p>
-          <div class="font-traverse text-xl rounded-xl w-full text-center pt-1" :class="typeSelected == 1 ? 'text-white bg-gradient-to-br from-sncf-primary-light to-sncf-primary border-0 ' : 'bg-white text-gray-400 border'">{{ allVehiculesSecteur.length }}</div>
+          <div class="font-traverse text-xl rounded-xl w-full text-center pt-1" :class="typeSelected == 1 ? 'text-white bg-gradient-to-br from-sncf-primary-light to-sncf-primary border-0 ' : 'bg-white text-gray-400 border'">{{ allVehiculesWithColors.length }}</div>
         </div>
-        <div class="w-full p-2 h-24 border flex flex-col justify-center gap-2 items-center rounded-xl cursor-pointer uppercase text-xl font-bold" :class="typeSelected == 2 ? 'text-white bg-gradient-to-br from-slate-600 to-slate-900 ' : 'bg-white text-gray-400'" @click="typeSelected = 2">
+        <div class="w-full p-2 h-24 border flex flex-col justify-center gap-2 items-center rounded-xl cursor-pointer uppercase text-xl font-bold" :class="typeSelected == 2 ? 'text-white bg-gradient-to-br from-slate-600 to-slate-900 ' : 'bg-white text-gray-400'" @click="(typeSelected = 2), (formValue.type = 2)">
           <p>Salles</p>
-          <div class="font-traverse text-xl rounded-xl w-full text-center pt-1" :class="typeSelected == 2 ? 'text-white bg-gradient-to-br from-sncf-primary-light to-sncf-primary border-0 ' : 'bg-white text-gray-400 border'">{{ allSallesSecteur.length }}</div>
+          <div class="font-traverse text-xl rounded-xl w-full text-center pt-1" :class="typeSelected == 2 ? 'text-white bg-gradient-to-br from-sncf-primary-light to-sncf-primary border-0 ' : 'bg-white text-gray-400 border'">{{ allSallesWithColors.length }}</div>
         </div>
       </div>
 
@@ -129,12 +210,12 @@ const showSideModal = (e) => {
 
       <div v-if="typeSelected == 1" class="w-full bg-slate-50 rounded-xl flex flex-col gap-2 border py-4">
         <p class="font-bold text-base px-4 cursor-default">Véhicules</p>
-        <div v-if="allVehiculesSecteur.length > 0">
-          <div class="w-full flex px-4 cursor-pointer pb-1" v-for="vehicule in allVehiculesSecteur" :key="vehicule.id">
+        <div v-if="allVehiculesWithColors.length > 0">
+          <div class="w-full flex px-4 cursor-pointer pb-1" v-for="vehicule in allVehiculesWithColors" :key="vehicule.id">
             <input type="checkbox" :id="vehicule.immat" :value="vehicule.id" class="mr-2 hidden" v-model="listeVehiculesSelected" />
             <div class="w-full flex gap-2">
               <label :for="vehicule.immat" class="">
-                <div class="relative h-3 w-3 p-2 border rounded-sm cursor-pointer" :class="listeVehiculesSelected.includes(vehicule.id) ? 'border-sky-500 bg-sky-500 ' : 'border-gray-500'">
+                <div class="relative h-3 w-3 p-2 border rounded-sm cursor-pointer" :style="{ backgroundColor: listeVehiculesSelected.includes(vehicule.id) ? vehicule.color : '', borderColor: listeVehiculesSelected.includes(vehicule.id) ? vehicule.color : '#6b7280' }">
                   <Check class="absolute top-[1px] left-[1px] h-3.5 w-3.5 text-white" :class="listeVehiculesSelected.includes(vehicule.id) ? 'block ' : 'hidden'" />
                 </div>
               </label>
@@ -152,12 +233,12 @@ const showSideModal = (e) => {
 
       <div v-if="typeSelected == 2" class="w-full bg-slate-50 rounded-xl flex flex-col gap-2 border py-4">
         <p class="font-bold text-base px-4 cursor-default">Salles</p>
-        <div v-if="allSallesSecteur.length > 0">
-          <div class="w-full flex px-4 cursor-pointer pb-1" v-for="salle in allSallesSecteur" :key="salle.id">
+        <div v-if="allSallesWithColors.length > 0">
+          <div class="w-full flex px-4 cursor-pointer pb-1" v-for="salle in allSallesWithColors" :key="salle.id">
             <input type="checkbox" :id="salle.id" :value="salle.id" class="mr-2 hidden" v-model="listeSallesSelected" />
             <div class="w-full flex gap-2">
               <label :for="salle.id" class="">
-                <div class="relative h-3 w-3 p-2 border rounded-sm cursor-pointer" :class="listeSallesSelected.includes(salle.id) ? 'border-green-500 bg-green-500 ' : 'border-gray-500'">
+                <div class="relative h-3 w-3 p-2 border rounded-sm cursor-pointer" :style="{ backgroundColor: listeSallesSelected.includes(salle.id) ? salle.color : '', borderColor: listeSallesSelected.includes(salle.id) ? salle.color : '#6b7280' }">
                   <Check class="absolute top-[1px] left-[1px] h-3.5 w-3.5 text-white" :class="listeSallesSelected.includes(salle.id) ? 'block ' : 'hidden'" />
                 </div>
               </label>
@@ -179,14 +260,13 @@ const showSideModal = (e) => {
     </div>
 
     <!-- PARTIE DROITE -->
-
     <div class="w-full h-full flex flex-col gap-4">
       <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4">
         <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-4 py-2">
           <div class="font-medium text-gray-50">{{ selectedDateFormated.jourName }} {{ selectedDateFormated.jour }} {{ selectedDateFormated.mois }} {{ selectedDateFormated.annee }}</div>
         </div>
         <div class="bg-slate-50 px-2 text-sm rounded-full border border-gray-400 text-gray-600">Semaine {{ weekNumber }}</div>
-        <AppButtonValidated class="w-fit px-4 text-sm lg:ml-auto font-normal" theme="" @click=""> <template #default> Nouvelle Réservation </template> </AppButtonValidated>
+        <AppButtonValidated class="w-fit px-4 text-sm lg:ml-auto font-normal" theme="" @click="showSideModal()"> <template #default> Nouvelle Réservation </template> </AppButtonValidated>
       </div>
 
       <div class="w-full h-full border rounded-xl bg-slate-50 overflow-hidden p-4">
@@ -287,12 +367,43 @@ const showSideModal = (e) => {
         </div>
       </template>
     </AppModal>
+
     <AppModalSide :sideModal="sideModal" :closeSideModal="showSideModal">
       <template #default>
         <AppModalSideContent v-if="sideModal" :closeSideModal="showSideModal">
-          <template #header> Header </template>
+          <template #header>
+            <div v-if="selectedResa == ''">
+              <p class="text-xl font-medium text-center">{{ secteurActive.name }}</p>
+              <p>Nouvelle réservation</p>
+            </div>
+            <div v-else>
+              <p class="text-xl font-medium text-center">{{ secteurActive.name }}</p>
+              <p>Réservation</p>
+            </div>
+          </template>
           <template #default>
-            {{ selectedResa }}
+            <div class="h-full" v-if="formValue.type == 1">
+              <div class="absolute inset-0 backdrop-blur-sm">
+                <div class="w-full h-full flex justify-center items-center">
+                  <div class="border rounded-xl overflow-hidden border-gray-300 shadow-lg">
+                    <AppDateTimePicker class="w-fit" v-model="formDateDebut" />
+                    <div class="flex gap-4 p-4 text-gray-600 text-base">
+                      <p class="ml-auto cursor-pointer hover:font-medium duration-300">Annuler</p>
+                      <p class="cursor-pointer hover:font-medium duration-300">Ok</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div class="w-full h-fit flex flex-col justify-center py-6">
+                <ResaRadioVehicule :data="formValue" v-model="formValue.vehicule" />
+              </div> -->
+            </div>
+            <div v-if="formValue.type == 2">
+              <div class="w-full h-fit flex flex-col justify-center py-6">
+                <ResaRadioSalle :data="formValue" v-model="formValue.salle" />
+              </div>
+            </div>
           </template>
           <template #footer>
             <AppButtonValidated class="w-full md:w-32" theme="cancel" @click="showSideModal()"> <template #default> Annuler </template> </AppButtonValidated>

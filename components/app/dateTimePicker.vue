@@ -1,0 +1,106 @@
+<script setup>
+import Left from "@/assets/svg/Left.vue";
+import Right from "@/assets/svg/Right.vue";
+
+const formValue = defineModel();
+const { formatedDate } = useFormatDate();
+
+const selectedMonth = ref(formValue.value.month);
+const selectedYear = ref(formValue.value.year);
+const selectedHeure = ref(formValue.value.heure);
+const selectedMinute = ref(formValue.value.minute);
+const days = ["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"];
+const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Décembre"];
+const minutes = ["00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"];
+const heures = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
+const activeIndexHeure = ref(new Date().getHours());
+const activeIndexMinute = computed(() => {
+  const date = new Date();
+  let currentMinutes = date.getMinutes();
+
+  // Arrondir les minutes à 5 près
+  currentMinutes = Math.ceil(currentMinutes / 5) * 5;
+
+  // Trouver l'index correspondant dans le tableau 'minutes'
+  const index = minutes.indexOf(currentMinutes.toString().padStart(2, "0"));
+
+  return index;
+});
+
+const firstDayOfMonth = computed(() => {
+  const firstDay = new Date(formValue.value.year, formValue.value.month, 1).getDay();
+  // Adjust for Monday as the first day
+  return (firstDay + 6) % 7;
+});
+
+const datesInMonth = computed(() => {
+  const daysInMonth = new Date(formValue.value.year, formValue.value.month + 1, 0).getDate();
+  return Array.from({ length: daysInMonth }, (_, i) => i + 1);
+});
+
+const selectDay = (day) => {
+  formValue.value.day = day;
+  formValue.value.month = selectedMonth.value;
+  formValue.value.year = selectedYear.value;
+};
+
+const colorOption = (num) => {
+  if (formValue.value.year == selectedYear.value && formValue.value.month == selectedMonth.value && formValue.value.day == num) {
+    return "bg-sncf-primary-light text-white font-medium  ";
+  }
+};
+</script>
+
+<template>
+  <div>
+    <div class="w-fit content-center text-sm text-gray-700">
+      <div class="p-2 bg-sncf-primary-light font-medium text-white">
+        <div>Date sélectionnée :</div>
+        <div class="text-lg">{{ formValue.day }} {{ months[formValue.month] }} {{ formValue.year }} - {{ formValue.heures }} h {{ formValue.minutes }}</div>
+      </div>
+      <div class="bg-slate-50 flex divide-x-2">
+        <!-- <div class="text-center font-medium text-base px-4 pt-4 pb-2 first-letter:uppercase">{{ selectedDateFormat.jourName }} {{ selectedDateFormat.jour }} {{ selectedDateFormat.mois }} {{ selectedDateFormat.annee }}</div> -->
+        <div class="w-full px-2">
+          <div class="flex items-center justify-center">
+            <div class="w-1/2 flex justify-center items-center py-2 px-2">
+              <Left class="mr-auto h-6 w-6 cursor-pointer" @click="selectedMonth--" :class="selectedMonth > 0 ? 'visible' : 'invisible'" />
+              <p class="text-center font-medium">{{ months[selectedMonth] }}</p>
+              <Right class="ml-auto h-6 w-6 cursor-pointer" @click="selectedMonth++" :class="selectedMonth < 11 ? 'visible' : 'invisible'" />
+            </div>
+            <div class="w-1/2 flex justify-center items-center py-2 px-2">
+              <Left class="mr-auto h-6 w-6 cursor-pointer" @click="selectedYear--" />
+              <p class="text-center font-medium">{{ selectedYear }}</p>
+              <Right class="ml-auto h-6 w-6 cursor-pointer" @click="selectedYear++" />
+            </div>
+          </div>
+
+          <div class="w-full grid grid-cols-7 gap-1 px-2 pb-2">
+            <div class="text-center font-bold w-full p-2" v-for="day in days" :key="day">{{ day }}</div>
+            <div v-for="n in firstDayOfMonth" :key="'empty-' + n" class=""></div>
+            <div class="relative w-full h-5 text-sm flex items-center justify-center cursor-pointer duration-300" v-for="date in datesInMonth" :key="date" @click="selectDay(date)">
+              <div class="rounded-full w-6 h-6 flex items-center justify-center" :class="colorOption(date)">
+                {{ date }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex px-2 py-1">
+          <div class="p-2 text-center">
+            <div class="text-center font-medium">Heures</div>
+            <div class="pt-4">
+              <AppDatePickerIos class="w-20" :items="heures" v-model="formValue.heures" :viewIndex="activeIndexHeure" />
+            </div>
+          </div>
+
+          <div class="p-2 text-center">
+            <div class="text-center font-medium">Minutes</div>
+            <div class="pt-4">
+              <AppDatePickerIos class="w-20" :items="minutes" v-model="formValue.minutes" :viewIndex="activeIndexMinute" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

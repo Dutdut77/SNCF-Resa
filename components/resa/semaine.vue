@@ -53,18 +53,9 @@ const hours = [
   "23h30",
 ];
 const hoveredCard = ref(null);
+const scrollableDiv = ref(null);
 
 const { formatedDate, getWeek } = useFormatDate();
-
-// Exemples de rendez-vous
-// const rendezVous = ref([
-//   { id: 1, titre: "Réunion équipe", debut: 1727244000000, fin: 1727267400000 }, // Sur plusieurs jours
-//   { id: 2, titre: "Appel client", debut: 1727353800000, fin: 1727420400000 }, // 14:30 à 09:00 (Sur deux jours)
-//   { id: 3, titre: "Autre", debut: 1727244000000, fin: 1727260217000 }, // Sur plusieurs jours
-//   { id: 4, titre: "Début Journée", debut: 1727226000000, fin: 1727229600000 }, // Sur plusieurs jours
-//   { id: 5, titre: "3eme rang", debut: 1727253017000, fin: 1727258417000 }, // Sur plusieurs jours
-//   { id: 6, titre: "2eme rang double", debut: 1727262017000, fin: 1727276417000 }, // Sur plusieurs jours
-// ]);
 
 // Fonction pour obtenir le premier jour de la semaine (lundi)
 const getStartOfWeek = (date) => {
@@ -227,14 +218,37 @@ const isHovered = (data) => {
     return true;
   }
 };
+const hexToRgba = (hex, opacity) => {
+  // Supprimer le symbole '#' s'il est présent
+  hex = hex.replace("#", "");
+
+  // Convertir en RGB
+  let r = parseInt(hex.substring(0, 2), 16);
+  let g = parseInt(hex.substring(2, 4), 16);
+  let b = parseInt(hex.substring(4, 6), 16);
+
+  // Retourner la couleur en rgba avec l'opacité
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+};
 
 const sendResa = (e) => {
   emits("selectedResa", e);
 };
+
+onMounted(() => {
+  const percentage = 20; // Par exemple, pour scroller à 50% de la hauteur
+
+  if (scrollableDiv.value) {
+    const scrollHeight = scrollableDiv.value.scrollHeight;
+    const scrollTop = (scrollHeight * percentage) / 100;
+
+    scrollableDiv.value.scrollTop = scrollTop;
+  }
+});
 </script>
 
 <template>
-  <div class="w-full h-full grid" :style="{ gridTemplateColumns: 'auto repeat(7, 1fr)' }">
+  <div ref="scrollableDiv" class="w-full h-full grid" :style="{ gridTemplateColumns: 'auto repeat(7, 1fr)' }">
     <div class="sticky top-0 bg-slate-50 z-40"></div>
     <div v-for="(day, index) in weekDays" :key="index" class="flex flex-col pb-4 border-b border-gray-300 text-center sticky top-0 bg-slate-50 z-40">
       <div class="uppercase text-sm text-gray-400 font-normal">{{ days[index] }}</div>
@@ -253,7 +267,7 @@ const sendResa = (e) => {
       <div v-for="event in events" :key="event">
         <div v-for="e in event" :key="e">
           <div class="absolute pr-1 cursor-pointer top-0" :style="getEventStyle(e, events, index)" @mouseenter="handleMouseEnter(e.id)" @mouseleave="handleMouseLeave" @click="sendResa(e)">
-            <div :id="`id_${index}-${e.id}`" class="rounded-r-lg w-full text-white h-full p-2 break-words overflow-hidden border-l-4 border-sncf-primary" :class="isHovered(`id_${index}-${e.id}`) ? 'bg-sncf-primary' : 'bg-sncf-primary-light/80'">
+            <div :id="`id_${index}-${e.id}`" class="rounded-r-md w-full text-white h-full p-2 break-words overflow-hidden border-l-4 border-sncf-primary" :class="isHovered(`id_${index}-${e.id}`) ? 'bg-sncf-primary' : ''" :style="{ backgroundColor: !isHovered(`id_${index}-${e.id}`) ? hexToRgba(e.color, 0.75) : e.color, borderColor: e.color }">
               <div class="w-full h-full text-xs flex flex-col">
                 <div v-if="e.salles">{{ e.salles.names }}</div>
                 <div v-if="e.vehicules.immat">{{ e.vehicules.immat }}</div>
