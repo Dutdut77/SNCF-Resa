@@ -219,16 +219,18 @@ const isHovered = (data) => {
   }
 };
 const hexToRgba = (hex, opacity) => {
-  // Supprimer le symbole '#' s'il est présent
-  hex = hex.replace("#", "");
+  if (hex) {
+    // Supprimer le symbole '#' s'il est présent
+    hex = hex.replace("#", "");
 
-  // Convertir en RGB
-  let r = parseInt(hex.substring(0, 2), 16);
-  let g = parseInt(hex.substring(2, 4), 16);
-  let b = parseInt(hex.substring(4, 6), 16);
+    // Convertir en RGB
+    let r = parseInt(hex.substring(0, 2), 16);
+    let g = parseInt(hex.substring(2, 4), 16);
+    let b = parseInt(hex.substring(4, 6), 16);
 
-  // Retourner la couleur en rgba avec l'opacité
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    // Retourner la couleur en rgba avec l'opacité
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
 };
 
 const sendResa = (e) => {
@@ -248,9 +250,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="scrollableDiv" class="w-full h-full grid" :style="{ gridTemplateColumns: 'auto repeat(7, 1fr)' }">
+  <div ref="scrollableDiv" class="w-full h-full grid overflow-auto" :style="{ gridTemplateColumns: 'auto repeat(7, 1fr)' }">
     <div class="sticky top-0 bg-slate-50 z-40"></div>
-    <div v-for="(day, index) in weekDays" :key="index" class="flex flex-col pb-4 border-b border-gray-300 text-center sticky top-0 bg-slate-50 z-40">
+    <div v-for="(day, index) in weekDays" :key="index" class="flex flex-col pb-4 border-b border-gray-300 text-center sticky top-0 bg-slate-50 z-40 min-w-20">
       <div class="uppercase text-sm text-gray-400 font-normal">{{ days[index] }}</div>
       <div class="text-xl font-bold text-gray-600">{{ day.getDate() }}</div>
     </div>
@@ -267,12 +269,14 @@ onMounted(() => {
       <div v-for="event in events" :key="event">
         <div v-for="e in event" :key="e">
           <div class="absolute pr-1 cursor-pointer top-0" :style="getEventStyle(e, events, index)" @mouseenter="handleMouseEnter(e.id)" @mouseleave="handleMouseLeave" @click="sendResa(e)">
-            <div :id="`id_${index}-${e.id}`" class="rounded-r-md w-full text-white h-full p-2 break-words overflow-hidden border-l-4 border-sncf-primary" :class="isHovered(`id_${index}-${e.id}`) ? 'bg-sncf-primary' : ''" :style="{ backgroundColor: !isHovered(`id_${index}-${e.id}`) ? hexToRgba(e.color, 0.75) : e.color, borderColor: e.color }">
+            <div :id="`id_${index}-${e.id}`" class="rounded-r-md w-full text-white h-full p-2 break-words overflow-hidden border-l-4 border-sncf-primary" :class="e.is_validated == 0 ? 'bg-hachure' : ''" :style="{ backgroundColor: !isHovered(`id_${index}-${e.id}`) ? hexToRgba(e.color, 0.75) : e.color, borderColor: e.color }">
               <div class="w-full h-full text-xs flex flex-col">
-                <div v-if="e.salles">{{ e.salles.names }}</div>
-                <div v-if="e.vehicules.immat">{{ e.vehicules.immat }}</div>
-                <div>{{ e.profiles.nom }} {{ e.profiles.prenom }}</div>
-                <div class="mt-auto ml-auto">{{ formatedDate(Number(e.debut)).heure }}h{{ formatedDate(Number(e.debut)).minute }} - {{ formatedDate(Number(e.fin)).heure }}h{{ formatedDate(Number(e.fin)).minute }}</div>
+                <div v-if="e.salles" class="uppercase">{{ e.salles.name }}</div>
+                <div v-if="e.salles" class="uppercase">{{ e.titre }}</div>
+                <div v-if="e.vehicules?.immat">{{ e.vehicules.immat }}</div>
+                <div v-if="e.vehicules">{{ e.vehicules.marque }} {{ e.vehicules.model }}</div>
+                <div class="mt-auto text-right">{{ e.profiles.nom }} {{ e.profiles.prenom }}</div>
+                <div class="text-right">{{ formatedDate(Number(e.debut)).heure }}h{{ formatedDate(Number(e.debut)).minute }} - {{ formatedDate(Number(e.fin)).heure }}h{{ formatedDate(Number(e.fin)).minute }}</div>
               </div>
             </div>
           </div>
@@ -281,3 +285,9 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.bg-hachure {
+  background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.2) 0, rgba(255, 255, 255, 0.2) 10px, transparent 10px, transparent 20px);
+}
+</style>

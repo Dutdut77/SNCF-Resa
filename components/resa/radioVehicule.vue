@@ -20,8 +20,9 @@ const props = defineProps({
 const emits = defineEmits(["update:model-value"]);
 
 setLoader(true);
-await getAllSecteurDispo(props.data.secteur.id);
-await getAllResaSecteurTime(props.data.secteur.id, props.data.dateDebut, props.data.dateFin);
+await getAllSecteurDispo(props.data.secteur);
+await getAllResaSecteurTime(props.data.secteur, props.data.dateDebut, props.data.dateFin);
+
 setLoader(false);
 
 const formRadio = computed({
@@ -44,13 +45,13 @@ const dispoVehicules = computed(() => {
 </script>
 
 <template>
-  <div class="w-full h-fit grid grid-cols-1 lg:grid-cols-2 gap-2 px-4">
+  <div class="w-full h-fit grid grid-cols-1 xl:grid-cols-2 gap-2 xl:px-4">
     <div v-if="dispoVehicules.length > 0" class="relative w-full h-fit" v-for="(vehicule, index) in dispoVehicules" :key="index">
-      <input :id="vehicule.id" type="radio" v-model="formRadio" :value="vehicule" class="hidden peer" />
+      <input :id="vehicule.id" type="radio" v-model="formRadio" :value="vehicule.id" class="hidden peer" />
       <label :for="vehicule.id" class="rounded-lg shadow-lg overflow-hidden flex flex-col items-center border justify-center bg-white hover:bg-opacity-75 peer-checked:shadow-lg peer-checked:text-white cursor-pointer transition">
         <div class="w-full cursor-pointer flex z-30">
-          <div class="w-2/5 border-r text-xl p-2 flex items-center justify-center">{{ vehicule.immat }}</div>
-          <div class="w-3/5 flex flex-col gap-3 p-2">
+          <div class="w-2/6 border-r text-lg p-1 flex items-center justify-center">{{ vehicule.immat }}</div>
+          <div class="w-4/6 flex flex-col gap-3 p-2">
             <p class="text-center font-medium text-lg">{{ vehicule.marque }} {{ vehicule.model }}</p>
             <div class="flex justify-center gap-4">
               <div class="flex gap-1 items-center text-sm"><Group class="w-4 h-4" />{{ vehicule.capacite }}</div>

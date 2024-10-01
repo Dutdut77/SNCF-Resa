@@ -9,6 +9,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 //     return navigateTo({ path: '/404' })
 // }
 
+
+
 if (to.meta.requiresAuth) {
 
         if (!session.value) {           

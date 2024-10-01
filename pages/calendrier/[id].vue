@@ -11,9 +11,10 @@ import VideoProj from "@/assets/svg/VideoProj.vue";
 import Jabra from "@/assets/svg/Jabra.vue";
 import WhiteBoard from "@/assets/svg/WhiteBoard.vue";
 import Webcam from "@/assets/svg/Webcam.vue";
+import ArrowRight from "@/assets/svg/ArrowRight.vue";
 
 definePageMeta({
-  requiresAuth: false,
+  requiresAuth: true,
   isAdmin: false,
   middleware: "secteur-exist",
 });
@@ -26,13 +27,14 @@ useHead({
 const route = useRoute();
 const userProfil = useState("userProfil");
 const { formatedDate, getWeek } = useFormatDate();
-const secteurs = useState("secteurs");
 
 const { setLoader } = useLoader();
+const { getMailSuperviseursSecteur, secteurs } = useSecteurs();
 const { getAllVehiculesBySecteur, allVehiculesSecteur } = useVehicules();
-const { getAllResaSecteurVehicule, allResaSecteurVehicule } = useResaVehicules();
+const { addResaVehicule, getAllResaSecteurVehicule, deleteResaVehicule, allResaSecteurVehicule } = useResaVehicules();
 const { getAllSallesBySecteur, allSallesSecteur } = useSalles();
-const { getAllResaSecteurSalle, allResaSecteurSalle } = useResaSalles();
+const { addResaSalles, getAllResaSecteurSalle, deleteResaSalle, allResaSecteurSalle } = useResaSalles();
+const { sendEmail } = useEmail();
 
 const selectedDate = ref({
   year: new Date().getFullYear(),
@@ -41,13 +43,17 @@ const selectedDate = ref({
 });
 const modalVehicule = ref(false);
 const modalSalle = ref(false);
+const modalResa = ref(false);
 const selectedVehicule = ref("");
 const selectedSalle = ref("");
+const selectedResa = ref("");
 const listeVehiculesSelected = ref([]);
 const listeSallesSelected = ref([]);
 const typeSelected = ref(1);
-const selectedResa = ref("");
+// const selectedResa = ref("");
 const sideModal = ref(false);
+const datePickerDebutIsVisible = ref(false);
+const datePickerFinIsVisible = ref(false);
 const colors = [
   "#0284c7", // Sky-600
   "#9333ea", // purple-600
@@ -63,25 +69,9 @@ const formValue = ref({
   type: typeSelected.value,
   dateDebut: "",
   dateFin: "",
-  year: new Date().getFullYear(),
-  month: new Date().getMonth(),
-  day: new Date().getDate(),
   vehicule: "",
   salle: "",
-});
-const formDateDebut = ref({
-  year: new Date().getFullYear(),
-  month: new Date().getMonth(),
-  day: new Date().getDate(),
-  heures: "",
-  minutes: "",
-});
-const formDateFin = ref({
-  year: new Date().getFullYear(),
-  month: new Date().getMonth(),
-  day: new Date().getDate(),
-  heures: "",
-  minutes: "",
+  titre: "",
 });
 
 setLoader(true);
@@ -107,6 +97,16 @@ const showModalSalle = (data) => {
   } else {
     selectedSalle.value = "";
     modalSalle.value = !modalSalle.value;
+  }
+};
+
+const showModalResa = (data) => {
+  if (data) {
+    selectedResa.value = data;
+    modalResa.value = !modalResa.value;
+  } else {
+    selectedResa.value = "";
+    modalResa.value = !modalResa.value;
   }
 };
 
@@ -180,14 +180,100 @@ const filteredReservations = computed(() => {
   }
 });
 
+const isAuthToReserv = computed(() => {
+  if (userProfil.value.secteur_auth) {
+    const array = userProfil.value.secteur_auth.split(",").map(Number);
+    return array.includes(formValue.value.secteur);
+  } else {
+    return false;
+  }
+});
+
+const validatedFormSalle = computed(() => {
+  return valideDate.value && formValue.value.titre != "" && formValue.value.salle != "" ? true : false;
+});
+
+const validatedFormVehicule = computed(() => {
+  return valideDate.value && formValue.value.vehicule != "" ? true : false;
+});
 const showSideModal = (e) => {
   if (e) {
-    selectedResa.value = e;
+    formValue.value.dateDebut = Number(e.debut);
+    formValue.value.dateFin = Number(e.fin);
+    if (typeSelected.value == 1) formValue.value.vehicule = e.vehicules.id;
+    if (typeSelected.value == 2) formValue.value.salle = e.salles.id;
     sideModal.value = true;
   } else {
-    selectedResa.value = "";
+    formValue.value = {
+      secteur: route.params.id,
+      type: typeSelected.value,
+      dateDebut: "",
+      dateFin: "",
+      vehicule: "",
+      salle: "",
+      titre: "",
+    };
     sideModal.value = !sideModal.value;
   }
+};
+const showDatePickerDebut = () => {
+  datePickerDebutIsVisible.value = !datePickerDebutIsVisible.value;
+};
+const showDatePickerFin = () => {
+  datePickerFinIsVisible.value = !datePickerFinIsVisible.value;
+};
+const valideDate = computed(() => {
+  return formValue.value.dateDebut !== "" && formValue.value.dateFin !== "" && formValue.value.dateDebut < formValue.value.dateFin;
+});
+
+const addResa = async () => {
+  if (isAuthToReserv.value) {
+    formValue.value.is_validated = 1;
+  } else {
+    formValue.value.is_validated = 0;
+  }
+
+  formValue.value.id_user = userProfil.value.id;
+
+  if (formValue.value.type == 2) {
+    setLoader(true);
+    if (!isAuthToReserv.value) {
+      const listes = await getMailSuperviseursSecteur(formValue.value.secteur);
+      await sendEmail(listes, userProfil.value, formValue.value);
+    }
+
+    await addResaSalles(formValue.value);
+    await getAllResaSecteurSalle(route.params.id);
+    showSideModal();
+    setLoader(false);
+  } else {
+    setLoader(true);
+    if (!isAuthToReserv.value) {
+      const listes = await getMailSuperviseursSecteur(formValue.value.secteur);
+      await sendEmail(listes, userProfil.value, formValue.value);
+    }
+
+    await addResaVehicule(formValue.value);
+    await getAllResaSecteurVehicule(route.params.id);
+
+    showSideModal();
+    setLoader(false);
+  }
+};
+const annulationSalle = async (id) => {
+  setLoader(true);
+  await deleteResaSalle(id);
+  await getAllResaSecteurSalle(route.params.id);
+  showModalResa();
+  setLoader(false);
+};
+
+const annulationVehicule = async (id) => {
+  setLoader(true);
+  await deleteResaVehicule(id);
+  await getAllResaSecteurVehicule(route.params.id);
+  showModalResa();
+  setLoader(false);
 };
 </script>
 
@@ -270,7 +356,7 @@ const showSideModal = (e) => {
       </div>
 
       <div class="w-full h-full border rounded-xl bg-slate-50 overflow-hidden p-4">
-        <ResaSemaine :startDate="dateIso" :allReservations="filteredReservations" class="overflow-auto" @selectedResa="showSideModal" />
+        <ResaSemaine :startDate="dateIso" :allReservations="filteredReservations" class="overflow-auto" @selectedResa="showModalResa" />
       </div>
     </div>
 
@@ -368,45 +454,251 @@ const showSideModal = (e) => {
       </template>
     </AppModal>
 
+    <AppModal v-if="modalResa" :closeModal="showModalResa">
+      <template #title>
+        <div class="w-full flex flex-col items-center text-xl font-medium text-slate-700">Réservation</div>
+      </template>
+      <template #default>
+        <div v-if="selectedResa.salles" class="text-gray-700">
+          <div v-if="selectedResa.is_validated == 0" class="absolute top-7 -left-7 bg-red-600 px-6 text-white -rotate-45 text-sm uppercase">non validée</div>
+          <div class="w-full flex flex-col xl:flex-row justify-between items-center gap-2">
+            <div class="w-full">
+              <p class="px-4 pb-2 text-center uppercase font-medium">Début</p>
+              <div class="w-full h-20 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden shadow-lg">
+                <div class="h-full w-full bg-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
+                  <div class="w-fitl h-full text-5xl font-traverse flex items-center justify-center pt-2">{{ formatedDate(Number(selectedResa.debut)).jour }}</div>
+                  <div class="w-fit h-full flex flex-col items-start justify-center">
+                    <div class="text-base uppercase">{{ formatedDate(Number(selectedResa.debut)).mois }}</div>
+                    <div class="text-base uppercase">{{ formatedDate(Number(selectedResa.debut)).annee }}</div>
+                  </div>
+                </div>
+                <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
+                  <p class="text-white text-xl font-bold">{{ formatedDate(Number(selectedResa.debut)).heure }}</p>
+                  <p class="text-white text-xl font-bold">h</p>
+                  <p class="text-white text-xl font-bold">{{ formatedDate(Number(selectedResa.debut)).minute }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="pt-8 hidden xl:block">
+              <ArrowRight class="w-6 h-6" />
+            </div>
+
+            <div class="w-full">
+              <p class="px-4 pb-2 text-center uppercase font-medium">Fin</p>
+              <div class="w-full h-20 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden shadow-lg">
+                <div class="h-full w-full bg-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
+                  <div class="w-fit h-full text-5xl font-traverse flex items-center justify-center pt-2">{{ formatedDate(Number(selectedResa.fin)).jour }}</div>
+                  <div class="w-fit h-full flex flex-col items-start justify-center">
+                    <div class="text-base uppercase">{{ formatedDate(Number(selectedResa.fin)).mois }}</div>
+                    <div class="text-base uppercase">{{ formatedDate(Number(selectedResa.fin)).annee }}</div>
+                  </div>
+                </div>
+                <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
+                  <p class="text-white text-xl font-bold">{{ formatedDate(Number(selectedResa.fin)).heure }}</p>
+                  <p class="text-white text-xl font-bold">h</p>
+                  <p class="text-white text-xl font-bold">{{ formatedDate(Number(selectedResa.fin)).minute }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-gradient-to-br from-slate-600 to-slate-900 p-4 rounded-lg border text-white text-sm mt-4">
+            <p class="text-lg text-center uppercase bg-white w-fit px-4 text-gray-700 rounded-lg mx-auto font-medium">Salle : {{ selectedResa.salles.name }}</p>
+            <div class="grid grid-cols-3 gap-2 pt-4">
+              <div class="flex gap-1">
+                <Group class="w-4 h-4" />
+                <p>{{ selectedResa.salles.capacite }}</p>
+              </div>
+              <div class="flex gap-1">
+                <Wifi class="w-4 h-4" />
+                <p :class="selectedResa.salles.wifi ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">Wifi</p>
+              </div>
+              <div class="flex gap-1">
+                <Pmr class="w-4 h-4" />
+                <p :class="selectedResa.salles.pmr ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">PMR</p>
+              </div>
+              <div class="flex gap-1">
+                <Clim class="w-4 h-4" />
+                <p :class="selectedResa.salles.clim ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">Clim</p>
+              </div>
+              <div class="flex gap-1">
+                <VideoProj class="w-4 h-4" />
+                <p :class="selectedResa.salles.video_proj ? '' : 'line-through decoration-white  decoration-2  text-slate-300 '">VP</p>
+              </div>
+              <div class="flex gap-1">
+                <Jabra class="w-4 h-4" />
+                <p :class="selectedResa.salles.jabra ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">Jabra</p>
+              </div>
+              <div class="flex gap-1">
+                <WhiteBoard class="w-4 h-4" />
+                <p :class="selectedResa.salles.white_board ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">Tableau</p>
+              </div>
+              <div class="flex gap-1">
+                <Webcam class="w-4 h-4" />
+                <p :class="selectedResa.salles.webcam ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">Webcam</p>
+              </div>
+            </div>
+          </div>
+          <div class="text-gray-700 text-sm flex gap-2 pt-4">
+            <p class="font-medium">Qui a réservé :</p>
+            <p>{{ selectedResa.profiles.nom }} {{ selectedResa.profiles.prenom }}</p>
+          </div>
+          <div class="text-gray-700 text-sm flex gap-2 py-2">
+            <p class="font-medium">Objet de la réservation :</p>
+            <p>{{ selectedResa.titre }}</p>
+          </div>
+          <div v-if="selectedResa.id_user == userProfil.id || userProfil.secteur_admin == route.params.id" class="w-full flex pt-2 pb-4">
+            <AppButtonValidated class="w-fit ml-auto text-sm" theme="delete" @click="annulationSalle(selectedResa.id)"> <template #default> Annuler la réservation</template> </AppButtonValidated>
+          </div>
+        </div>
+        <div v-if="selectedResa.vehicules" class="text-gray-700">
+          <div v-if="selectedResa.is_validated == 0" class="absolute top-7 -left-7 bg-red-600 px-6 text-white -rotate-45 text-sm uppercase">non validée</div>
+          <div class="w-full flex flex-col xl:flex-row justify-between items-center gap-2">
+            <div class="w-full">
+              <p class="px-4 pb-2 text-center uppercase font-medium">Début</p>
+              <div class="w-full h-20 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden shadow-lg">
+                <div class="h-full w-full bg-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
+                  <div class="w-fitl h-full text-5xl font-traverse flex items-center justify-center pt-2">{{ formatedDate(Number(selectedResa.debut)).jour }}</div>
+                  <div class="w-fit h-full flex flex-col items-start justify-center">
+                    <div class="text-base uppercase">{{ formatedDate(Number(selectedResa.debut)).mois }}</div>
+                    <div class="text-base uppercase">{{ formatedDate(Number(selectedResa.debut)).annee }}</div>
+                  </div>
+                </div>
+                <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
+                  <p class="text-white text-xl font-bold">{{ formatedDate(Number(selectedResa.debut)).heure }}</p>
+                  <p class="text-white text-xl font-bold">h</p>
+                  <p class="text-white text-xl font-bold">{{ formatedDate(Number(selectedResa.debut)).minute }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="pt-8 hidden xl:block">
+              <ArrowRight class="w-6 h-6" />
+            </div>
+
+            <div class="w-full">
+              <p class="px-4 pb-2 text-center uppercase font-medium">Fin</p>
+              <div class="w-full h-20 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden shadow-lg">
+                <div class="h-full w-full bg-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
+                  <div class="w-fit h-full text-5xl font-traverse flex items-center justify-center pt-2">{{ formatedDate(Number(selectedResa.fin)).jour }}</div>
+                  <div class="w-fit h-full flex flex-col items-start justify-center">
+                    <div class="text-base uppercase">{{ formatedDate(Number(selectedResa.fin)).mois }}</div>
+                    <div class="text-base uppercase">{{ formatedDate(Number(selectedResa.fin)).annee }}</div>
+                  </div>
+                </div>
+                <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
+                  <p class="text-white text-xl font-bold">{{ formatedDate(Number(selectedResa.fin)).heure }}</p>
+                  <p class="text-white text-xl font-bold">h</p>
+                  <p class="text-white text-xl font-bold">{{ formatedDate(Number(selectedResa.fin)).minute }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="w-full flex flex-col gap-3 p-4 text-white bg-gradient-to-br from-slate-600 to-slate-900 rounded-lg border mt-4">
+            <div class="text-lg text-center uppercase bg-white w-fit px-4 text-gray-700 rounded-lg mx-auto font-medium">
+              <p>{{ selectedResa.vehicules.immat }}</p>
+              <p>{{ selectedResa.vehicules.marque }} {{ selectedResa.vehicules.model }}</p>
+            </div>
+            <div class="flex justify-center gap-4 py-4">
+              <div class="flex gap-1 items-center text-sm"><Group class="w-4 h-4" />{{ selectedResa.vehicules.capacite }}</div>
+              <div v-if="selectedResa.vehicules.id_carburant == 1" class="flex gap-1 items-center text-sm">
+                <Electric class="w-4 h-4" />
+                <p class="first-letter:uppercase">électrique</p>
+              </div>
+
+              <div v-if="selectedResa.vehicules.id_carburant == 2" class="flex gap-1 items-center text-sm"><Fuel class="w-4 h-4" />Diesel</div>
+              <div v-if="selectedResa.vehicules.id_carburant == 3" class="flex gap-1 items-center text-sm"><Fuel class="w-4 h-4" />Essence</div>
+
+              <div v-if="selectedResa.vehicules.vitesse == 0" class="flex gap-1 items-center text-sm">
+                <div class="w-4 h-4 border rounded flex items-center justify-center">A</div>
+                Auto
+              </div>
+
+              <div v-if="selectedResa.vehicules.vitesse == 1" class="flex gap-1 items-center text-sm"><Manuel class="w-4 h-4" />Manuel</div>
+            </div>
+          </div>
+          <div class="text-gray-700 text-sm flex gap-2 pt-4">
+            <p class="font-medium">Qui a réservé :</p>
+            <p>{{ selectedResa.profiles.nom }} {{ selectedResa.profiles.prenom }}</p>
+          </div>
+
+          <div v-if="selectedResa.id_user == userProfil.id || userProfil.secteur_admin == route.params.id" class="w-full flex pt-2 pb-4">
+            <AppButtonValidated class="w-fit ml-auto text-sm" theme="delete" @click="annulationVehicule(selectedResa.id)"> <template #default> Annuler la réservation</template> </AppButtonValidated>
+          </div>
+        </div>
+      </template>
+    </AppModal>
+
     <AppModalSide :sideModal="sideModal" :closeSideModal="showSideModal">
       <template #default>
         <AppModalSideContent v-if="sideModal" :closeSideModal="showSideModal">
           <template #header>
-            <div v-if="selectedResa == ''">
-              <p class="text-xl font-medium text-center">{{ secteurActive.name }}</p>
-              <p>Nouvelle réservation</p>
-            </div>
-            <div v-else>
-              <p class="text-xl font-medium text-center">{{ secteurActive.name }}</p>
+            <div class="w-full text-center">
+              <p class="text-xl font-medium">{{ secteurActive.name }}</p>
               <p>Réservation</p>
             </div>
           </template>
           <template #default>
-            <div class="h-full" v-if="formValue.type == 1">
-              <div class="absolute inset-0 backdrop-blur-sm">
-                <div class="w-full h-full flex justify-center items-center">
-                  <div class="border rounded-xl overflow-hidden border-gray-300 shadow-lg">
-                    <AppDateTimePicker class="w-fit" v-model="formDateDebut" />
-                    <div class="flex gap-4 p-4 text-gray-600 text-base">
-                      <p class="ml-auto cursor-pointer hover:font-medium duration-300">Annuler</p>
-                      <p class="cursor-pointer hover:font-medium duration-300">Ok</p>
+            <div class="uppercase text-base font-medium py-2 border-b text-left pt-8">Période</div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-3 text-sm text-gray-700">
+              <div class="w-full break-inside-avoid">
+                <label for="dateDebut" class="block text-sm">Date début :</label>
+                <div class="mt-1">
+                  <div class="w-full py-2 px-4 border border-gray-300 text-sm text-gray-700 rounded-md cursor-pointer" @click="showDatePickerDebut()">
+                    <div v-if="formValue.dateDebut" class="first-letter:uppercase">{{ formatedDate(formValue.dateDebut).jourName }} {{ formatedDate(formValue.dateDebut).jour }} {{ formatedDate(formValue.dateDebut).mois }} {{ formatedDate(formValue.dateDebut).annee }} - {{ formatedDate(formValue.dateDebut).heure }}h{{ formatedDate(formValue.dateDebut).minute }}</div>
+                    <div v-else class="text-gray-400">Selectionnez une date</div>
+                  </div>
+                </div>
+                <div v-if="datePickerDebutIsVisible" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-40">
+                  <div class="w-full h-full flex justify-center items-center">
+                    <div class=" ">
+                      <AppDateTimePicker class="w-fit" v-model="formValue.dateDebut" :action="showDatePickerDebut" />
                     </div>
                   </div>
                 </div>
               </div>
-
-              <!-- <div class="w-full h-fit flex flex-col justify-center py-6">
-                <ResaRadioVehicule :data="formValue" v-model="formValue.vehicule" />
-              </div> -->
+              <div class="w-full break-inside-avoid">
+                <label for="dateFin" class="block text-sm">Date fin :</label>
+                <div class="mt-1">
+                  <div class="w-full py-2 px-4 border border-gray-300 text-sm text-gray-700 rounded-md cursor-pointer" @click="showDatePickerFin()">
+                    <div v-if="formValue.dateFin" class="first-letter:uppercase">{{ formatedDate(formValue.dateFin).jourName }} {{ formatedDate(formValue.dateFin).jour }} {{ formatedDate(formValue.dateFin).mois }} {{ formatedDate(formValue.dateFin).annee }} - {{ formatedDate(formValue.dateFin).heure }}h{{ formatedDate(formValue.dateFin).minute }}</div>
+                    <div v-else class="text-gray-400">Selectionnez une date</div>
+                  </div>
+                </div>
+                <div v-if="datePickerFinIsVisible" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-40 overscroll-none">
+                  <div class="w-full h-full flex justify-center items-center">
+                    <div class=" ">
+                      <AppDateTimePicker class="w-fit" v-model="formValue.dateFin" :action="showDatePickerFin" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div v-if="formValue.type == 2">
+
+            <div v-if="formValue.type == 1" class="h-full w-full pt-8 xl:pt-12">
+              <div class="uppercase text-base font-medium py-2 border-b text-left">Véhicules disponible</div>
+              <div v-if="valideDate" class="w-full h-fit flex flex-col justify-center py-6">
+                <ResaRadioVehicule :data="formValue" v-model="formValue.vehicule" />
+              </div>
+              <div v-else class="py-6">Aucun véhicule de disponible pour ces dates.</div>
+            </div>
+            <div v-if="formValue.type == 2" class="h-full w-full pt-8">
+              <div class="uppercase text-base font-medium py-2 border-b text-left">Divers</div>
+              <AppInput name="titre" type="text" title="Objet de la réunion :" placeholder="" v-model="formValue.titre" class="pt-4 pb-6" />
+
+              <div class="uppercase text-base font-medium py-2 border-b text-left">Salles disponible</div>
               <div class="w-full h-fit flex flex-col justify-center py-6">
-                <ResaRadioSalle :data="formValue" v-model="formValue.salle" />
+                <div v-if="valideDate" class="w-full h-fit flex flex-col justify-center">
+                  <ResaRadioSalle :data="formValue" v-model="formValue.salle" />
+                </div>
+                <div v-else class="font-normal text-sm text-gray-600">Aucune salle de disponible pour ces dates.</div>
               </div>
             </div>
           </template>
           <template #footer>
-            <AppButtonValidated class="w-full md:w-32" theme="cancel" @click="showSideModal()"> <template #default> Annuler </template> </AppButtonValidated>
+            <div class="w-full flex gap-4">
+              <AppButtonValidated class="w-full ml-auto md:w-32" theme="cancel" @click="showSideModal()"> <template #default> Annuler </template> </AppButtonValidated>
+              <AppButtonValidated v-if="formValue.type == 1" class="w-full md:w-32" theme="success" :validated="validatedFormVehicule" @click="addResa()"> <template #default> Enregistrer </template> </AppButtonValidated>
+              <AppButtonValidated v-if="formValue.type == 2" class="w-full md:w-32" theme="success" :validated="validatedFormSalle" @click="addResa()"> <template #default> Enregistrer </template> </AppButtonValidated>
+            </div>
           </template>
         </AppModalSideContent>
       </template>

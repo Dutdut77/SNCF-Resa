@@ -3,8 +3,13 @@ import User from "@/assets/svg/User.vue";
 import Right from "@/assets/svg/Right.vue";
 
 const route = useRoute();
+const { setLoader } = useLoader();
+const { getAll, secteurs } = useSecteurs();
 
-const secteurs = useState("secteurs");
+setLoader(true);
+await getAll();
+setLoader(false);
+
 const showSubmenuSecteurs = ref(false);
 
 const secteurActive = computed(() => {
@@ -22,7 +27,7 @@ const secteurActive = computed(() => {
 
     <div class="relative w-full h-full flex flex-col items-center justify-center">
       <div class="relative w-fit h-full flex flex-col items-center justify-center cursor-pointer" @click="showSubmenuSecteurs = !showSubmenuSecteurs">
-        <div class="font-bold uppercase text-xl">{{ secteurActive.name }}</div>
+        <div class="font-bold uppercase text-xl">{{ secteurActive?.name }}</div>
         <Right class="absolute bottom-0 size-6 rotate-90" />
 
         <div v-if="showSubmenuSecteurs" class="absolute -bottom-44 z-40 p-4 w-72 bg-gradient-to-br from-slate-600 to-slate-900 border rounded-xl grid grid-cols-2 gap-2 shadow-lg">

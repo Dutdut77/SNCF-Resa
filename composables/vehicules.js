@@ -23,6 +23,7 @@ export const useVehicules = () => {
 
 
     const getAllSecteurDispo = async (id) => {
+
         try {
             const { data, error } = await supabase
             .from('vehicules')

@@ -84,7 +84,7 @@ export const useResaVehicules = () => {
             const { data : resa, error } = await supabase
             .from('resa_vehicules')
             .insert([
-              { id_vehicule : form.vehicule.id, id_secteur : form.secteur.id, id_user : form.id_user, debut : form.dateDebut, fin : form.dateFin, is_validated : form.is_validated },
+              { id_vehicule : form.vehicule, id_secteur : form.secteur, id_user : form.id_user, debut : form.dateDebut, fin : form.dateFin, is_validated : form.is_validated },
             ])
             .select() 
             if (error) throw error;
