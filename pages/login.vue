@@ -1,114 +1,159 @@
 <script setup>
+const { addToast } = useToast();
+const { setLoader } = useLoader();
+const { login, signup } = useAuth();
+const supabase = useSupabaseClient();
+const route = useRoute();
+
 definePageMeta({
   requiresAuth: false,
   isAdmin: false,
   layout: false,
 });
 useHead({
-  title: "Login - Résa Pro",
-  description: "Page d'authentification",
+  title: "Résa Pro - Login",
+  description: "Page de connexion",
 });
 
-const { login } = useAuth();
-const { setLoader } = useLoader();
-const { addToast } = useToast();
-const supabase = useSupabaseClient();
-
+const email = ref("");
+const password = ref("");
 const formValue = ref({
+  nom: "",
+  prenom: "",
   email: "",
   password: "",
 });
-const modalPassword = ref(false);
-const emailResetPassword = ref("");
+const viewSignup = ref(false);
 
-const validated = computed(() => {
-  return formValue.value.email != "" && formValue.value.password != "" ? true : false;
+const validatedSignin = computed(() => {
+  return email.value != "" && password.value != "" ? true : false;
 });
 
-const validatedEmail = computed(() => {
-  return emailResetPassword.value != "" ? true : false;
+const validatedSignup = computed(() => {
+  return formValue.value.nom != "" && formValue.value.prenom != "" && formValue.value.email != "" && formValue.value.password != "" ? true : false;
 });
 
-const goToSignup = async () => {
-  await navigateTo("/signup");
+const isEmailValid = (email) => {
+  return email.includes("@") && email.endsWith("reseau.sncf.fr");
 };
 
 const signIn = async () => {
-  setLoader(true);
-  await login(formValue.value);
-  await navigateTo("/home");
-  setLoader(false);
-};
-
-const showModalPassword = () => {
-  modalPassword.value = !modalPassword.value;
-};
-
-const sendResetMdp = async () => {
-  try {
+  if (password.value.length < 8) {
+    addToast({ type: "Error", title: "Mot de passe non conforme", message: "Votre mot de passe doit contenir au minimum 8 charactères" });
+  } else if (!isEmailValid(email.value)) {
+    addToast({ type: "Error", title: "Email non conforme", message: "Votre adresse doit contenir un @ et se terminer par reseau.sncf.fr" });
+  } else {
     setLoader(true);
-    const { data, error } = await supabase.auth.resetPasswordForEmail(emailResetPassword.value, {
-      redirectTo: "http://localhost:3000/resetMdp",
-    });
-    modalPassword.value = false;
-    setLoader(false);
-
-    addToast({ type: "Success", title: "Demande envoyé", message: "Un email vous à été envoyé." });
-  } catch (err) {
-    addToast({ type: "Error", title: "Problème lors de la modification du mot de passe.", message: err.message });
-
+    await login({ email: email.value, password: password.value });
+    if (route.query.redirect) {
+      await navigateTo(route.query.redirect);
+    } else {
+      await navigateTo("/");
+    }
     setLoader(false);
   }
+};
+
+const register = async () => {
+  console.log(route);
+  if (formValue.value.password.length < 8) {
+    addToast({ type: "Error", title: "Mot de passe non conforme", message: "Votre mot de passe doit contenir au minimum 8 charactères" });
+  } else if (!isEmailValid(formValue.value.email)) {
+    addToast({ type: "Error", title: "Email non conforme", message: "Votre adresse doit contenir un @ et se terminer par reseau.sncf.fr" });
+  } else {
+    setLoader(true);
+    await signup(formValue.value);
+    if (route.query.redirect) {
+      await navigateTo(route.query.redirect);
+    } else {
+      await navigateTo("/");
+    }
+    setLoader(false);
+  }
+};
+const showSignup = () => {
+  viewSignup.value = !viewSignup.value;
 };
 </script>
 
 <template>
-  <section class="relative h-dvh w-full text-gray-50 flex flex-col bg-slate-100 pt-12 overflow-auto">
-    <img class="absolute top-12 right-8 w-14" src="../assets/img/logo.png" alt="" />
-
-    <p class="font-bold text-2xl text-gray-700 px-8">Authentification</p>
-
-    <form class="mb-0 space-y-6" @submit.prevent="signIn()">
-      <div class="flex flex-col gap-4 pt-10 px-8">
-        <AppInput name="email" type="email" title="Email : " placeholder="Entrez votre email professionel" v-model="formValue.email" />
-        <div class="flex flex-col">
-          <AppInput name="password" type="password" title="Mot de passe : " placeholder="" v-model="formValue.password" />
-          <p class="text-xs ml-auto pt-2.5 text-gray-700 cursor-pointer" @click="showModalPassword()">Mot de passe oublié ?</p>
-        </div>
-        <AppButtonCarre class="ml-auto my-4" direction="" :validated="validated" type="submit"> <template #default> Se connecter </template> </AppButtonCarre>
+  <section class="relative h-dvh w-dvw overflow-hidden flex">
+    <div v-if="viewSignup" class="relative w-full lg:w-1/2 h-full flex flex-col bg-slate-50">
+      <div class="absolute top-6 right-6">
+        <img class="h-12" src="@/assets/img/logo.png" alt="Logo SNCF" />
       </div>
-    </form>
-    <div class="relative mt-auto">
-      <svg class="absolute bottom-14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-        <path fill="#0284c7" fill-opacity="1" d="M0,32L48,32C96,32,192,32,288,80C384,128,480,224,576,245.3C672,267,768,213,864,208C960,203,1056,245,1152,234.7C1248,224,1344,160,1392,128L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-      </svg>
-      <svg class="absolute bottom-14 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-        <path fill="#0284c7" fill-opacity="1" d="M0,288L48,282.7C96,277,192,267,288,224C384,181,480,107,576,80C672,53,768,75,864,117.3C960,160,1056,224,1152,245.3C1248,267,1344,245,1392,234.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-      </svg>
-      <svg class="absolute bottom-14 opacity-25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-        <path fill="#0284c7" fill-opacity="1" d="M0,128L48,138.7C96,149,192,171,288,154.7C384,139,480,85,576,80C672,75,768,117,864,117.3C960,117,1056,75,1152,85.3C1248,96,1344,160,1392,192L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-      </svg>
-      <div class="h-16 w-full bg-[#0284c7] px-4"></div>
-      <p class="absolute bottom-0 left-0 right-0 text-center text-gray-50 text-sm p-4 cursor-pointer pb-8" @click="goToSignup()">Pas de compte ? Inscription par ici !</p>
+
+      <form class="h-full px-6 pt-4 flex flex-col justify-center items-center text-gray-700 gap-4" @submit.prevent="register()">
+        <div class="text-2xl font-Medium w-full xl:w-1/2 cursor-default">
+          <p>Enregistrement Résa Pro</p>
+          <p class="text-sm italic text-gray-500">Votre solution de réservation en ligne pour véhicules et salles</p>
+        </div>
+
+        <div class="w-full xl:w-1/2 flex flex-col gap-4 pt-4">
+          <AppInput name="nom" type="text" title="Nom : " placeholder="Entrez votre nom" v-model="formValue.nom" />
+          <AppInput name="prenom" type="text" title="Prénom : " placeholder="Entrez votre prénom" v-model="formValue.prenom" />
+          <AppInput name="email" type="text" title="Email : " placeholder="Entrez votre email professionnel" v-model="formValue.email" />
+          <div class="flex flex-col">
+            <AppInput name="password" type="password" title="Mot de passe : " placeholder="Minimun 8 charactères" v-model="formValue.password" />
+          </div>
+
+          <AppButtonCarre class="ml-auto my-4" direction="" :validated="validatedSignup"> <template #default> Se connecter </template> </AppButtonCarre>
+        </div>
+        <div class="w-full xl:w-1/2">
+          <p class="text-center text-gray-500 text-sm cursor-pointer w-fit mx-auto hover:font-medium hover:text-gray-800 duration-300" @click="showSignup()">Déjà un compte ? Par ici</p>
+        </div>
+      </form>
+
+      <div class="text-xs text-gray-600 cursor-default text-center p-4">Copyright © 2024 - GRANDMAIRE Nicolas</div>
     </div>
 
-    <AppModal v-if="modalPassword" :closeModal="showModalPassword">
-      <template #title>
-        <span class="text-lg text-gray-700 font-medium text-center">Pour réinitialiser votre mot de passe, merci de renseigner votre adressse mail professionel.</span>
-      </template>
-      <template #default>
-        <div class="w-full">
-          <AppInput name="email" type="email" title="Email : " v-model="emailResetPassword" />
+    <div class="hidden lg:block absolute top-0 bottom-0 w-1/2 z-40 transition-all duration-500" :class="viewSignup ? ' translate-x-full ' : ' translate-x-0 '">
+      <div class="w-full h-full flex flex-col items-center gap-8 justify-center bg-gradient-to-br from-slate-600 to-slate-900">
+        <div class="relative w-[150px] h-[150px] flex justify-center items-center">
+          <span class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-slate-700 to-slate-500 rotate-45 rounded-[38%_62%_63%_37%_/_41%_44%_56%_59%]"></span>
+          <span class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-slate-700 to-slate-500 opacity-25 scale-110 rotate-[60deg] rounded-[38%_62%_63%_37%_/_41%_44%_56%_59%]"></span>
+          <span class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-slate-700 to-slate-500 opacity-50 scale-110 rounded-[38%_62%_63%_37%_/_41%_44%_56%_59%]"></span>
+          <span class="absolute top-0 left-0 w-full h-full border rounded-[38%_62%_63%_37%_/_41%_44%_56%_59%]"></span>
+
+          <div class="uppercase font-bold text-4xl z-10 text-white text-center flex flex-col">
+            <div class="font-traverse">résa</div>
+            <div class="ml-auto text-sm bg-white px-3 text-slate-700 rounded w-fit -mt-2">pro</div>
+          </div>
+        </div>
+        <div class="w-3/4 text-white dark:text-gray-200 text-justify">
+          Simplifiez vos réservations grâce à Resa Pro, une plateforme dédiée aux professionnels pour gérer vos réservations de véhicules et de salles en toute simplicité. Que vous ayez besoin d'une salle pour une réunion importante ou d'un véhicule pour vos déplacements, Resa Pro vous permet de réserver rapidement, suivre vos réservations en temps réel et optimiser la gestion de vos ressources.
+        </div>
+      </div>
+    </div>
+
+    <div v-if="!viewSignup" class="relative w-full lg:w-1/2 h-full flex flex-col ml-auto bg-slate-50">
+      <div class="absolute top-6 right-6">
+        <img class="h-12" src="@/assets/img/logo.png" alt="Logo SNCF" />
+      </div>
+
+      <form class="h-full px-6 pt-4 flex flex-col justify-center items-center text-gray-700 gap-4" @submit.prevent="signIn()">
+        <div class="text-2xl font-Medium w-full xl:w-1/2 cursor-default">
+          <p>Bienvenue sur Résa Pro</p>
+          <p class="text-sm italic text-gray-500">Votre solution de réservation en ligne pour véhicules et salles</p>
         </div>
 
-        <span class="text-base text-cyan-700 font-bold"> </span>
-      </template>
-      <template #footer>
-        <div class="flex justify-end gap-4">
-          <AppButtonValidated class="w-32" theme="cancel" @click="showModalPassword()"> <template #default> Annuler </template> </AppButtonValidated>
-          <AppButtonValidated class="w-32" theme="" :validated="validatedEmail" @click="sendResetMdp()"> <template #default> Envoyer </template> </AppButtonValidated>
+        <div class="w-full xl:w-1/2 flex flex-col gap-4 pt-2">
+          <AppInput class="" name="Email" type="text" title="Email professionnel : " placeholder="Entrez votre email SNCF" v-model="email" />
+          <AppInput name="password" type="password" title="Mot de passe : " placeholder="Entrez votre mot de passe" v-model="password" />
         </div>
-      </template>
-    </AppModal>
+
+        <div class="w-full xl:w-1/2 flex gap-4">
+          <AppButtonCarre class="ml-auto" theme="primary" :validated="validatedSignin"> <template #default> Se connecter </template> </AppButtonCarre>
+        </div>
+        <div class="w-full xl:w-1/2">
+          <div class="text-end text-gray-500 text-sm cursor-pointer w-fit ml-auto hover:font-medium hover:text-gray-800 duration-300"><p @click="showModalPassword()">Mot de passe oublié ?</p></div>
+          <div class="text-end text-gray-500 text-sm cursor-pointer w-fit ml-auto hover:font-medium hover:text-gray-800 duration-300"><p @click="showSignup()">Pas de compte ? Inscription par ici !</p></div>
+        </div>
+      </form>
+
+      <div class="text-xs text-gray-600 cursor-default text-center p-4">Copyright © 2024 - GRANDMAIRE Nicolas</div>
+    </div>
   </section>
 </template>
+
+<style></style>
