@@ -54,7 +54,6 @@ const hours = [
 ];
 const hoveredCard = ref(null);
 const scrollableDiv = ref(null);
-
 const { formatedDate, getWeek } = useFormatDate();
 
 // Fonction pour obtenir le premier jour de la semaine (lundi)
@@ -247,14 +246,25 @@ onMounted(() => {
     scrollableDiv.value.scrollTop = scrollTop;
   }
 });
+
+const isJourJ = (date) => {
+  const day = new Date(date);
+  const today = new Date();
+
+  return (
+    day.getFullYear() === today.getFullYear() &&
+    day.getMonth() === today.getMonth() && // Les mois sont basés sur 0 (janvier = 0)
+    day.getDate() === today.getDate()
+  );
+};
 </script>
 
 <template>
   <div ref="scrollableDiv" class="w-full h-full grid overflow-auto" :style="{ gridTemplateColumns: 'auto repeat(7, 1fr)' }">
     <div class="sticky top-0 bg-slate-50 z-40"></div>
     <div v-for="(day, index) in weekDays" :key="index" class="flex flex-col pb-4 border-b border-gray-300 text-center sticky top-0 bg-slate-50 z-40 min-w-20">
-      <div class="uppercase text-sm text-gray-400 font-normal">{{ days[index] }}</div>
-      <div class="text-xl font-bold text-gray-600">{{ day.getDate() }}</div>
+      <div class="uppercase text-sm font-normal" :class="isJourJ(day) ? 'text-sky-500' : 'text-gray-600'">{{ days[index] }}</div>
+      <div class="text-xl font-bold" :class="isJourJ(day) ? 'text-sky-500' : 'text-gray-600'">{{ day.getDate() }}</div>
     </div>
 
     <!-- Colonne des heures -->

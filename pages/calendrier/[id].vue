@@ -12,6 +12,8 @@ import Jabra from "@/assets/svg/Jabra.vue";
 import WhiteBoard from "@/assets/svg/WhiteBoard.vue";
 import Webcam from "@/assets/svg/Webcam.vue";
 import ArrowRight from "@/assets/svg/ArrowRight.vue";
+import Left from "@/assets/svg/Left.vue";
+import Right from "@/assets/svg/Right.vue";
 
 definePageMeta({
   requiresAuth: true,
@@ -291,6 +293,27 @@ const updateVehicule = async (data) => {
   showSideModal();
   setLoader(false);
 };
+
+const addSemaine = () => {
+  // Créer une instance de Date à partir de l'objet
+  const currentDate = new Date(selectedDate.value.year, selectedDate.value.month - 1, selectedDate.value.day);
+  // Ajouter les jours
+  currentDate.setDate(currentDate.getDate() + 7);
+  // Mettre à jour l'objet avec la nouvelle date
+  selectedDate.value.year = currentDate.getFullYear();
+  selectedDate.value.month = currentDate.getMonth() + 1; // getMonth() renvoie un index (0 pour janvier)
+  selectedDate.value.day = currentDate.getDate();
+};
+const subSemaine = () => {
+  // Créer une instance de Date à partir de l'objet
+  const currentDate = new Date(selectedDate.value.year, selectedDate.value.month - 1, selectedDate.value.day);
+  // Ajouter les jours
+  currentDate.setDate(currentDate.getDate() - 7);
+  // Mettre à jour l'objet avec la nouvelle date
+  selectedDate.value.year = currentDate.getFullYear();
+  selectedDate.value.month = currentDate.getMonth() + 1; // getMonth() renvoie un index (0 pour janvier)
+  selectedDate.value.day = currentDate.getDate();
+};
 </script>
 
 <template>
@@ -367,7 +390,7 @@ const updateVehicule = async (data) => {
         <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-4 py-2">
           <div class="font-medium text-gray-50">Semaine {{ weekNumber }}</div>
         </div>
-
+        <div class="flex gap-4"><Left class="size-8 cursor-pointer" @click="subSemaine()" /><Right class="size-8 cursor-pointer" @click="addSemaine()" /></div>
         <AppButtonValidated class="w-fit px-4 text-sm lg:ml-auto font-normal" theme="" @click="showSideModal()"> <template #default> Nouvelle Réservation </template> </AppButtonValidated>
       </div>
 
@@ -479,8 +502,7 @@ const updateVehicule = async (data) => {
               <p>Réservation</p>
             </div>
           </template>
-          <template #default
-            >{{ formValue }}
+          <template #default>
             <div class="uppercase text-base font-medium py-2 border-b text-left pt-8">Période</div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-3 text-sm text-gray-700">
               <div class="w-full break-inside-avoid">

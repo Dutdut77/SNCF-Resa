@@ -2,24 +2,12 @@
 import Left from "@/assets/svg/Left.vue";
 import Right from "@/assets/svg/Right.vue";
 
-const props = defineProps({
-  dayIsReserved: {
-    type: Array,
-    default: [],
-  },
+const formValue = defineModel();
 
-  modelValue: {
-    type: Object,
-    required: true,
-  },
-});
-
-const emit = defineEmits(["update:modelValue"]);
 const { formatedDate } = useFormatDate();
 
-const year = ref(props.modelValue.year);
-const month = ref(props.modelValue.month);
-const day = ref(props.modelValue.day);
+const year = ref(formValue.value.year);
+const month = ref(formValue.value.month);
 
 const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Décembre"];
 
@@ -27,7 +15,7 @@ const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet"
 const days = ["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"];
 
 const selectedDateFormat = computed(() => {
-  const dateObject = new Date(props.modelValue.year, props.modelValue.month, props.modelValue.day);
+  const dateObject = new Date(formValue.value.year, formValue.value.month, formValue.value.day);
   return formatedDate(dateObject.getTime());
 });
 
@@ -43,25 +31,21 @@ const datesInMonth = computed(() => {
 });
 
 const colorOption = (num) => {
-  if (year.value == props.modelValue.year && month.value == props.modelValue.month && day.value == num) {
+  if (year.value == formValue.value.year && month.value == formValue.value.month && formValue.value.day == num) {
     return "bg-sncf-primary text-white font-medium  ";
   }
 };
 
-const isReserved = (num) => {
-  const result = props.dayIsReserved.some((date) => date.year === year.value && date.month === month.value && date.day === num);
-  return result;
-};
-const colorOptionIsReserved = (num) => {
-  if (year.value == props.modelValue.year && month.value == props.modelValue.month && day.value == num) {
-    return "bg-white ";
-  }
+const selectDay = (selectedDay) => {
+  formValue.value.day = selectedDay;
+  formValue.value.month = month.value;
+  formValue.value.year = year.value;
 };
 
-const selectDay = (selectedDay) => {
-  day.value = selectedDay;
-  emit("update:modelValue", { year: year.value, month: month.value, day: selectedDay });
-};
+watch(formValue.value, async (newValue, oldValue) => {
+  month.value = formValue.value.month;
+  year.value = formValue.value.year;
+});
 </script>
 
 <template>
@@ -90,8 +74,6 @@ const selectDay = (selectedDay) => {
             <div class="rounded-full w-6 h-6 flex items-center justify-center" :class="colorOption(date)">
               {{ date }}
             </div>
-
-            <div v-if="isReserved(date)" class="absolute bottom-0.5 h-1 w-1 rounded-full bg-sky-500"></div>
           </div>
         </div>
       </div>
