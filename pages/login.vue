@@ -24,6 +24,8 @@ const formValue = ref({
   password: "",
 });
 const viewSignup = ref(false);
+const modalPassword = ref(false);
+const emailResetPassword = ref("");
 
 const validatedSignin = computed(() => {
   return email.value != "" && password.value != "" ? true : false;
@@ -73,6 +75,27 @@ const register = async () => {
 const showSignup = () => {
   viewSignup.value = !viewSignup.value;
 };
+
+const showModalPassword = () => {
+  modalPassword.value = !modalPassword.value;
+};
+
+// const sendResetMdp = async () => {
+//   try {
+//     setLoader(true);
+//     const { data, error } = await supabase.auth.resetPasswordForEmail(emailResetPassword.value, {
+//       redirectTo: "http://localhost:3000/resetMdp",
+//     });
+//     modalPassword.value = false;
+//     setLoader(false);
+
+//     addToast({ type: "Success", title: "Demande envoyé", message: "Un email vous à été envoyé." });
+//   } catch (err) {
+//     addToast({ type: "Error", title: "Problème lors de la modification du mot de passe.", message: err.message });
+
+//     setLoader(false);
+//   }
+// };
 </script>
 
 <template>
@@ -83,7 +106,7 @@ const showSignup = () => {
       </div>
 
       <form class="h-full px-6 pt-4 flex flex-col justify-center items-center text-gray-700 gap-4" @submit.prevent="register()">
-        <div class="text-2xl font-Medium w-full xl:w-1/2 cursor-default">
+        <div class="text-2xl font-Medium w-full xl:w-2/3 cursor-default">
           <p>Enregistrement Résa Pro</p>
           <p class="text-sm italic text-gray-500">Votre solution de réservation en ligne pour véhicules et salles</p>
         </div>
@@ -131,7 +154,7 @@ const showSignup = () => {
       </div>
 
       <form class="h-full px-6 pt-4 flex flex-col justify-center items-center text-gray-700 gap-4" @submit.prevent="signIn()">
-        <div class="text-2xl font-Medium w-full xl:w-1/2 cursor-default">
+        <div class="text-2xl font-Medium w-full xl:w-2/3 cursor-default">
           <p>Bienvenue sur Résa Pro</p>
           <p class="text-sm italic text-gray-500">Votre solution de réservation en ligne pour véhicules et salles</p>
         </div>
@@ -145,13 +168,31 @@ const showSignup = () => {
           <AppButtonCarre class="ml-auto" theme="primary" :validated="validatedSignin"> <template #default> Se connecter </template> </AppButtonCarre>
         </div>
         <div class="w-full xl:w-1/2">
-          <div class="text-end text-gray-500 text-sm cursor-pointer w-fit ml-auto hover:font-medium hover:text-gray-800 duration-300"><p @click="showModalPassword()">Mot de passe oublié ?</p></div>
+          <!-- <div class="text-end text-gray-500 text-sm cursor-pointer w-fit ml-auto hover:font-medium hover:text-gray-800 duration-300"><p @click="showModalPassword()">Mot de passe oublié ?</p></div> -->
           <div class="text-end text-gray-500 text-sm cursor-pointer w-fit ml-auto hover:font-medium hover:text-gray-800 duration-300"><p @click="showSignup()">Pas de compte ? Inscription par ici !</p></div>
         </div>
       </form>
 
       <div class="text-xs text-gray-600 cursor-default text-center p-4">Copyright © 2024 - GRANDMAIRE Nicolas</div>
     </div>
+    <!-- <AppModal v-if="modalPassword" :closeModal="showModalPassword">
+      <template #title>
+        <span class="text-lg text-gray-700 font-medium text-center">Pour réinitialiser votre mot de passe, merci de renseigner votre adressse mail professionel.</span>
+      </template>
+      <template #default>
+        <div class="w-full">
+          <AppInput name="email" type="email" title="Email : " v-model="emailResetPassword" />
+        </div>
+
+        <span class="text-base text-cyan-700 font-bold"> </span>
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-4">
+          <AppButtonValidated class="w-32" theme="cancel" @click="showModalPassword()"> <template #default> Annuler </template> </AppButtonValidated>
+          <AppButtonValidated class="w-32" theme="" :validated="validatedEmail" @click="sendResetMdp()"> <template #default> Envoyer </template> </AppButtonValidated>
+        </div>
+      </template>
+    </AppModal> -->
   </section>
 </template>
 
