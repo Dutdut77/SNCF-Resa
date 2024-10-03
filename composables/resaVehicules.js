@@ -124,7 +124,7 @@ export const useResaVehicules = () => {
             .update({ "id_vehicule" : data.vehicule, "debut" : data.dateDebut, "fin" : data.dateFin})
             .eq('id', data.id)
             if (error) throw error;
-                 addToast({ type: "Success", title: "Félicitation", message: "Votre réservation a  été annulée." });
+            addToast({ type: "Success", title: "Félicitation", message: "Votre réservation a correctement été modifiée." });
 
         } catch (err) {
             console.log("erreurs :", err);

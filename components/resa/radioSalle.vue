@@ -33,7 +33,7 @@ const dispoSalles = computed(() => {
   // Créer un ensemble (Set) des id_vehicule réservés
   const reservedSalleIds = new Set(allResaSallesSecteurTime.value.map((reservation) => reservation.id_salle));
   if (props.data.salle) {
-    reservedSalleIds.delete(props.data.salle);
+    reservedSalleIds.delete(props.data.updateRadioId);
   }
   // Filtrer les véhicules qui ne sont pas réservés
   const availableSalles = salles.value.filter((salle) => !reservedSalleIds.has(salle.id));
@@ -52,15 +52,21 @@ watch(props.data, async (newValue, oldValue) => {
       <input :id="salle.id" type="radio" v-model="formRadio" :value="salle.id" class="hidden peer" />
       <label :for="salle.id" class="rounded-lg shadow-lg overflow-hidden flex flex-col items-center border justify-center bg-white hover:bg-opacity-75 peer-checked:text-white cursor-pointer transition">
         <div class="w-full h-30 cursor-pointer flex z-30">
-          <div class="w-2/5 border-r text-lg p-2 flex items-center justify-center">{{ salle.name }}</div>
+          <div class="w-2/5 border-r text-lg p-2 flex flex-col items-center justify-center gap-2">
+            <p>{{ salle.name }}</p>
+            <div class="mt-auto">
+              <!-- <p class="font-bold text-sm">Adresse :</p> -->
+              <p class="text-xs italic text-center">{{ salle.adresse }}</p>
+            </div>
+          </div>
           <div class="w-3/5 flex flex-col gap-3 p-2">
-            <div>
+            <!-- <div>
               <p class="font-bold text-sm">Adresse :</p>
               <p class="text-xs">{{ salle.adresse }}</p>
-            </div>
+            </div> -->
             <div>
               <p class="font-bold text-sm">Informations :</p>
-              <div class="grid grid-cols-3 gap-2 text-xs">
+              <div class="grid grid-cols-3 gap-2 text-xs pt-1">
                 <div class="flex gap-1">
                   <Group class="w-4 h-4" />
                   <p>{{ salle.capacite }}</p>

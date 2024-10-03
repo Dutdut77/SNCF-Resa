@@ -76,6 +76,8 @@ const formValue = ref({
   salle: "",
   titre: "",
   update: false,
+  updateRadioId: "",
+  id_user: "",
 });
 
 setLoader(true);
@@ -199,6 +201,9 @@ const showSideModal = (e) => {
     if (typeSelected.value == 2) formValue.value.salle = e.salles.id;
     formValue.value.titre = e.titre;
     formValue.value.update = true;
+    if (typeSelected.value == 1) formValue.value.updateRadioId = e.vehicules.id;
+    if (typeSelected.value == 2) formValue.value.updateRadioId = e.salles.id;
+    formValue.value.id_user = e.id_user;
     sideModal.value = true;
   } else {
     formValue.value = {
@@ -211,6 +216,8 @@ const showSideModal = (e) => {
       salle: "",
       titre: "",
       update: false,
+      updateRadioId: "",
+      id_user: "",
     };
     sideModal.value = !sideModal.value;
   }
@@ -296,22 +303,23 @@ const updateVehicule = async (data) => {
 
 const addSemaine = () => {
   // Créer une instance de Date à partir de l'objet
-  const currentDate = new Date(selectedDate.value.year, selectedDate.value.month - 1, selectedDate.value.day);
+  const currentDate = new Date(selectedDate.value.year, selectedDate.value.month, selectedDate.value.day);
   // Ajouter les jours
   currentDate.setDate(currentDate.getDate() + 7);
+
   // Mettre à jour l'objet avec la nouvelle date
   selectedDate.value.year = currentDate.getFullYear();
-  selectedDate.value.month = currentDate.getMonth() + 1; // getMonth() renvoie un index (0 pour janvier)
+  selectedDate.value.month = currentDate.getMonth(); // getMonth() renvoie un index (0 pour janvier)
   selectedDate.value.day = currentDate.getDate();
 };
 const subSemaine = () => {
   // Créer une instance de Date à partir de l'objet
-  const currentDate = new Date(selectedDate.value.year, selectedDate.value.month - 1, selectedDate.value.day);
+  const currentDate = new Date(selectedDate.value.year, selectedDate.value.month, selectedDate.value.day);
   // Ajouter les jours
   currentDate.setDate(currentDate.getDate() - 7);
   // Mettre à jour l'objet avec la nouvelle date
   selectedDate.value.year = currentDate.getFullYear();
-  selectedDate.value.month = currentDate.getMonth() + 1; // getMonth() renvoie un index (0 pour janvier)
+  selectedDate.value.month = currentDate.getMonth(); // getMonth() renvoie un index (0 pour janvier)
   selectedDate.value.day = currentDate.getDate();
 };
 </script>
@@ -387,10 +395,10 @@ const subSemaine = () => {
     <!-- PARTIE DROITE -->
     <div class="w-full h-full flex flex-col gap-4">
       <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4">
-        <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-4 py-2">
+        <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
           <div class="font-medium text-gray-50">Semaine {{ weekNumber }}</div>
         </div>
-        <div class="flex gap-4"><Left class="size-8 cursor-pointer" @click="subSemaine()" /><Right class="size-8 cursor-pointer" @click="addSemaine()" /></div>
+        <div class="flex gap-1"><Left class="size-8 cursor-pointer hover:text-sky-500" @click="subSemaine()" /><Right class="size-8 cursor-pointer hover:text-sky-500" @click="addSemaine()" /></div>
         <AppButtonValidated class="w-fit px-4 text-sm lg:ml-auto font-normal" theme="" @click="showSideModal()"> <template #default> Nouvelle Réservation </template> </AppButtonValidated>
       </div>
 
@@ -503,12 +511,12 @@ const subSemaine = () => {
             </div>
           </template>
           <template #default>
-            <div class="uppercase text-base font-medium py-2 border-b text-left pt-8">Période</div>
+            <div class="uppercase text-base font-medium py-2 border-b text-left">Période</div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-3 text-sm text-gray-700">
               <div class="w-full break-inside-avoid">
                 <label for="dateDebut" class="block text-sm">Date début :</label>
                 <div class="mt-1">
-                  <div class="w-full py-2 px-4 border border-gray-300 text-sm text-gray-700 rounded-md cursor-pointer" @click="showDatePickerDebut()">
+                  <div class="w-full py-2 px-4 border border-gray-300 bg-slate-50 text-sm text-gray-700 rounded-md cursor-pointer" @click="showDatePickerDebut()">
                     <div v-if="formValue.dateDebut" class="first-letter:uppercase">{{ formatedDate(formValue.dateDebut).jourName }} {{ formatedDate(formValue.dateDebut).jour }} {{ formatedDate(formValue.dateDebut).mois }} {{ formatedDate(formValue.dateDebut).annee }} - {{ formatedDate(formValue.dateDebut).heure }}h{{ formatedDate(formValue.dateDebut).minute }}</div>
                     <div v-else class="text-gray-400">Selectionnez une date</div>
                   </div>
@@ -524,7 +532,7 @@ const subSemaine = () => {
               <div class="w-full break-inside-avoid">
                 <label for="dateFin" class="block text-sm">Date fin :</label>
                 <div class="mt-1">
-                  <div class="w-full py-2 px-4 border border-gray-300 text-sm text-gray-700 rounded-md cursor-pointer" @click="showDatePickerFin()">
+                  <div class="w-full py-2 px-4 border border-gray-300 bg-slate-50 text-sm text-gray-700 rounded-md cursor-pointer" @click="showDatePickerFin()">
                     <div v-if="formValue.dateFin" class="first-letter:uppercase">{{ formatedDate(formValue.dateFin).jourName }} {{ formatedDate(formValue.dateFin).jour }} {{ formatedDate(formValue.dateFin).mois }} {{ formatedDate(formValue.dateFin).annee }} - {{ formatedDate(formValue.dateFin).heure }}h{{ formatedDate(formValue.dateFin).minute }}</div>
                     <div v-else class="text-gray-400">Selectionnez une date</div>
                   </div>
@@ -561,12 +569,14 @@ const subSemaine = () => {
           </template>
           <template #footer>
             <div v-if="formValue.update" class="w-full flex gap-4">
-              <AppButtonValidated class="w-full ml-auto md:w-32" theme="cancel" @click="showSideModal()"> <template #default> Annuler </template> </AppButtonValidated>
-              <AppButtonValidated v-if="formValue.type == 1" class="w-full md:w-32 flex-none px-4" theme="success" @click="updateVehicule(formValue)"> <template #default> Modifier</template> </AppButtonValidated>
-              <AppButtonValidated v-if="formValue.type == 2" class="w-full md:w-32 flex-none px-4" theme="success" @click="updateSalle(formValue)"> <template #default> Modifier</template> </AppButtonValidated>
+              <AppButtonValidated class="w-full ml-auto md:w-32" theme="cancel" @click="showSideModal()"> <template #default> Fermer </template> </AppButtonValidated>
+              <div v-if="formValue.id_user == userProfil.id || userProfil.secteur_admin == route.params.id" class="flex gap-4">
+                <AppButtonValidated v-if="formValue.type == 1" class="w-full md:w-32 flex-none px-4" theme="success" @click="updateVehicule(formValue)"> <template #default> Modifier</template> </AppButtonValidated>
+                <AppButtonValidated v-if="formValue.type == 2" class="w-full md:w-32 flex-none px-4" theme="success" @click="updateSalle(formValue)"> <template #default> Modifier</template> </AppButtonValidated>
 
-              <AppButtonValidated v-if="formValue.type == 1" class="w-full md:w-fit flex-none px-4" theme="delete" @click="annulationVehicule(formValue.id)"> <template #default> Annuler la réservation</template> </AppButtonValidated>
-              <AppButtonValidated v-if="formValue.type == 2" class="w-full md:w-fit flex-none px-4" theme="delete" @click="annulationSalle(formValue.id)"> <template #default> Annuler la réservation</template> </AppButtonValidated>
+                <AppButtonValidated v-if="formValue.type == 1" class="w-full md:w-fit flex-none px-4" theme="delete" @click="annulationVehicule(formValue.id)"> <template #default> Annuler la réservation</template> </AppButtonValidated>
+                <AppButtonValidated v-if="formValue.type == 2" class="w-full md:w-fit flex-none px-4" theme="delete" @click="annulationSalle(formValue.id)"> <template #default> Annuler la réservation</template> </AppButtonValidated>
+              </div>
             </div>
             <div v-else class="w-full flex gap-4">
               <AppButtonValidated class="w-full ml-auto md:w-32" theme="cancel" @click="showSideModal()"> <template #default> Annuler </template> </AppButtonValidated>

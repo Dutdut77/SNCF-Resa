@@ -30,7 +30,7 @@ const dispoVehicules = computed(() => {
   // Créer un ensemble (Set) des id_vehicule réservés
   const reservedVehicleIds = new Set(allResaSecteurTime.value.map((reservation) => reservation.id_vehicule));
   if (props.data.vehicule) {
-    reservedVehicleIds.delete(props.data.vehicule);
+    reservedVehicleIds.delete(props.data.updateRadioId);
   }
 
   // Filtrer les véhicules qui ne sont pas réservés
