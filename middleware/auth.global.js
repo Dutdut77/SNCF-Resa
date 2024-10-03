@@ -3,17 +3,20 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const auth = useSupabaseUser();
     const client = useSupabaseClient();
     const session = useSupabaseSession();
-
+    const userProfil = useState('userProfil', () => "") 
 
 // if ( ! to.matched[0] ) {
 //     return navigateTo({ path: '/404' })
 // }
 
-
+if (to.fullPath == "/") {
+ return navigateTo({ path: '/calendrier/5' })
+}
 
 if (to.meta.requiresAuth) {
 
         if (!session.value) {           
+            
             return navigateTo({ path: '/login', query : { redirect : to.fullPath } })
         }  
  }

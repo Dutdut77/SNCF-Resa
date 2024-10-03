@@ -12,15 +12,7 @@ const { setLoader } = useLoader();
 const { getAllSallesSecteurDispo, salles } = useSalles();
 const { getAllResaSallesSecteurTime, allResaSallesSecteurTime } = useResaSalles();
 
-const props = defineProps({
-  data: {
-    default: [],
-  },
-
-  modelValue: {
-    default: "",
-  },
-});
+const props = defineProps(["data", "modelValue"]);
 const emits = defineEmits(["update:model-value"]);
 
 setLoader(true);
@@ -40,11 +32,17 @@ const formRadio = computed({
 const dispoSalles = computed(() => {
   // Créer un ensemble (Set) des id_vehicule réservés
   const reservedSalleIds = new Set(allResaSallesSecteurTime.value.map((reservation) => reservation.id_salle));
-
+  if (props.data.salle) {
+    reservedSalleIds.delete(props.data.salle);
+  }
   // Filtrer les véhicules qui ne sont pas réservés
   const availableSalles = salles.value.filter((salle) => !reservedSalleIds.has(salle.id));
 
   return availableSalles;
+});
+
+watch(props.data, async (newValue, oldValue) => {
+  await getAllResaSallesSecteurTime(props.data.secteur, props.data.dateDebut, props.data.dateFin);
 });
 </script>
 

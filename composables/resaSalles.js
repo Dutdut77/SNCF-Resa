@@ -69,7 +69,7 @@ export const useResaSalles = () => {
             .select()
             .eq('id_secteur', secteur)
             .gt('fin', dateDebut)
-            .eq('is_validated', 1)
+            // .eq('is_validated', 1)
             .lt('debut', dateFin);
            if (error) throw error;
            allResaSallesSecteurTime.value = data
@@ -116,6 +116,22 @@ export const useResaSalles = () => {
         }
 
     }
+
+    const updateResaSalle = async(data) => {
+        try {
+            const { error } = await supabase
+            .from('resa_salles')
+            .update({ "id_salle" : data.salle, "titre": data.titre, "debut" : data.dateDebut, "fin" : data.dateFin})
+            .eq('id', data.id)
+     
+            if (error) throw error;
+                 addToast({ type: "Success", title: "Félicitation", message: "Votre réservation a  été annulée." });
+
+        } catch (err) {
+            console.log("erreurs :", err);
+        //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
+        }
+    }
   
     const validResaSalle = async (id) => {
         try {
@@ -134,6 +150,6 @@ export const useResaSalles = () => {
      
   
   
-      return { getAllResaSecteurSalle, getAllResaSallesSecteurTime,  addResaSalles,getAllSallesResaSecteurActuel, getAllSallesResaUserActuel,deleteResaSalle, validResaSalle, allResaSallesSecteurTime, allResaSallesUserActuel, allResaSecteurSalle, allSallesResaSecteurActuel}
+      return { getAllResaSecteurSalle, getAllResaSallesSecteurTime,  addResaSalles,getAllSallesResaSecteurActuel, getAllSallesResaUserActuel,deleteResaSalle,updateResaSalle, validResaSalle, allResaSallesSecteurTime, allResaSallesUserActuel, allResaSecteurSalle, allSallesResaSecteurActuel}
       
   }

@@ -55,7 +55,6 @@ const signIn = async () => {
 };
 
 const register = async () => {
-  console.log(route);
   if (formValue.value.password.length < 8) {
     addToast({ type: "Error", title: "Mot de passe non conforme", message: "Votre mot de passe doit contenir au minimum 8 charactères" });
   } else if (!isEmailValid(formValue.value.email)) {
@@ -89,7 +88,7 @@ const showSignup = () => {
           <p class="text-sm italic text-gray-500">Votre solution de réservation en ligne pour véhicules et salles</p>
         </div>
 
-        <div class="w-full xl:w-1/2 flex flex-col gap-4 pt-4">
+        <div class="w-full 2xl:w-1/2 flex flex-col gap-4 pt-4">
           <AppInput name="nom" type="text" title="Nom : " placeholder="Entrez votre nom" v-model="formValue.nom" />
           <AppInput name="prenom" type="text" title="Prénom : " placeholder="Entrez votre prénom" v-model="formValue.prenom" />
           <AppInput name="email" type="text" title="Email : " placeholder="Entrez votre email professionnel" v-model="formValue.email" />
@@ -137,7 +136,7 @@ const showSignup = () => {
           <p class="text-sm italic text-gray-500">Votre solution de réservation en ligne pour véhicules et salles</p>
         </div>
 
-        <div class="w-full xl:w-1/2 flex flex-col gap-4 pt-2">
+        <div class="w-full 2xl:w-1/2 flex flex-col gap-4 pt-2">
           <AppInput class="" name="Email" type="text" title="Email professionnel : " placeholder="Entrez votre email SNCF" v-model="email" />
           <AppInput name="password" type="password" title="Mot de passe : " placeholder="Entrez votre mot de passe" v-model="password" />
         </div>

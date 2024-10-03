@@ -5,10 +5,13 @@ import Right from "@/assets/svg/Right.vue";
 const route = useRoute();
 const { setLoader } = useLoader();
 const { getAll, secteurs } = useSecteurs();
+const session = useSupabaseSession();
 
-setLoader(true);
-await getAll();
-setLoader(false);
+if (session.value) {
+  setLoader(true);
+  await getAll();
+  setLoader(false);
+}
 
 const showSubmenuSecteurs = ref(false);
 

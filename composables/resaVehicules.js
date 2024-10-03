@@ -67,7 +67,7 @@ export const useResaVehicules = () => {
             .from('resa_vehicules')
             .select()
             .eq('id_secteur', secteur)
-            .eq('is_validated', 1)
+            // .eq('is_validated', 1)
             .gt('fin', dateDebut)
             .lt('debut', dateFin);
            if (error) throw error;
@@ -116,6 +116,22 @@ export const useResaVehicules = () => {
         }
 
     }
+
+    const updateResaVehicule = async (data) => {
+        try {
+            const { error } = await supabase
+            .from('resa_vehicules')
+            .update({ "id_vehicule" : data.vehicule, "debut" : data.dateDebut, "fin" : data.dateFin})
+            .eq('id', data.id)
+            if (error) throw error;
+                 addToast({ type: "Success", title: "Félicitation", message: "Votre réservation a  été annulée." });
+
+        } catch (err) {
+            console.log("erreurs :", err);
+        //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
+        }
+
+    }
   
     const validResaVehicule = async (id) => {
         try {
@@ -134,6 +150,6 @@ export const useResaVehicules = () => {
      
   
   
-      return {getAllResaSecteurVehicule,  getAllResaSecteurTime,  addResaVehicule, getAllVehiculesResaSecteurActuel, getAllVehiculesResaUserActuel ,deleteResaVehicule, validResaVehicule, allResaSecteurTime, allResaUserActuel,allResaSecteurVehicule, allResaSecteurActuel}
+      return {getAllResaSecteurVehicule,  getAllResaSecteurTime,  addResaVehicule, getAllVehiculesResaSecteurActuel, getAllVehiculesResaUserActuel ,deleteResaVehicule,updateResaVehicule, validResaVehicule, allResaSecteurTime, allResaUserActuel,allResaSecteurVehicule, allResaSecteurActuel}
       
   }

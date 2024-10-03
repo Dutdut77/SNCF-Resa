@@ -31,9 +31,9 @@ const { formatedDate, getWeek } = useFormatDate();
 const { setLoader } = useLoader();
 const { getMailSuperviseursSecteur, secteurs } = useSecteurs();
 const { getAllVehiculesBySecteur, allVehiculesSecteur } = useVehicules();
-const { addResaVehicule, getAllResaSecteurVehicule, deleteResaVehicule, allResaSecteurVehicule } = useResaVehicules();
+const { addResaVehicule, getAllResaSecteurVehicule, deleteResaVehicule, updateResaVehicule, allResaSecteurVehicule } = useResaVehicules();
 const { getAllSallesBySecteur, allSallesSecteur } = useSalles();
-const { addResaSalles, getAllResaSecteurSalle, deleteResaSalle, allResaSecteurSalle } = useResaSalles();
+const { addResaSalles, getAllResaSecteurSalle, deleteResaSalle, updateResaSalle, allResaSecteurSalle } = useResaSalles();
 const { sendEmail } = useEmail();
 
 const selectedDate = ref({
@@ -65,6 +65,7 @@ const colors = [
   "#0891b2", // cyan-600
 ];
 const formValue = ref({
+  id: "",
   secteur: route.params.id,
   type: typeSelected.value,
   dateDebut: "",
@@ -72,6 +73,7 @@ const formValue = ref({
   vehicule: "",
   salle: "",
   titre: "",
+  update: false,
 });
 
 setLoader(true);
@@ -97,16 +99,6 @@ const showModalSalle = (data) => {
   } else {
     selectedSalle.value = "";
     modalSalle.value = !modalSalle.value;
-  }
-};
-
-const showModalResa = (data) => {
-  if (data) {
-    selectedResa.value = data;
-    modalResa.value = !modalResa.value;
-  } else {
-    selectedResa.value = "";
-    modalResa.value = !modalResa.value;
   }
 };
 
@@ -198,13 +190,17 @@ const validatedFormVehicule = computed(() => {
 });
 const showSideModal = (e) => {
   if (e) {
+    formValue.value.id = e.id;
     formValue.value.dateDebut = Number(e.debut);
     formValue.value.dateFin = Number(e.fin);
     if (typeSelected.value == 1) formValue.value.vehicule = e.vehicules.id;
     if (typeSelected.value == 2) formValue.value.salle = e.salles.id;
+    formValue.value.titre = e.titre;
+    formValue.value.update = true;
     sideModal.value = true;
   } else {
     formValue.value = {
+      id: "",
       secteur: route.params.id,
       type: typeSelected.value,
       dateDebut: "",
@@ -212,11 +208,15 @@ const showSideModal = (e) => {
       vehicule: "",
       salle: "",
       titre: "",
+      update: false,
     };
     sideModal.value = !sideModal.value;
   }
 };
-const showDatePickerDebut = () => {
+const showDatePickerDebut = (e) => {
+  if (e && formValue.value.dateFin == "") {
+    formValue.value.dateFin = e;
+  }
   datePickerDebutIsVisible.value = !datePickerDebutIsVisible.value;
 };
 const showDatePickerFin = () => {
@@ -264,7 +264,7 @@ const annulationSalle = async (id) => {
   setLoader(true);
   await deleteResaSalle(id);
   await getAllResaSecteurSalle(route.params.id);
-  showModalResa();
+  showSideModal();
   setLoader(false);
 };
 
@@ -272,7 +272,23 @@ const annulationVehicule = async (id) => {
   setLoader(true);
   await deleteResaVehicule(id);
   await getAllResaSecteurVehicule(route.params.id);
-  showModalResa();
+  showSideModal();
+  setLoader(false);
+};
+
+const updateSalle = async (data) => {
+  setLoader(true);
+  await updateResaSalle(data);
+  await getAllResaSecteurSalle(route.params.id);
+  showSideModal();
+  setLoader(false);
+};
+
+const updateVehicule = async (data) => {
+  setLoader(true);
+  await updateResaVehicule(data);
+  await getAllResaSecteurVehicule(route.params.id);
+  showSideModal();
   setLoader(false);
 };
 </script>
@@ -349,14 +365,14 @@ const annulationVehicule = async (id) => {
     <div class="w-full h-full flex flex-col gap-4">
       <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4">
         <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-4 py-2">
-          <div class="font-medium text-gray-50">{{ selectedDateFormated.jourName }} {{ selectedDateFormated.jour }} {{ selectedDateFormated.mois }} {{ selectedDateFormated.annee }}</div>
+          <div class="font-medium text-gray-50">Semaine {{ weekNumber }}</div>
         </div>
-        <div class="bg-slate-50 px-2 text-sm rounded-full border border-gray-400 text-gray-600">Semaine {{ weekNumber }}</div>
+
         <AppButtonValidated class="w-fit px-4 text-sm lg:ml-auto font-normal" theme="" @click="showSideModal()"> <template #default> Nouvelle Réservation </template> </AppButtonValidated>
       </div>
 
       <div class="w-full h-full border rounded-xl bg-slate-50 overflow-hidden p-4">
-        <ResaSemaine :startDate="dateIso" :allReservations="filteredReservations" class="overflow-auto" @selectedResa="showModalResa" />
+        <ResaSemaine :startDate="dateIso" :allReservations="filteredReservations" class="overflow-auto" @selectedResa="showSideModal" />
       </div>
     </div>
 
@@ -454,179 +470,6 @@ const annulationVehicule = async (id) => {
       </template>
     </AppModal>
 
-    <AppModal v-if="modalResa" :closeModal="showModalResa">
-      <template #title>
-        <div class="w-full flex flex-col items-center text-xl font-medium text-slate-700">Réservation</div>
-      </template>
-      <template #default>
-        <div v-if="selectedResa.salles" class="text-gray-700">
-          <div v-if="selectedResa.is_validated == 0" class="absolute top-7 -left-7 bg-red-600 px-6 text-white -rotate-45 text-sm uppercase">non validée</div>
-          <div class="w-full flex flex-col xl:flex-row justify-between items-center gap-2">
-            <div class="w-full">
-              <p class="px-4 pb-2 text-center uppercase font-medium">Début</p>
-              <div class="w-full h-20 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden shadow-lg">
-                <div class="h-full w-full bg-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
-                  <div class="w-fitl h-full text-5xl font-traverse flex items-center justify-center pt-2">{{ formatedDate(Number(selectedResa.debut)).jour }}</div>
-                  <div class="w-fit h-full flex flex-col items-start justify-center">
-                    <div class="text-base uppercase">{{ formatedDate(Number(selectedResa.debut)).mois }}</div>
-                    <div class="text-base uppercase">{{ formatedDate(Number(selectedResa.debut)).annee }}</div>
-                  </div>
-                </div>
-                <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
-                  <p class="text-white text-xl font-bold">{{ formatedDate(Number(selectedResa.debut)).heure }}</p>
-                  <p class="text-white text-xl font-bold">h</p>
-                  <p class="text-white text-xl font-bold">{{ formatedDate(Number(selectedResa.debut)).minute }}</p>
-                </div>
-              </div>
-            </div>
-            <div class="pt-8 hidden xl:block">
-              <ArrowRight class="w-6 h-6" />
-            </div>
-
-            <div class="w-full">
-              <p class="px-4 pb-2 text-center uppercase font-medium">Fin</p>
-              <div class="w-full h-20 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden shadow-lg">
-                <div class="h-full w-full bg-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
-                  <div class="w-fit h-full text-5xl font-traverse flex items-center justify-center pt-2">{{ formatedDate(Number(selectedResa.fin)).jour }}</div>
-                  <div class="w-fit h-full flex flex-col items-start justify-center">
-                    <div class="text-base uppercase">{{ formatedDate(Number(selectedResa.fin)).mois }}</div>
-                    <div class="text-base uppercase">{{ formatedDate(Number(selectedResa.fin)).annee }}</div>
-                  </div>
-                </div>
-                <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
-                  <p class="text-white text-xl font-bold">{{ formatedDate(Number(selectedResa.fin)).heure }}</p>
-                  <p class="text-white text-xl font-bold">h</p>
-                  <p class="text-white text-xl font-bold">{{ formatedDate(Number(selectedResa.fin)).minute }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="bg-gradient-to-br from-slate-600 to-slate-900 p-4 rounded-lg border text-white text-sm mt-4">
-            <p class="text-lg text-center uppercase bg-white w-fit px-4 text-gray-700 rounded-lg mx-auto font-medium">Salle : {{ selectedResa.salles.name }}</p>
-            <div class="grid grid-cols-3 gap-2 pt-4">
-              <div class="flex gap-1">
-                <Group class="w-4 h-4" />
-                <p>{{ selectedResa.salles.capacite }}</p>
-              </div>
-              <div class="flex gap-1">
-                <Wifi class="w-4 h-4" />
-                <p :class="selectedResa.salles.wifi ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">Wifi</p>
-              </div>
-              <div class="flex gap-1">
-                <Pmr class="w-4 h-4" />
-                <p :class="selectedResa.salles.pmr ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">PMR</p>
-              </div>
-              <div class="flex gap-1">
-                <Clim class="w-4 h-4" />
-                <p :class="selectedResa.salles.clim ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">Clim</p>
-              </div>
-              <div class="flex gap-1">
-                <VideoProj class="w-4 h-4" />
-                <p :class="selectedResa.salles.video_proj ? '' : 'line-through decoration-white  decoration-2  text-slate-300 '">VP</p>
-              </div>
-              <div class="flex gap-1">
-                <Jabra class="w-4 h-4" />
-                <p :class="selectedResa.salles.jabra ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">Jabra</p>
-              </div>
-              <div class="flex gap-1">
-                <WhiteBoard class="w-4 h-4" />
-                <p :class="selectedResa.salles.white_board ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">Tableau</p>
-              </div>
-              <div class="flex gap-1">
-                <Webcam class="w-4 h-4" />
-                <p :class="selectedResa.salles.webcam ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">Webcam</p>
-              </div>
-            </div>
-          </div>
-          <div class="text-gray-700 text-sm flex gap-2 pt-4">
-            <p class="font-medium">Qui a réservé :</p>
-            <p>{{ selectedResa.profiles.nom }} {{ selectedResa.profiles.prenom }}</p>
-          </div>
-          <div class="text-gray-700 text-sm flex gap-2 py-2">
-            <p class="font-medium">Objet de la réservation :</p>
-            <p>{{ selectedResa.titre }}</p>
-          </div>
-          <div v-if="selectedResa.id_user == userProfil.id || userProfil.secteur_admin == route.params.id" class="w-full flex pt-2 pb-4">
-            <AppButtonValidated class="w-fit ml-auto text-sm" theme="delete" @click="annulationSalle(selectedResa.id)"> <template #default> Annuler la réservation</template> </AppButtonValidated>
-          </div>
-        </div>
-        <div v-if="selectedResa.vehicules" class="text-gray-700">
-          <div v-if="selectedResa.is_validated == 0" class="absolute top-7 -left-7 bg-red-600 px-6 text-white -rotate-45 text-sm uppercase">non validée</div>
-          <div class="w-full flex flex-col xl:flex-row justify-between items-center gap-2">
-            <div class="w-full">
-              <p class="px-4 pb-2 text-center uppercase font-medium">Début</p>
-              <div class="w-full h-20 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden shadow-lg">
-                <div class="h-full w-full bg-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
-                  <div class="w-fitl h-full text-5xl font-traverse flex items-center justify-center pt-2">{{ formatedDate(Number(selectedResa.debut)).jour }}</div>
-                  <div class="w-fit h-full flex flex-col items-start justify-center">
-                    <div class="text-base uppercase">{{ formatedDate(Number(selectedResa.debut)).mois }}</div>
-                    <div class="text-base uppercase">{{ formatedDate(Number(selectedResa.debut)).annee }}</div>
-                  </div>
-                </div>
-                <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
-                  <p class="text-white text-xl font-bold">{{ formatedDate(Number(selectedResa.debut)).heure }}</p>
-                  <p class="text-white text-xl font-bold">h</p>
-                  <p class="text-white text-xl font-bold">{{ formatedDate(Number(selectedResa.debut)).minute }}</p>
-                </div>
-              </div>
-            </div>
-            <div class="pt-8 hidden xl:block">
-              <ArrowRight class="w-6 h-6" />
-            </div>
-
-            <div class="w-full">
-              <p class="px-4 pb-2 text-center uppercase font-medium">Fin</p>
-              <div class="w-full h-20 border border-slate-300 cursor-pointer flex rounded-lg overflow-hidden shadow-lg">
-                <div class="h-full w-full bg-sky-500 text-white flex items-center justify-center gap-2 px-2 pb-1 pt-2">
-                  <div class="w-fit h-full text-5xl font-traverse flex items-center justify-center pt-2">{{ formatedDate(Number(selectedResa.fin)).jour }}</div>
-                  <div class="w-fit h-full flex flex-col items-start justify-center">
-                    <div class="text-base uppercase">{{ formatedDate(Number(selectedResa.fin)).mois }}</div>
-                    <div class="text-base uppercase">{{ formatedDate(Number(selectedResa.fin)).annee }}</div>
-                  </div>
-                </div>
-                <div class="h-full w-full bg-slate-700 flex justify-center items-center p-2">
-                  <p class="text-white text-xl font-bold">{{ formatedDate(Number(selectedResa.fin)).heure }}</p>
-                  <p class="text-white text-xl font-bold">h</p>
-                  <p class="text-white text-xl font-bold">{{ formatedDate(Number(selectedResa.fin)).minute }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="w-full flex flex-col gap-3 p-4 text-white bg-gradient-to-br from-slate-600 to-slate-900 rounded-lg border mt-4">
-            <div class="text-lg text-center uppercase bg-white w-fit px-4 text-gray-700 rounded-lg mx-auto font-medium">
-              <p>{{ selectedResa.vehicules.immat }}</p>
-              <p>{{ selectedResa.vehicules.marque }} {{ selectedResa.vehicules.model }}</p>
-            </div>
-            <div class="flex justify-center gap-4 py-4">
-              <div class="flex gap-1 items-center text-sm"><Group class="w-4 h-4" />{{ selectedResa.vehicules.capacite }}</div>
-              <div v-if="selectedResa.vehicules.id_carburant == 1" class="flex gap-1 items-center text-sm">
-                <Electric class="w-4 h-4" />
-                <p class="first-letter:uppercase">électrique</p>
-              </div>
-
-              <div v-if="selectedResa.vehicules.id_carburant == 2" class="flex gap-1 items-center text-sm"><Fuel class="w-4 h-4" />Diesel</div>
-              <div v-if="selectedResa.vehicules.id_carburant == 3" class="flex gap-1 items-center text-sm"><Fuel class="w-4 h-4" />Essence</div>
-
-              <div v-if="selectedResa.vehicules.vitesse == 0" class="flex gap-1 items-center text-sm">
-                <div class="w-4 h-4 border rounded flex items-center justify-center">A</div>
-                Auto
-              </div>
-
-              <div v-if="selectedResa.vehicules.vitesse == 1" class="flex gap-1 items-center text-sm"><Manuel class="w-4 h-4" />Manuel</div>
-            </div>
-          </div>
-          <div class="text-gray-700 text-sm flex gap-2 pt-4">
-            <p class="font-medium">Qui a réservé :</p>
-            <p>{{ selectedResa.profiles.nom }} {{ selectedResa.profiles.prenom }}</p>
-          </div>
-
-          <div v-if="selectedResa.id_user == userProfil.id || userProfil.secteur_admin == route.params.id" class="w-full flex pt-2 pb-4">
-            <AppButtonValidated class="w-fit ml-auto text-sm" theme="delete" @click="annulationVehicule(selectedResa.id)"> <template #default> Annuler la réservation</template> </AppButtonValidated>
-          </div>
-        </div>
-      </template>
-    </AppModal>
-
     <AppModalSide :sideModal="sideModal" :closeSideModal="showSideModal">
       <template #default>
         <AppModalSideContent v-if="sideModal" :closeSideModal="showSideModal">
@@ -636,7 +479,8 @@ const annulationVehicule = async (id) => {
               <p>Réservation</p>
             </div>
           </template>
-          <template #default>
+          <template #default
+            >{{ formValue }}
             <div class="uppercase text-base font-medium py-2 border-b text-left pt-8">Période</div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-3 text-sm text-gray-700">
               <div class="w-full break-inside-avoid">
@@ -649,7 +493,7 @@ const annulationVehicule = async (id) => {
                 </div>
                 <div v-if="datePickerDebutIsVisible" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-40">
                   <div class="w-full h-full flex justify-center items-center">
-                    <div class=" ">
+                    <div class="">
                       <AppDateTimePicker class="w-fit" v-model="formValue.dateDebut" :action="showDatePickerDebut" />
                     </div>
                   </div>
@@ -694,7 +538,15 @@ const annulationVehicule = async (id) => {
             </div>
           </template>
           <template #footer>
-            <div class="w-full flex gap-4">
+            <div v-if="formValue.update" class="w-full flex gap-4">
+              <AppButtonValidated class="w-full ml-auto md:w-32" theme="cancel" @click="showSideModal()"> <template #default> Annuler </template> </AppButtonValidated>
+              <AppButtonValidated v-if="formValue.type == 1" class="w-full md:w-32 flex-none px-4" theme="success" @click="updateVehicule(formValue)"> <template #default> Modifier</template> </AppButtonValidated>
+              <AppButtonValidated v-if="formValue.type == 2" class="w-full md:w-32 flex-none px-4" theme="success" @click="updateSalle(formValue)"> <template #default> Modifier</template> </AppButtonValidated>
+
+              <AppButtonValidated v-if="formValue.type == 1" class="w-full md:w-fit flex-none px-4" theme="delete" @click="annulationVehicule(formValue.id)"> <template #default> Annuler la réservation</template> </AppButtonValidated>
+              <AppButtonValidated v-if="formValue.type == 2" class="w-full md:w-fit flex-none px-4" theme="delete" @click="annulationSalle(formValue.id)"> <template #default> Annuler la réservation</template> </AppButtonValidated>
+            </div>
+            <div v-else class="w-full flex gap-4">
               <AppButtonValidated class="w-full ml-auto md:w-32" theme="cancel" @click="showSideModal()"> <template #default> Annuler </template> </AppButtonValidated>
               <AppButtonValidated v-if="formValue.type == 1" class="w-full md:w-32" theme="success" :validated="validatedFormVehicule" @click="addResa()"> <template #default> Enregistrer </template> </AppButtonValidated>
               <AppButtonValidated v-if="formValue.type == 2" class="w-full md:w-32" theme="success" :validated="validatedFormSalle" @click="addResa()"> <template #default> Enregistrer </template> </AppButtonValidated>

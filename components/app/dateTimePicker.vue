@@ -67,13 +67,14 @@ const colorOption = (num) => {
 const validChoice = () => {
   const date = new Date(selectedYear.value, selectedMonth.value, selectedDay.value, selectedHeure.value, selectedMinute.value).getTime();
   formValue.value = date;
-  props.action();
+  props.action(date);
 };
 </script>
 
 <template>
   <div>
     <div class="w-fit content-center text-sm text-gray-700 border rounded-xl border-gray-300 shadow-lg overflow-hidden">
+      form : {{ formValue }}
       <div class="p-2 bg-sncf-primary-light font-medium text-white">
         <div>Date sélectionnée :</div>
         <div class="text-lg">{{ selectedDay }} {{ months[selectedMonth] }} {{ selectedYear }} - {{ selectedHeure }} h {{ selectedMinute }}</div>
