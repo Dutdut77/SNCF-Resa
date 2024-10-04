@@ -179,7 +179,7 @@ const filteredReservations = computed(() => {
 const isAuthToReserv = computed(() => {
   if (userProfil.value.secteur_auth) {
     const array = userProfil.value.secteur_auth.split(",").map(Number);
-    return array.includes(formValue.value.secteur);
+    return array.includes(Number(formValue.value.secteur));
   } else {
     return false;
   }
@@ -325,6 +325,23 @@ const subSemaine = () => {
 const goToAdministration = async () => {
   await navigateTo("/administration");
 };
+
+const selectAllVehicules = async () => {
+  if (listeVehiculesSelected.value.length > 0) {
+    listeVehiculesSelected.value = [];
+  } else {
+    const result = allVehiculesSecteur.value.map((item) => item.id);
+    listeVehiculesSelected.value = result;
+  }
+};
+const selectAllSalles = async () => {
+  if (listeSallesSelected.value.length > 0) {
+    listeSallesSelected.value = [];
+  } else {
+    const result = allSallesSecteur.value.map((item) => item.id);
+    listeSallesSelected.value = result;
+  }
+};
 </script>
 
 <template>
@@ -345,7 +362,11 @@ const goToAdministration = async () => {
       <ResaCalendar class="w-full" v-model="selectedDate" />
 
       <div v-if="typeSelected == 1" class="w-full bg-slate-50 rounded-xl flex flex-col gap-2 border py-4">
-        <p class="font-bold text-base px-4 cursor-default">Véhicules</p>
+        <div class="flex items-center">
+          <p class="font-bold text-base px-4 cursor-default">Véhicules</p>
+          <p class="ml-auto px-4 font-medium hover:text-sky-600 cursor-pointer" @click="selectAllVehicules()">Tous</p>
+        </div>
+
         <div v-if="allVehiculesWithColors.length > 0">
           <div class="w-full flex px-4 cursor-pointer pb-1" v-for="vehicule in allVehiculesWithColors" :key="vehicule.id">
             <input type="checkbox" :id="vehicule.immat" :value="vehicule.id" class="mr-2 hidden" v-model="listeVehiculesSelected" />
@@ -368,7 +389,10 @@ const goToAdministration = async () => {
       </div>
 
       <div v-if="typeSelected == 2" class="w-full bg-slate-50 rounded-xl flex flex-col gap-2 border py-4">
-        <p class="font-bold text-base px-4 cursor-default">Salles</p>
+        <div class="flex items-center">
+          <p class="font-bold text-base px-4 cursor-default">Salles</p>
+          <p class="ml-auto px-4 font-medium hover:text-sky-600 cursor-pointer" @click="selectAllSalles()">Tous</p>
+        </div>
         <div v-if="allSallesWithColors.length > 0">
           <div class="w-full flex px-4 cursor-pointer pb-1" v-for="salle in allSallesWithColors" :key="salle.id">
             <input type="checkbox" :id="salle.id" :value="salle.id" class="mr-2 hidden" v-model="listeSallesSelected" />

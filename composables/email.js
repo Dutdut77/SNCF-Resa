@@ -6,7 +6,7 @@ export const useEmail = () => {
     const sendEmail = async (liste, profil, form) => {
 
         try {
-                if (form.type == 0) {
+           
                 
                     const html = `<html lang="fr">
                       <head>
@@ -49,12 +49,12 @@ export const useEmail = () => {
                       <body>
                         
                               <div class="header">
-                                <h1>Demande de réservation d'une salle</h1>
+                                <h1>Demande de réservation Résa-Pro</h1>
                               </div>
 
                             <h2>Bonjour,</h2>
-                            <p>${profil.prenom} ${profil.nom} (${profil.email}) a effectué une demande de réservation de salle depuis l'application Résa-Pro</p>
-                            <p>En tant qu'administrateur, il vous est demandé de valider / refuser cette demande en vous connectant directement à votre espace administrateur (profil -> espace admin).</p>
+                            <p>${profil.prenom} ${profil.nom} (${profil.email}) a effectué une demande de réservation depuis l'application Résa-Pro</p>
+                            <p>En tant qu'administrateur, il vous est demandé de valider / refuser cette demande en vous connectant directement à votre espace administrateur.</p>
 
                     
                       </body>
@@ -65,77 +65,13 @@ export const useEmail = () => {
                         body : {
                             from : 'ResaPro <noreply@resa-pro.infpe.fr>',
                             to : liste,
-                            subject : 'Demande de réservation de salle',
+                            subject : 'Demande de réservation',
                             html : html
                         }
 
                     });
                  
-                }
-
-                if (form.type == 1) {
-                    const html = `<html lang="fr">
-                    <head>
-                      <meta charset="UTF-8">
-                      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <style>
-                              body {
-                                  font-family: Arial, sans-serif;
-                                  line-height: 1.1;
-                                  color: #333;
-                                  background : #FFF
-                              }
-                              .header {
-                                  background:  #0369a1;
-                                  padding: 10px;
-                                  text-align: center;
-                                  border-bottom: 1px solid #ddd;
-                                  color : #FFF;
-                              }
-                        a {
-                            color: #FFF; 
-                            text-decoration: none; 
-                        }
-                        .button-link {
-                              display: inline-block;
-                              padding: 10px 20px;
-                              font-size: 16px;
-                              color: #FFF;
-                              background-color: #0369a1;
-                              text-align: center;
-                              text-decoration: none;
-                              border-radius: 5px;
-                        }
-                
-                          
-                  
-                          </style>
-                    </head>
-                    <body>
-                      
-                              <div class="header">
-                              <h1>Demande de réservation d'un véhicule</h1>
-                              </div>
-                  
-                          <h2>Bonjour,</h2>
-                          <p>${profil.prenom} ${profil.nom} (${profil.email}) a effectué une demande de réservation d'un véhicule depuis l'application Résa-Pro</p>
-                          <p>En tant qu'administrateur, il vous est demandé de valider / refuser cette demande en vous connectant directement à votre espace administrateur (profil -> espace admin).</p>
-               
-                    </body>
-                                  </html>`
-                  
-                    await $fetch("/api/sendEmail" ,{
-                      method : 'post',
-                      body : {
-                          from : 'ResaPro <noreply@resa-pro.infpe.fr>',
-                          to : liste,
-                          subject : 'Demande de réservation de véhicule',
-                          html : html
-                      }
-          
-                    });
-                  
-                }
+   
 
         } catch (err) {     
           addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée."});
