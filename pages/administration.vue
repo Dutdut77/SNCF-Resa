@@ -1,7 +1,7 @@
 <script setup>
 definePageMeta({
   requiresAuth: true,
-  isAdmin: false,
+  isAdmin: true,
 });
 
 useHead({
@@ -62,29 +62,14 @@ const goToCalendrier = async () => {
     </div>
 
     <div v-if="activeMenu == 4" class="w-full h-full flex flex-col gap-4">
-      <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
-        <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
-          <div class="font-medium text-gray-50">Réservations de salles</div>
-        </div>
-      </div>
       <ResaAdminResaSalles />
     </div>
 
     <div v-if="activeMenu == 5" class="w-full h-full flex flex-col gap-4">
-      <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
-        <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
-          <div class="font-medium text-gray-50">Réservations directes</div>
-        </div>
-      </div>
       <ResaAdminReservation />
     </div>
 
     <div v-if="activeMenu == 6" class="w-full h-full flex flex-col gap-4">
-      <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
-        <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
-          <div class="font-medium text-gray-50">Liste des administrateurs</div>
-        </div>
-      </div>
       <ResaAdminAdministration />
     </div>
   </section>

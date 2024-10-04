@@ -26,7 +26,7 @@ if (session.value) {
 
 
     if (to.meta.isAdmin) {
-        if (to.params.id != user.secteur_admin) {
+        if (user.secteur_admin == "" || user.secteur_admin == null) {
             return navigateTo({ path: '/forbidden' })
         }   
     }

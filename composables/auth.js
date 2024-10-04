@@ -68,6 +68,7 @@ export const useAuth = () => {
         const { data, error } = await supabase
         .from('profiles')
         .select('*')
+        .order('nom', { ascending: true })
         if (error) throw error;
         allProfiles.value = data
 
@@ -103,18 +104,15 @@ export const useAuth = () => {
     }
 
     const deleteValideur = async (form) => {
-
       // Convertir la chaîne en tableau d'entiers
       let secteurArray = form.secteur_auth.split(',').map(Number);
-
       // Filtrer le tableau pour supprimer le chiffre 5
-      secteurArray = secteurArray.filter(num => num !== Number(form.secteur));
-
+      secteurArray = secteurArray.filter(num => num !== form.secteur);
       // Reconvertir le tableau en chaîne de caractères
       form.secteur_auth = secteurArray.join(',');
-
+  
       try {
-        const { error } = await supabase
+        const { data, error } = await supabase
         .from('profiles')
         .update({ secteur_auth : form.secteur_auth })
         .eq('id', form.id)
@@ -125,6 +123,7 @@ export const useAuth = () => {
       } catch (err) {
         addToast({ type: "Error", title: "Problème lors de la modification du profil.",  message: err.message  });
       }
+
     }
 
     const addAdmin = async (form) => {

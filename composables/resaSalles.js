@@ -52,7 +52,8 @@ export const useResaSalles = () => {
             .from('resa_salles')
             .select('*, salles!inner(*), secteurs!inner(name), profiles!inner(*)')
             .eq('id_secteur', id)
-            .gte('fin', now);
+            .order('debut', { ascending: false })
+            // .gte('fin', now);
            if (error) throw error;
            allSallesResaSecteurActuel.value = data
            
