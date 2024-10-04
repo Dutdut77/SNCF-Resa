@@ -86,7 +86,7 @@ const updateProfil = async () => {
       <div class="text-sm bg-gradient-to-br from-sncf-primary-light to-sncf-primary px-4 text-white rounded w-fit -mt-1">pro</div>
     </div>
 
-    <div class="relative w-full h-full flex flex-col items-center justify-center">
+    <div v-if="route.params.id" class="relative w-full h-full flex flex-col items-center justify-center">
       <div class="relative w-fit h-full flex flex-col items-center justify-center cursor-pointer" @click="showSubmenuSecteurs = !showSubmenuSecteurs">
         <div class="font-bold uppercase text-xl">{{ secteurActive?.name }}</div>
         <Right class="absolute bottom-0 size-6 rotate-90" />
@@ -99,7 +99,7 @@ const updateProfil = async () => {
       </div>
     </div>
 
-    <div class="h-full w-20 pr-4 flex items-center justify-end">
+    <div class="h-full w-20 pr-4 flex items-center justify-end ml-auto">
       <div class="h-10 w-10 bg-gray-100 border border-gray-700 rounded-full flex justify-center items-center cursor-pointer hover:bg-sky-500 hover:border-sky-500 hover:text-white duration-500" @click="showDropdown()">
         <p class="text-sm font-medium">{{ firstLetter(userProfil.prenom) }}</p>
         <p class="text-sm font-medium">{{ firstLetter(userProfil.nom) }}</p>

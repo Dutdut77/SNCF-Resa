@@ -375,7 +375,7 @@ const deleteProfilAdmin = async (data) => {
     <template #title> <p class="font-bold text-xl">Administration</p> </template>
     <template #default>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 px-4 py-6">
-        <ResaAdminCard>
+        <!-- <ResaAdminCard>
           <template #title>
             <p>Véhicules :</p>
             <div class="h-5 w-5 bg-white border rounded-full flex items-center justify-center cursor-pointer" @click="showSideVehicules()"><p class="text-gray-500 pb-0.5">+</p></div>
@@ -403,9 +403,9 @@ const deleteProfilAdmin = async (data) => {
             </table>
             <div class="italic" v-else>Aucun véhicule d'enregistré !</div>
           </template>
-        </ResaAdminCard>
+        </ResaAdminCard> -->
 
-        <ResaAdminCard>
+        <!-- <ResaAdminCard>
           <template #title>
             <p>Salles :</p>
             <div class="h-5 w-5 bg-white border rounded-full flex items-center justify-center cursor-pointer" @click="showSideSalles()"><p class="text-gray-500 pb-0.5">+</p></div>
@@ -431,9 +431,9 @@ const deleteProfilAdmin = async (data) => {
           </template>
           <template #footer></template>
           <template #modal></template>
-        </ResaAdminCard>
+        </ResaAdminCard> -->
 
-        <ResaAdminCard>
+        <!-- <ResaAdminCard>
           <template #title> <p>Anomalies Véhicules :</p></template>
           <template #default>
             <table v-if="anomaliesVehicules.length > 0" class="w-full">
@@ -456,9 +456,9 @@ const deleteProfilAdmin = async (data) => {
           </template>
           <template #footer></template>
           <template #modal></template>
-        </ResaAdminCard>
+        </ResaAdminCard> -->
 
-        <ResaAdminCard>
+        <!-- <ResaAdminCard>
           <template #title> <p>Anomalies Salles :</p></template>
           <template #default>
             <table v-if="anomaliesSalles.length > 0" class="w-full">
@@ -481,9 +481,9 @@ const deleteProfilAdmin = async (data) => {
           </template>
           <template #footer></template>
           <template #modal></template>
-        </ResaAdminCard>
+        </ResaAdminCard> -->
 
-        <ResaAdminCard>
+        <!-- <ResaAdminCard>
           <template #title> <p>Réservations Véhicules :</p></template>
           <template #default>
             <table v-if="allResaSecteurActuel.length > 0" class="w-full">
@@ -511,7 +511,7 @@ const deleteProfilAdmin = async (data) => {
             </table>
             <div class="italic" v-else>Aucune réservation !</div>
           </template>
-        </ResaAdminCard>
+        </ResaAdminCard> -->
 
         <ResaAdminCard>
           <template #title> <p>Réservations Salles :</p></template>
@@ -595,7 +595,7 @@ const deleteProfilAdmin = async (data) => {
         </ResaAdminCard>
       </div>
 
-      <AppModalSide :sideModal="sideModalVehicules" :closeSideModal="showSideVehicules">
+      <!-- <AppModalSide :sideModal="sideModalVehicules" :closeSideModal="showSideVehicules">
         <template #default>
           <AppModalSideContent v-if="sideModalVehicules" :closeSideModal="showSideVehicules">
             <template #header>
@@ -642,9 +642,9 @@ const deleteProfilAdmin = async (data) => {
             </template>
           </AppModalSideContent>
         </template>
-      </AppModalSide>
+      </AppModalSide> -->
 
-      <AppModalSide :sideModal="sideModalSalles" :closeSideModal="showSideSalles">
+      <!-- <AppModalSide :sideModal="sideModalSalles" :closeSideModal="showSideSalles">
         <template #default>
           <AppModalSideContent v-if="sideModalSalles" :closeSideModal="showSideSalles">
             <template #header>
@@ -696,9 +696,9 @@ const deleteProfilAdmin = async (data) => {
             </template>
           </AppModalSideContent>
         </template>
-      </AppModalSide>
+      </AppModalSide> -->
 
-      <AppModalSide :sideModal="sideModalAnomalieVehicule" :closeSideModal="showSideAnomalieVehicule">
+      <!-- <AppModalSide :sideModal="sideModalAnomalieVehicule" :closeSideModal="showSideAnomalieVehicule">
         <template #default>
           <AppModalSideContent v-if="sideModalAnomalieVehicule" :closeSideModal="showSideAnomalieVehicule">
             <template #header>
@@ -723,9 +723,9 @@ const deleteProfilAdmin = async (data) => {
             </template>
           </AppModalSideContent>
         </template>
-      </AppModalSide>
+      </AppModalSide> -->
 
-      <AppModalSide :sideModal="sideModalAnomalieSalle" :closeSideModal="showSideAnomalieSalle">
+      <!-- <AppModalSide :sideModal="sideModalAnomalieSalle" :closeSideModal="showSideAnomalieSalle">
         <template #default>
           <AppModalSideContent v-if="sideModalAnomalieSalle" :closeSideModal="showSideAnomalieSalle">
             <template #header>
@@ -750,9 +750,9 @@ const deleteProfilAdmin = async (data) => {
             </template>
           </AppModalSideContent>
         </template>
-      </AppModalSide>
+      </AppModalSide> -->
 
-      <AppModalSide :sideModal="sideModalResaVehicule" :closeSideModal="showSideResaVehicule">
+      <!-- <AppModalSide :sideModal="sideModalResaVehicule" :closeSideModal="showSideResaVehicule">
         <template #default>
           <AppModalSideContent v-if="sideModalResaVehicule" :closeSideModal="showSideResaVehicule">
             <template #header>
@@ -791,7 +791,7 @@ const deleteProfilAdmin = async (data) => {
             </template>
           </AppModalSideContent>
         </template>
-      </AppModalSide>
+      </AppModalSide> -->
 
       <AppModalSide :sideModal="sideModalResaSalle" :closeSideModal="showSideResaSalle">
         <template #default>

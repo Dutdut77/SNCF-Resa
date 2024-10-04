@@ -322,6 +322,9 @@ const subSemaine = () => {
   selectedDate.value.month = currentDate.getMonth(); // getMonth() renvoie un index (0 pour janvier)
   selectedDate.value.day = currentDate.getDate();
 };
+const goToAdministration = async () => {
+  await navigateTo("/administration");
+};
 </script>
 
 <template>
@@ -388,7 +391,7 @@ const subSemaine = () => {
       </div>
 
       <div v-if="userProfil.secteur_admin == route.params.id" class="mt-auto hidden lg:block">
-        <AppButtonValidated class="w-full text-sm" theme="cancel" @click=""> <template #default> Administration </template> </AppButtonValidated>
+        <AppButtonValidated class="w-full text-sm" theme="cancel" @click="goToAdministration()"> <template #default> Administration </template> </AppButtonValidated>
       </div>
     </div>
 
