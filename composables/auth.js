@@ -49,7 +49,7 @@ export const useAuth = () => {
       try {
         const { error } = await supabase
         .from('profiles')
-        .update({ nom : form.nom, prenom : form.prenom })
+        .update({ nom : form.nom, prenom : form.prenom, favorite_secteur : form.favorite_secteur })
         .eq('id', form.id)
         .select()
         if (error) throw error;

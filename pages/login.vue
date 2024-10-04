@@ -3,6 +3,7 @@ const { addToast } = useToast();
 const { setLoader } = useLoader();
 const { login, signup } = useAuth();
 const supabase = useSupabaseClient();
+
 const route = useRoute();
 
 definePageMeta({
@@ -106,14 +107,17 @@ const showModalPassword = () => {
       </div>
 
       <form class="h-full px-6 pt-4 flex flex-col justify-center items-center text-gray-700 gap-4" @submit.prevent="register()">
-        <div class="text-2xl font-Medium w-full xl:w-2/3 cursor-default">
+        <div class="text-2xl font-Medium w-full 2xl:w-2/3 cursor-default">
           <p>Enregistrement Résa Pro</p>
           <p class="text-sm italic text-gray-500">Votre solution de réservation en ligne pour véhicules et salles</p>
         </div>
 
         <div class="w-full 2xl:w-1/2 flex flex-col gap-4 pt-4">
-          <AppInput name="nom" type="text" title="Nom : " placeholder="Entrez votre nom" v-model="formValue.nom" />
-          <AppInput name="prenom" type="text" title="Prénom : " placeholder="Entrez votre prénom" v-model="formValue.prenom" />
+          <div class="flex flex-col xl:flex-row gap-4">
+            <AppInput name="nom" type="text" title="Nom : " placeholder="Entrez votre nom" v-model="formValue.nom" />
+            <AppInput name="prenom" type="text" title="Prénom : " placeholder="Entrez votre prénom" v-model="formValue.prenom" />
+          </div>
+
           <AppInput name="email" type="text" title="Email : " placeholder="Entrez votre email professionnel" v-model="formValue.email" />
           <div class="flex flex-col">
             <AppInput name="password" type="password" title="Mot de passe : " placeholder="Minimun 8 charactères" v-model="formValue.password" />
@@ -154,7 +158,7 @@ const showModalPassword = () => {
       </div>
 
       <form class="h-full px-6 pt-4 flex flex-col justify-center items-center text-gray-700 gap-4" @submit.prevent="signIn()">
-        <div class="text-2xl font-Medium w-full xl:w-2/3 cursor-default">
+        <div class="text-2xl font-Medium w-full 2xl:w-2/3 cursor-default">
           <p>Bienvenue sur Résa Pro</p>
           <p class="text-sm italic text-gray-500">Votre solution de réservation en ligne pour véhicules et salles</p>
         </div>

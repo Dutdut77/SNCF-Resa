@@ -8,6 +8,7 @@ const { addToast } = useToast();
 const session = useSupabaseSession();
 const supabase = useSupabaseClient();
 const userProfil = useState("userProfil");
+const { updateProfiles } = useAuth();
 
 if (session.value) {
   setLoader(true);
@@ -18,6 +19,7 @@ if (session.value) {
 const showSubmenuSecteurs = ref(false);
 const viewDropdown = ref(false);
 const modalPassword = ref(false);
+const modalProfil = ref(false);
 const newPassword = ref("");
 const secteurActive = computed(() => {
   const result = secteurs.value.find((obj) => obj.id == route.params.id);
@@ -34,8 +36,16 @@ const showDropdown = () => {
 const showModalPassword = () => {
   modalPassword.value = !modalPassword.value;
 };
+
+const showModalProfil = () => {
+  modalProfil.value = !modalProfil.value;
+};
 const validatedForm = computed(() => {
   return newPassword.value != "" ? true : false;
+});
+
+const validatedFormProfil = computed(() => {
+  return userProfil.value.nom != "" && userProfil.value.prenom ? true : false;
 });
 
 const logout = async () => {
@@ -58,6 +68,14 @@ const changeMdp = async () => {
   } catch (err) {
     addToast({ type: "Error", title: "Problème lors de la modification du mot de passe.", message: err.message });
   }
+};
+
+const updateProfil = async () => {
+  setLoader(true);
+  await updateProfiles(userProfil.value);
+  viewDropdown.value = false;
+  showModalProfil();
+  setLoader(false);
 };
 </script>
 
@@ -88,7 +106,8 @@ const changeMdp = async () => {
       </div>
     </div>
 
-    <div v-if="viewDropdown" class="absolute -bottom-20 right-4 border rounded-lg bg-white p-4 z-50 shadow-lg text-right">
+    <div v-if="viewDropdown" class="absolute -bottom-28 right-4 border rounded-lg bg-white p-4 z-50 shadow-lg text-right">
+      <p class="cursor-pointer hover:font-medium duration-500" @click="showModalProfil()">Mon profil</p>
       <p class="cursor-pointer hover:font-medium duration-500" @click="showModalPassword()">Changer de mot de passe</p>
       <p class="cursor-pointer w-fit ml-auto hover:font-medium duration-500" @click="logout()">Se déconnecter</p>
     </div>
@@ -97,7 +116,7 @@ const changeMdp = async () => {
         <span class="text-xl text-gray-700 font-bold uppercase">Modification du mot de passe</span>
       </template>
       <template #default>
-        <div class="w-full">
+        <div class="w-full p-4">
           <AppInput name="password" type="password" title="Nouveau mot de passe : " placeholder="*****" v-model="newPassword" />
         </div>
 
@@ -107,6 +126,32 @@ const changeMdp = async () => {
         <div class="flex justify-end gap-4">
           <AppButtonValidated class="w-32" theme="cancel" @click="showModalPassword()"> <template #default> Annuler </template> </AppButtonValidated>
           <AppButtonValidated class="w-32" theme="" :validated="validatedForm" @click="changeMdp()"> <template #default> Enregistrer </template> </AppButtonValidated>
+        </div>
+      </template>
+    </AppModal>
+    <!-- Modal Profil -->
+    <AppModal v-if="modalProfil" :closeModal="showModalProfil">
+      <template #title>
+        <span class="text-xl text-gray-700 font-bold uppercase">Mon profil</span>
+      </template>
+      <template #default>
+        <div class="w-full flex flex-col gap-4 p-4">
+          <AppInput name="nom" type="text" title="Nom : " placeholder="" v-model="userProfil.nom" />
+          <AppInput name="prenom" type="text" title="Prénom : " placeholder="" v-model="userProfil.prenom" />
+          <AppSelect name="secteur" title="Secteur Favori: " v-model="userProfil.favorite_secteur">
+            <template #options>
+              <option class="" value="" disabled hidden>Choisissez votre secteur</option>
+              <option v-for="(secteur, index) in secteurs" :key="index" :value="secteur.id" :data="secteur.id">{{ secteur.name }}</option>
+            </template>
+          </AppSelect>
+        </div>
+
+        <span class="text-base text-cyan-700 font-bold"> </span>
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-4">
+          <AppButtonValidated class="w-32" theme="cancel" @click="showModalProfil()"> <template #default> Annuler </template> </AppButtonValidated>
+          <AppButtonValidated class="w-32" theme="" :validated="validatedFormProfil" @click="updateProfil()"> <template #default> Enregistrer </template> </AppButtonValidated>
         </div>
       </template>
     </AppModal>
