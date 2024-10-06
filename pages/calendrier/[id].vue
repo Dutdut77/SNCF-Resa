@@ -31,12 +31,13 @@ const userProfil = useState("userProfil");
 const { formatedDate, getWeek } = useFormatDate();
 
 const { setLoader } = useLoader();
-const { getMailSuperviseursSecteur, secteurs } = useSecteurs();
+const { getAll, getMailSuperviseursSecteur, secteurs } = useSecteurs();
 const { getAllVehiculesBySecteur, allVehiculesSecteur } = useVehicules();
 const { addResaVehicule, getAllResaSecteurVehicule, deleteResaVehicule, updateResaVehicule, allResaSecteurVehicule } = useResaVehicules();
 const { getAllSallesBySecteur, allSallesSecteur } = useSalles();
 const { addResaSalles, getAllResaSecteurSalle, deleteResaSalle, updateResaSalle, allResaSecteurSalle } = useResaSalles();
 const { sendEmail } = useEmail();
+const { updateProfiles } = useAuth();
 
 const selectedDate = ref({
   year: new Date().getFullYear(),
@@ -46,6 +47,7 @@ const selectedDate = ref({
 const modalVehicule = ref(false);
 const modalSalle = ref(false);
 const modalResa = ref(false);
+const modalChoiceSecteur = ref(false);
 const selectedVehicule = ref("");
 const selectedSalle = ref("");
 const selectedResa = ref("");
@@ -85,6 +87,7 @@ await getAllSallesBySecteur(route.params.id);
 await getAllVehiculesBySecteur(route.params.id);
 await getAllResaSecteurVehicule(route.params.id);
 await getAllResaSecteurSalle(route.params.id);
+await getAll();
 setLoader(false);
 
 const showModalVehicule = (data) => {
@@ -222,6 +225,10 @@ const showSideModal = (e) => {
     sideModal.value = !sideModal.value;
   }
 };
+
+const showModalChoiceSecteur = () => {
+  modalChoiceSecteur.value = !modalChoiceSecteur.value;
+};
 const showDatePickerDebut = (e) => {
   if (e && formValue.value.dateFin == "") {
     formValue.value.dateFin = e;
@@ -342,6 +349,20 @@ const selectAllSalles = async () => {
     listeSallesSelected.value = result;
   }
 };
+const updateSecteur = async (id) => {
+  setLoader(true);
+  userProfil.value.favorite_secteur = id;
+  await updateProfiles(userProfil.value);
+
+  showModalChoiceSecteur();
+  const url = `/calendrier/${id}`;
+  await navigateTo(url);
+  setLoader(false);
+};
+
+if (userProfil.value.favorite_secteur == "" || userProfil.value.favorite_secteur == null) {
+  modalChoiceSecteur.value = true;
+}
 </script>
 
 <template>
@@ -395,9 +416,9 @@ const selectAllSalles = async () => {
         </div>
         <div v-if="allSallesWithColors.length > 0">
           <div class="w-full flex px-4 cursor-pointer pb-1" v-for="salle in allSallesWithColors" :key="salle.id">
-            <input type="checkbox" :id="salle.id" :value="salle.id" class="mr-2 hidden" v-model="listeSallesSelected" />
+            <input type="checkbox" :id="salle.name" :value="salle.id" class="mr-2 hidden" v-model="listeSallesSelected" />
             <div class="w-full flex gap-2">
-              <label :for="salle.id" class="">
+              <label :for="salle.name" class="">
                 <div class="relative h-3 w-3 p-2 border rounded-sm cursor-pointer" :style="{ backgroundColor: listeSallesSelected.includes(salle.id) ? salle.color : '', borderColor: listeSallesSelected.includes(salle.id) ? salle.color : '#6b7280' }">
                   <Check class="absolute top-[1px] left-[1px] h-3.5 w-3.5 text-white" :class="listeSallesSelected.includes(salle.id) ? 'block ' : 'hidden'" />
                 </div>
@@ -550,8 +571,8 @@ const selectAllSalles = async () => {
                 </div>
                 <div v-if="datePickerDebutIsVisible" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-40">
                   <div class="w-full h-full flex justify-center items-center">
-                    <div class="">
-                      <AppDateTimePicker class="w-fit" v-model="formValue.dateDebut" :action="showDatePickerDebut" />
+                    <div class="w-full flex justify-center">
+                      <AppDateTimePicker class="" v-model="formValue.dateDebut" :action="showDatePickerDebut" />
                     </div>
                   </div>
                 </div>
@@ -566,7 +587,7 @@ const selectAllSalles = async () => {
                 </div>
                 <div v-if="datePickerFinIsVisible" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-40 overscroll-none">
                   <div class="w-full h-full flex justify-center items-center">
-                    <div class=" ">
+                    <div class="w-full flex justify-center">
                       <AppDateTimePicker class="w-fit" v-model="formValue.dateFin" :action="showDatePickerFin" />
                     </div>
                   </div>
@@ -614,5 +635,21 @@ const selectAllSalles = async () => {
         </AppModalSideContent>
       </template>
     </AppModalSide>
+
+    <AppModal v-if="modalChoiceSecteur" :closeModal="showModalChoiceSecteur">
+      <template #title>
+        <div class="w-full flex flex-col items-center text-lg text-slate-700">
+          <p class="font-medium">Choisissez-votre secteur favori</p>
+        </div>
+      </template>
+      <template #default>
+        <div class="p-2 w-full flex gap-4 flex-wrap justify-center">
+          <p class="py-2 text-gray-500 text-sm italic text-justify">Veuillez choisir votre secteur préféré afin d'accéder directement à son calendrier. Ce choix pourra être modifié ultérieurement dans votre page profil.</p>
+          <div class="border bg-gradient-to-tl from-sky-600 to-sky-500 uppercase font-medium rounded-lg text-center text-sm hover:text-white cursor-pointer px-4 py-2 duration-300" v-for="(secteur, index) in secteurs" :key="index" @click="updateSecteur(secteur.id)">
+            {{ secteur.name }}
+          </div>
+        </div>
+      </template>
+    </AppModal>
   </section>
 </template>

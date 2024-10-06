@@ -45,7 +45,6 @@ export const useAuth = () => {
   
   
      const updateProfiles = async (form) => {
-
       try {
         const { error } = await supabase
         .from('profiles')
