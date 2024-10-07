@@ -193,7 +193,7 @@ const validatedFormSalle = computed(() => {
 });
 
 const validatedFormVehicule = computed(() => {
-  return valideDate.value && formValue.value.vehicule != "" ? true : false;
+  return valideDate.value && formValue.value.titre != "" && formValue.value.vehicule != "" ? true : false;
 });
 const showSideModal = (e) => {
   if (e) {
@@ -596,6 +596,9 @@ if (userProfil.value.favorite_secteur == "" || userProfil.value.favorite_secteur
             </div>
 
             <div v-if="formValue.type == 1" class="h-full w-full pt-8 xl:pt-12">
+              <div class="uppercase text-base font-medium py-2 border-b text-left">Divers</div>
+              <AppInput name="titre" type="text" title="Objet de la réservation :" placeholder="" v-model="formValue.titre" class="pt-4 pb-6" />
+
               <div class="uppercase text-base font-medium py-2 border-b text-left">Véhicules disponible</div>
               <div v-if="valideDate" class="w-full h-fit flex flex-col justify-center py-6">
                 <ResaRadioVehicule :data="formValue" v-model="formValue.vehicule" />

@@ -282,9 +282,10 @@ const isJourJ = (date) => {
             <div :id="`id_${index}-${e.id}`" class="rounded-r-md w-full text-white h-full p-2 break-words overflow-hidden border-l-4 border-sncf-primary" :class="e.is_validated == 0 ? 'bg-hachure' : ''" :style="{ backgroundColor: !isHovered(`id_${index}-${e.id}`) ? hexToRgba(e.color, 0.75) : e.color, borderColor: e.color }">
               <div class="w-full h-full text-xs flex flex-col">
                 <div v-if="e.salles" class="uppercase">{{ e.salles.name }}</div>
-                <div v-if="e.salles" class="uppercase">{{ e.titre }}</div>
+
                 <div v-if="e.vehicules?.immat">{{ e.vehicules.immat }}</div>
                 <div v-if="e.vehicules">{{ e.vehicules.marque }} {{ e.vehicules.model }}</div>
+                <div class="uppercase">{{ e.titre }}</div>
                 <div class="mt-auto text-right">{{ e.profiles.nom }} {{ e.profiles.prenom }}</div>
                 <div class="text-right">{{ formatedDate(Number(e.debut)).heure }}h{{ formatedDate(Number(e.debut)).minute }} - {{ formatedDate(Number(e.fin)).heure }}h{{ formatedDate(Number(e.fin)).minute }}</div>
               </div>

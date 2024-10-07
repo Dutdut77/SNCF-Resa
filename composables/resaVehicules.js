@@ -85,7 +85,7 @@ export const useResaVehicules = () => {
             const { data : resa, error } = await supabase
             .from('resa_vehicules')
             .insert([
-              { id_vehicule : form.vehicule, id_secteur : form.secteur, id_user : form.id_user, debut : form.dateDebut, fin : form.dateFin, is_validated : form.is_validated },
+              { id_vehicule : form.vehicule, id_secteur : form.secteur, id_user : form.id_user, debut : form.dateDebut, fin : form.dateFin, is_validated : form.is_validated, titre : form.titre },
             ])
             .select() 
             if (error) throw error;
@@ -122,7 +122,7 @@ export const useResaVehicules = () => {
         try {
             const { error } = await supabase
             .from('resa_vehicules')
-            .update({ "id_vehicule" : data.vehicule, "debut" : data.dateDebut, "fin" : data.dateFin})
+            .update({ "id_vehicule" : data.vehicule, "titre": data.titre, "debut" : data.dateDebut, "fin" : data.dateFin})
             .eq('id', data.id)
             if (error) throw error;
             addToast({ type: "Success", title: "Félicitation", message: "Votre réservation a correctement été modifiée." });
