@@ -122,7 +122,7 @@ export const useResaSalles = () => {
         try {
             const { error } = await supabase
             .from('resa_salles')
-            .update({ "id_salle" : data.salle, "titre": data.titre, "debut" : data.dateDebut, "fin" : data.dateFin})
+            .update({ "id_salle" : data.salle, "titre": data.titre, "debut" : data.dateDebut, "fin" : data.dateFin, "is_validated" : data.is_validated})
             .eq('id', data.id)
      
             if (error) throw error;

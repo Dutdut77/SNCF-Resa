@@ -122,7 +122,7 @@ export const useResaVehicules = () => {
         try {
             const { error } = await supabase
             .from('resa_vehicules')
-            .update({ "id_vehicule" : data.vehicule, "titre": data.titre, "debut" : data.dateDebut, "fin" : data.dateFin})
+            .update({ "id_vehicule" : data.vehicule, "titre": data.titre, "debut" : data.dateDebut, "fin" : data.dateFin, "is_validated" : data.is_validated})
             .eq('id', data.id)
             if (error) throw error;
             addToast({ type: "Success", title: "Félicitation", message: "Votre réservation a correctement été modifiée." });

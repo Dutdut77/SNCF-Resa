@@ -144,7 +144,6 @@ const changeMinute = () => {
               <Left class="size-8 rotate-90 text-gray-600 cursor-pointer hover:text-sky-500" @click="changeMinute()" />
               <p class="text-lg font-bold text-white bg-sncf-primary-light rounded px-4 py-1 cursor-default">{{ selectedMinute }}</p>
               <Left class="size-8 -rotate-90 text-gray-600 cursor-pointer hover:text-sky-500" @click="changeMinute" />
-
               <!-- <AppDatePickerIos class="w-20" :items="minutes" v-model="selectedMinute" :viewIndex="activeIndexMinute" /> -->
             </div>
           </div>

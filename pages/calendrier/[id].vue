@@ -293,6 +293,11 @@ const annulationVehicule = async (id) => {
 };
 
 const updateSalle = async (data) => {
+  if (isAuthToReserv.value || userProfil.value.secteur_admin == route.params.id) {
+    data.is_validated = 1;
+  } else {
+    data.is_validated = 0;
+  }
   setLoader(true);
   await updateResaSalle(data);
   await getAllResaSecteurSalle(route.params.id);
@@ -301,6 +306,11 @@ const updateSalle = async (data) => {
 };
 
 const updateVehicule = async (data) => {
+  if (isAuthToReserv.value || userProfil.value.secteur_admin == route.params.id) {
+    data.is_validated = 1;
+  } else {
+    data.is_validated = 0;
+  }
   setLoader(true);
   await updateResaVehicule(data);
   await getAllResaSecteurVehicule(route.params.id);
