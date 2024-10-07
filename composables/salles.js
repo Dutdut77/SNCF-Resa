@@ -11,6 +11,7 @@ export const useSalles = () => {
       try {
           const { data, error } = await supabase
           .from('salles')
+          .order('id', { ascending: true })
           .select('*')
          if (error) throw error;
          allSalles.value = data

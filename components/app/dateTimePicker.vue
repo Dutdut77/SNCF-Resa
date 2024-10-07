@@ -131,9 +131,9 @@ const changeMinute = () => {
           <div class="p-2 text-center">
             <div class="text-center font-medium">Heures</div>
             <div class="h-full w-16 flex flex-col items-center justify-center pb-8">
-              <Left class="size-8 rotate-90 text-gray-600 cursor-pointer hover:text-sky-500" @click="addHour()" />
+              <Left class="size-8 rotate-90 text-gray-600 cursor-pointer hover:text-sky-500" @click="subHour()" />
               <p class="text-lg font-bold text-white bg-sncf-primary-light rounded px-4 py-1 cursor-default">{{ selectedHeure }}</p>
-              <Left class="size-8 -rotate-90 text-gray-600 cursor-pointer hover:text-sky-500" @click="subHour()" />
+              <Left class="size-8 -rotate-90 text-gray-600 cursor-pointer hover:text-sky-500" @click="addHour()" />
               <!-- <AppDatePickerIos class="w-20" :items="heures" v-model="selectedHeure" :viewIndex="activeIndexHeure" /> -->
             </div>
           </div>
@@ -152,7 +152,7 @@ const changeMinute = () => {
       </div>
 
       <div class="flex gap-4 px-4 py-2 text-gray-600 text-base bg-slate-50">
-        <p class="ml-auto cursor-pointer hover:font-medium duration-300" @click="props.action">Annuler</p>
+        <p class="ml-auto cursor-pointer hover:font-medium duration-300" @click="props.action()">Annuler</p>
         <p class="cursor-pointer hover:font-medium duration-300" @click="validChoice()">Ok</p>
       </div>
     </div>
