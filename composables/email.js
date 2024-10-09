@@ -216,8 +216,6 @@ export const useEmail = () => {
       addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée."});
     }
 }
-
-
   
   const sendEmailRefusVehicule = async (data) => {
     const dateDebut = timestampToDateFr(data.debut)
@@ -364,6 +362,145 @@ const sendEmailRefusSalle = async (data) => {
   }
   }
 
-      return { sendEmail,sendEmailValidationVehicule,sendEmailValidationSalle, sendEmailRefusVehicule, sendEmailRefusSalle}
+
+
+
+    const sendEmailAnnulation = async (data) => {
+      const dateDebut = timestampToDateFr(data.debut)
+      const heureDebut = timestampToHeure(data.debut)
+      const dateFin = timestampToDateFr(data.fin)
+      const heureFin = timestampToHeure(data.fin)
+  
+      try {
+  
+                  const html = `<html lang="fr">
+                  <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                          <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                line-height: 1.1;
+                                color: #333;
+                                background : #FFF
+                            }
+                            .header {
+                                background:  #db1237;
+                                padding: 10px;
+                                text-align: center;
+                                border-bottom: 1px solid #ddd;
+                                color : #FFF;
+                            }
+  
+                        </style>
+                  </head>
+                  <body>
+                    
+                            <div class="header">
+                            <h1>Réservation de votre véhicule annulée</h1>
+                            </div>
+  
+                            <h2>Bonjour ${data.profiles.prenom},</h2>
+                  <p>Un administrateur a été contraint d'annuler votre réservation.</p>
+       <p>Merci de vous connecter à l'application Résa-Pro pour plus d'informations</p>
+
+                  <p>&nbsp;</p>
+                  <p>Vous pouvez reformuler une autre demande directement depuis l'application Résa-Pro.</p>
+                  <p>À bientôt.</p>
+                  <p>&nbsp;</p>
+                
+  
+                
+               
+                  </body>
+                                </html>`
+                
+                  await $fetch("/api/sendEmail" ,{
+                    method : 'post',
+                    body : {
+                        from : 'ResaPro <noreply@resa-pro.infpe.fr>',
+                        to : data.profiles.email,
+                        subject : 'Annulation réservation Résa-Pro',
+                        html : html
+                    }
+        
+                  });
+          
+  
+      } catch (err) {     
+        addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée."});
+      }
+  }
+  const sendEmailModification = async (data) => {
+    const dateDebut = timestampToDateFr(data.debut)
+    const heureDebut = timestampToHeure(data.debut)
+    const dateFin = timestampToDateFr(data.fin)
+    const heureFin = timestampToHeure(data.fin)
+    try {
+  
+     const html = `<html lang="fr">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                  body {
+                      font-family: Arial, sans-serif;
+                      line-height: 1.1;
+                      color: #333;
+                      background : #FFF
+                  }
+                  .header {
+                      background:  #db1237;
+                      padding: 10px;
+                      text-align: center;
+                      border-bottom: 1px solid #ddd;
+                      color : #FFF;
+                  }
+
+              </style>
+        </head>
+        <body>
+          
+                  <div class="header">
+                  <h1>Réservation  modifiée</h1>
+                  </div>
+
+                  <h2>Bonjour ${data.profiles.prenom},</h2>
+        <p>Un administrateur a été contraint de modifier votre réservation.</p>
+       <p>Merci de vous connecter à l'application Résa-Pro pour plus d'informations</p>
+        <p>&nbsp;</p>
+        <p>À bientôt.</p>
+        <p>&nbsp;</p>
+      
+
+      
+     
+        </body>
+                      </html>`
+
+
+
+
+              
+                await $fetch("/api/sendEmail" ,{
+                  method : 'post',
+                  body : {
+                      from : 'ResaPro <noreply@resa-pro.infpe.fr>',
+                      to : data.profiles.email,
+                      subject : 'Modification réservation Résa-Pro',
+                      html : html
+                  }
+      
+                });
+        
+
+    } catch (err) {     
+      addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée."});
+    }
+}
+
+
+
+      return { sendEmail,sendEmailValidationVehicule,sendEmailValidationSalle, sendEmailRefusVehicule, sendEmailRefusSalle, sendEmailAnnulation,sendEmailModification}
       
   }

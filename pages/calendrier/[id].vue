@@ -36,7 +36,7 @@ const { getAllVehiculesBySecteur, allVehiculesSecteur } = useVehicules();
 const { addResaVehicule, getAllResaSecteurVehicule, deleteResaVehicule, updateResaVehicule, allResaSecteurVehicule } = useResaVehicules();
 const { getAllSallesBySecteur, allSallesSecteur } = useSalles();
 const { addResaSalles, getAllResaSecteurSalle, deleteResaSalle, updateResaSalle, allResaSecteurSalle } = useResaSalles();
-const { sendEmail } = useEmail();
+const { sendEmail, sendEmailAnnulation, sendEmailModification } = useEmail();
 const { updateProfiles } = useAuth();
 
 const selectedDate = ref({
@@ -200,6 +200,8 @@ const showSideModal = (e) => {
     formValue.value.id = e.id;
     formValue.value.dateDebut = Number(e.debut);
     formValue.value.dateFin = Number(e.fin);
+    formValue.value.profiles = e.profiles;
+    formValue.value.is_validated = e.is_validated;
     if (typeSelected.value == 1) formValue.value.vehicule = e.vehicules.id;
     if (typeSelected.value == 2) formValue.value.salle = e.salles.id;
     formValue.value.titre = e.titre;
@@ -276,29 +278,33 @@ const addResa = async () => {
     setLoader(false);
   }
 };
-const annulationSalle = async (id) => {
+const annulationSalle = async (data) => {
   setLoader(true);
-  await deleteResaSalle(id);
+  if (data.id_user != userProfil.value.id) {
+    await sendEmailAnnulation(data);
+  }
+  await deleteResaSalle(data.id);
   await getAllResaSecteurSalle(route.params.id);
   showSideModal();
   setLoader(false);
 };
 
-const annulationVehicule = async (id) => {
+const annulationVehicule = async (data) => {
   setLoader(true);
-  await deleteResaVehicule(id);
+  if (data.id_user != userProfil.value.id) {
+    await sendEmailAnnulation(data);
+  }
+  await deleteResaVehicule(data.id);
   await getAllResaSecteurVehicule(route.params.id);
   showSideModal();
   setLoader(false);
 };
 
 const updateSalle = async (data) => {
-  if (isAuthToReserv.value || userProfil.value.secteur_admin == route.params.id) {
-    data.is_validated = 1;
-  } else {
-    data.is_validated = 0;
-  }
   setLoader(true);
+  if (data.id_user != userProfil.value.id) {
+    await sendEmailModification(data);
+  }
   await updateResaSalle(data);
   await getAllResaSecteurSalle(route.params.id);
   showSideModal();
@@ -306,12 +312,10 @@ const updateSalle = async (data) => {
 };
 
 const updateVehicule = async (data) => {
-  if (isAuthToReserv.value || userProfil.value.secteur_admin == route.params.id) {
-    data.is_validated = 1;
-  } else {
-    data.is_validated = 0;
-  }
   setLoader(true);
+  if (data.id_user != userProfil.value.id) {
+    await sendEmailModification(data);
+  }
   await updateResaVehicule(data);
   await getAllResaSecteurVehicule(route.params.id);
   showSideModal();
@@ -569,62 +573,65 @@ if (userProfil.value.favorite_secteur == "" || userProfil.value.favorite_secteur
             </div>
           </template>
           <template #default>
-            <div class="uppercase text-base font-medium py-2 border-b text-left">Période</div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-3 text-sm text-gray-700">
-              <div class="w-full break-inside-avoid">
-                <label for="dateDebut" class="block text-sm">Date début :</label>
-                <div class="mt-1">
-                  <div class="w-full py-2 px-4 border border-gray-300 bg-slate-50 text-sm text-gray-700 rounded-md cursor-pointer" @click="showDatePickerDebut()">
-                    <div v-if="formValue.dateDebut" class="first-letter:uppercase">{{ formatedDate(formValue.dateDebut).jourName }} {{ formatedDate(formValue.dateDebut).jour }} {{ formatedDate(formValue.dateDebut).mois }} {{ formatedDate(formValue.dateDebut).annee }} - {{ formatedDate(formValue.dateDebut).heure }}h{{ formatedDate(formValue.dateDebut).minute }}</div>
-                    <div v-else class="text-gray-400">Selectionnez une date</div>
+            <div class="h-full w-full flex flex-col gap-4">
+              <div class="flex h-full"></div>
+              <div class="uppercase text-base font-medium pb-2 border-b text-left">Période</div>
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-3 text-sm text-gray-700">
+                <div class="w-full break-inside-avoid">
+                  <label for="dateDebut" class="block text-sm">Date début :</label>
+                  <div class="mt-1">
+                    <div class="w-full py-2 px-4 border border-gray-300 bg-slate-50 text-sm text-gray-700 rounded-md cursor-pointer" @click="showDatePickerDebut()">
+                      <div v-if="formValue.dateDebut" class="first-letter:uppercase">{{ formatedDate(formValue.dateDebut).jourName }} {{ formatedDate(formValue.dateDebut).jour }} {{ formatedDate(formValue.dateDebut).mois }} {{ formatedDate(formValue.dateDebut).annee }} - {{ formatedDate(formValue.dateDebut).heure }}h{{ formatedDate(formValue.dateDebut).minute }}</div>
+                      <div v-else class="text-gray-400">Selectionnez une date</div>
+                    </div>
+                  </div>
+                  <div v-if="datePickerDebutIsVisible" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-40">
+                    <div class="w-full h-full flex justify-center items-center">
+                      <div class="w-full flex justify-center">
+                        <AppDateTimePicker class="" v-model="formValue.dateDebut" :action="showDatePickerDebut" />
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div v-if="datePickerDebutIsVisible" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-40">
-                  <div class="w-full h-full flex justify-center items-center">
-                    <div class="w-full flex justify-center">
-                      <AppDateTimePicker class="" v-model="formValue.dateDebut" :action="showDatePickerDebut" />
+                <div class="w-full break-inside-avoid">
+                  <label for="dateFin" class="block text-sm">Date fin :</label>
+                  <div class="mt-1">
+                    <div class="w-full py-2 px-4 border border-gray-300 bg-slate-50 text-sm text-gray-700 rounded-md cursor-pointer" @click="showDatePickerFin()">
+                      <div v-if="formValue.dateFin" class="first-letter:uppercase">{{ formatedDate(formValue.dateFin).jourName }} {{ formatedDate(formValue.dateFin).jour }} {{ formatedDate(formValue.dateFin).mois }} {{ formatedDate(formValue.dateFin).annee }} - {{ formatedDate(formValue.dateFin).heure }}h{{ formatedDate(formValue.dateFin).minute }}</div>
+                      <div v-else class="text-gray-400">Selectionnez une date</div>
+                    </div>
+                  </div>
+                  <div v-if="datePickerFinIsVisible" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-40 overscroll-none">
+                    <div class="w-full h-full flex justify-center items-center">
+                      <div class="w-full flex justify-center">
+                        <AppDateTimePicker class="w-fit" v-model="formValue.dateFin" :action="showDatePickerFin" />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="w-full break-inside-avoid">
-                <label for="dateFin" class="block text-sm">Date fin :</label>
-                <div class="mt-1">
-                  <div class="w-full py-2 px-4 border border-gray-300 bg-slate-50 text-sm text-gray-700 rounded-md cursor-pointer" @click="showDatePickerFin()">
-                    <div v-if="formValue.dateFin" class="first-letter:uppercase">{{ formatedDate(formValue.dateFin).jourName }} {{ formatedDate(formValue.dateFin).jour }} {{ formatedDate(formValue.dateFin).mois }} {{ formatedDate(formValue.dateFin).annee }} - {{ formatedDate(formValue.dateFin).heure }}h{{ formatedDate(formValue.dateFin).minute }}</div>
-                    <div v-else class="text-gray-400">Selectionnez une date</div>
-                  </div>
+
+              <div v-if="formValue.type == 1" class="h-full w-full pt-8 xl:pt-12">
+                <div class="uppercase text-base font-medium py-2 border-b text-left">Divers</div>
+                <AppInput name="titre" type="text" title="Objet de la réservation :" placeholder="" v-model="formValue.titre" class="pt-4 pb-6" />
+
+                <div class="uppercase text-base font-medium py-2 border-b text-left">Véhicules disponible</div>
+                <div v-if="valideDate" class="w-full h-fit flex flex-col justify-center py-6">
+                  <ResaRadioVehicule :data="formValue" v-model="formValue.vehicule" />
                 </div>
-                <div v-if="datePickerFinIsVisible" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-40 overscroll-none">
-                  <div class="w-full h-full flex justify-center items-center">
-                    <div class="w-full flex justify-center">
-                      <AppDateTimePicker class="w-fit" v-model="formValue.dateFin" :action="showDatePickerFin" />
-                    </div>
-                  </div>
-                </div>
+                <div v-else class="py-6">Aucun véhicule de disponible pour ces dates.</div>
               </div>
-            </div>
+              <div v-if="formValue.type == 2" class="h-full w-full pt-8">
+                <div class="uppercase text-base font-medium py-2 border-b text-left">Divers</div>
+                <AppInput name="titre" type="text" title="Objet de la réunion :" placeholder="" v-model="formValue.titre" class="pt-4 pb-6" />
 
-            <div v-if="formValue.type == 1" class="h-full w-full pt-8 xl:pt-12">
-              <div class="uppercase text-base font-medium py-2 border-b text-left">Divers</div>
-              <AppInput name="titre" type="text" title="Objet de la réservation :" placeholder="" v-model="formValue.titre" class="pt-4 pb-6" />
-
-              <div class="uppercase text-base font-medium py-2 border-b text-left">Véhicules disponible</div>
-              <div v-if="valideDate" class="w-full h-fit flex flex-col justify-center py-6">
-                <ResaRadioVehicule :data="formValue" v-model="formValue.vehicule" />
-              </div>
-              <div v-else class="py-6">Aucun véhicule de disponible pour ces dates.</div>
-            </div>
-            <div v-if="formValue.type == 2" class="h-full w-full pt-8">
-              <div class="uppercase text-base font-medium py-2 border-b text-left">Divers</div>
-              <AppInput name="titre" type="text" title="Objet de la réunion :" placeholder="" v-model="formValue.titre" class="pt-4 pb-6" />
-
-              <div class="uppercase text-base font-medium py-2 border-b text-left">Salles disponible</div>
-              <div class="w-full h-fit flex flex-col justify-center py-6">
-                <div v-if="valideDate" class="w-full h-fit flex flex-col justify-center">
-                  <ResaRadioSalle :data="formValue" v-model="formValue.salle" />
+                <div class="uppercase text-base font-medium py-2 border-b text-left">Salles disponible</div>
+                <div class="w-full h-fit flex flex-col justify-center py-6">
+                  <div v-if="valideDate" class="w-full h-fit flex flex-col justify-center">
+                    <ResaRadioSalle :data="formValue" v-model="formValue.salle" />
+                  </div>
+                  <div v-else class="font-normal text-sm text-gray-600">Aucune salle de disponible pour ces dates.</div>
                 </div>
-                <div v-else class="font-normal text-sm text-gray-600">Aucune salle de disponible pour ces dates.</div>
               </div>
             </div>
           </template>
@@ -635,8 +642,8 @@ if (userProfil.value.favorite_secteur == "" || userProfil.value.favorite_secteur
                 <AppButtonValidated v-if="formValue.type == 1" class="w-full md:w-32 flex-none px-4" theme="success" @click="updateVehicule(formValue)"> <template #default> Modifier</template> </AppButtonValidated>
                 <AppButtonValidated v-if="formValue.type == 2" class="w-full md:w-32 flex-none px-4" theme="success" @click="updateSalle(formValue)"> <template #default> Modifier</template> </AppButtonValidated>
 
-                <AppButtonValidated v-if="formValue.type == 1" class="w-full md:w-fit flex-none px-4" theme="delete" @click="annulationVehicule(formValue.id)"> <template #default> Annuler la réservation</template> </AppButtonValidated>
-                <AppButtonValidated v-if="formValue.type == 2" class="w-full md:w-fit flex-none px-4" theme="delete" @click="annulationSalle(formValue.id)"> <template #default> Annuler la réservation</template> </AppButtonValidated>
+                <AppButtonValidated v-if="formValue.type == 1" class="w-full md:w-fit flex-none px-4" theme="delete" @click="annulationVehicule(formValue)"> <template #default> Annuler la réservation</template> </AppButtonValidated>
+                <AppButtonValidated v-if="formValue.type == 2" class="w-full md:w-fit flex-none px-4" theme="delete" @click="annulationSalle(formValue)"> <template #default> Annuler la réservation</template> </AppButtonValidated>
               </div>
             </div>
             <div v-else class="w-full flex gap-4">
