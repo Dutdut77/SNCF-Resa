@@ -60,7 +60,7 @@ const supprimerResaVehicule = async (data) => {
     <div class="w-full flex">
       <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
         <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
-          <div class="font-medium text-gray-50">Réservations des véhicules</div>
+          <div class="font-medium text-gray-50">Réservations véhicules</div>
         </div>
       </div>
     </div>
