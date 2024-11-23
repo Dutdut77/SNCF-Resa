@@ -46,8 +46,8 @@ const deleteProfilAdmin = async (data) => {
 <template>
   <section class="w-full h-full flex flex-col gap-4 lg:overflow-hidden">
     <div class="w-full flex">
-      <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
-        <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
+      <div class="w-full font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
+        <div class="relative w-full lg:w-fit text-center lg:text-left text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
           <div class="font-medium text-gray-50">Administrateurs</div>
         </div>
       </div>

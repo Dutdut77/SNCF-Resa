@@ -457,11 +457,12 @@ if (userProfil.value.favorite_secteur == "" || userProfil.value.favorite_secteur
     <!-- PARTIE DROITE -->
     <div class="w-full h-full flex flex-col gap-4">
       <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
-        <div class="relative w-full text-center lg:text-left lg:w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
+        <div class="relative w-full text-center lg:text-left lg:w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2 flex items-center justify-center gap-4">
           <div class="font-medium text-gray-50">Semaine {{ weekNumber }}</div>
+          <div class="ml-auto flex lg:hidden gap-1"><Left class="size-8 cursor-pointer text-gray-50" @click="subSemaine()" /><Right class="size-8 cursor-pointer text-gray-50" @click="addSemaine()" /></div>
         </div>
-        <div class="flex gap-1"><Left class="size-8 cursor-pointer hover:text-sky-500" @click="subSemaine()" /><Right class="size-8 cursor-pointer hover:text-sky-500" @click="addSemaine()" /></div>
-        <AppButtonValidated class="w-fit px-4 text-sm lg:ml-auto font-normal" theme="" @click="showSideModal()"> <template #default> Nouvelle Réservation </template> </AppButtonValidated>
+        <div class="hidden lg:flex gap-1"><Left class="size-8 cursor-pointer hover:text-sky-500" @click="subSemaine()" /><Right class="size-8 cursor-pointer hover:text-sky-500" @click="addSemaine()" /></div>
+        <AppButtonValidated class="w-fit px-4 text-sm lg:ml-auto font-normal uppercase" theme="" @click="showSideModal()"> <template #default> Nouvelle Réservation </template> </AppButtonValidated>
       </div>
 
       <div class="w-full h-full border rounded-xl bg-slate-50 pr-4 overflow-auto">
