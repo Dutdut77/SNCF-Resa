@@ -57,7 +57,7 @@ const deleteProfilValideur = async (data) => {
     </div>
 
     <div class="h-full w-full flex flex-col gap-4 lg:overflow-auto pr-4">
-      <div class="w-full h-full flex flex-col gap-4">
+      <div class="w-full flex flex-col gap-4">
         <div class="pt-4 uppercase text-lg text-gray-600 font-medium text-left">Profils autorisés :</div>
         <table v-if="userAuth.length > 0" class="w-full">
           <thead>

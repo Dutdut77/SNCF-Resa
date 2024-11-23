@@ -44,7 +44,7 @@ const deleteProfilAdmin = async (data) => {
 </script>
 
 <template>
-  <section class="w-full h-full flex flex-col gap-4">
+  <section class="w-full h-full flex flex-col gap-4 lg:overflow-hidden">
     <div class="w-full flex">
       <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
         <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
@@ -55,53 +55,57 @@ const deleteProfilAdmin = async (data) => {
         ><p class="font-bold text-base"><Edit class="size-5" /></p
       ></AppButtonValidated> -->
     </div>
-    <div class="w-full flex flex-col gap-4">
-      <div class="pt-4 uppercase text-lg text-gray-600 font-medium text-left">Profil Administrateur :</div>
 
-      <table class="w-full">
-        <thead>
-          <tr class="font-medium text-base border-b">
-            <th class="text-left pb-4">Nom</th>
-            <th class="text-left pb-4">Prénom</th>
-            <th class="hidden lg:block">Email</th>
-            <th class="w-12">#</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="cursor-default h-10 border-b hover:bg-slate-10" v-for="data in userAdmin" :key="data.id">
-            <td>{{ data.nom }}</td>
-            <td class="text-left">{{ data.prenom }}</td>
-            <td class="text-center hidden lg:block">{{ data.email }}</td>
-            <td class="cursor-pointer" @click="deleteProfilAdmin(data)">
-              <Trash class="size-5 mx-auto text-red-500" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="w-full flex flex-col gap-4">
-      <div class="pt-4 uppercase text-lg text-gray-600 font-medium text-left">Ajouter un profil :</div>
+    <div class="h-full w-full flex flex-col gap-4 lg:overflow-auto pr-4">
+      <div class="w-full flex flex-col gap-4">
+        <div class="pt-4 uppercase text-lg text-gray-600 font-medium text-left">Profil Administrateur :</div>
 
-      <table class="w-full">
-        <thead>
-          <tr class="font-medium text-base border-b">
-            <th class="text-left pb-4">Nom</th>
-            <th class="text-left pb-4">Prénom</th>
-            <th class="hidden lg:block">Email</th>
-            <th class="w-12">#</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="cursor-default h-10 border-b hover:bg-slate-10" v-for="data in userNotAdmin" :key="data.id">
-            <td>{{ data.nom }}</td>
-            <td class="text-left">{{ data.prenom }}</td>
-            <td class="text-center hidden lg:block">{{ data.email }}</td>
-            <td class="cursor-pointer" @click="addProfilAdmin(data)">
-              <Add class="size-5 mx-auto text-green-500" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        <table class="w-full">
+          <thead>
+            <tr class="font-medium text-base border-b">
+              <th class="text-left pb-4">Nom</th>
+              <th class="text-left pb-4">Prénom</th>
+              <th class="hidden lg:block">Email</th>
+              <th class="w-12">#</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="cursor-default h-10 border-b hover:bg-slate-10" v-for="data in userAdmin" :key="data.id">
+              <td>{{ data.nom }}</td>
+              <td class="text-left">{{ data.prenom }}</td>
+              <td class="text-center hidden lg:block">{{ data.email }}</td>
+              <td class="cursor-pointer" @click="deleteProfilAdmin(data)">
+                <Trash class="size-5 mx-auto text-red-500" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="w-full flex flex-col gap-4">
+        <div class="pt-4 uppercase text-lg text-gray-600 font-medium text-left">Ajouter un profil :</div>
+
+        <table class="w-full">
+          <thead>
+            <tr class="font-medium text-base border-b">
+              <th class="text-left pb-4">Nom</th>
+              <th class="text-left pb-4">Prénom</th>
+              <th class="hidden lg:block">Email</th>
+              <th class="w-12">#</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="cursor-default h-10 border-b hover:bg-slate-10" v-for="data in userNotAdmin" :key="data.id">
+              <td>{{ data.nom }}</td>
+              <td class="text-left">{{ data.prenom }}</td>
+              <td class="text-center hidden lg:block">{{ data.email }}</td>
+              <td class="cursor-pointer" @click="addProfilAdmin(data)">
+                <Add class="size-5 mx-auto text-green-500" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <AppModalSide :sideModal="sideModalAdmin" :closeSideModal="showSideAdmin">
