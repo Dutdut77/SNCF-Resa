@@ -44,7 +44,7 @@ const deleteProfilValideur = async (data) => {
 </script>
 
 <template>
-  <section class="w-full h-full flex flex-col gap-4 overflow-hidden">
+  <section class="w-full h-full flex flex-col gap-4 lg:overflow-hidden">
     <div class="w-full flex">
       <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
         <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
@@ -56,54 +56,57 @@ const deleteProfilValideur = async (data) => {
       ></AppButtonValidated> -->
     </div>
 
-    <div class="w-full flex flex-col gap-4">
-      <div class="pt-4 uppercase text-lg text-gray-600 font-medium text-left">Profils autorisés :</div>
-      <table v-if="userAuth.length > 0" class="w-full">
-        <thead>
-          <tr class="font-medium text-base border-b">
-            <th class="text-left pb-4">Nom</th>
-            <th class="text-left pb-4">Prénom</th>
-            <th class="hidden lg:block">Email</th>
-            <th class="w-12"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="cursor-default h-10 border-b hover:bg-slate-100" v-for="data in userAuth" :key="data.id">
-            <td>{{ data.nom }}</td>
-            <td class="text-left">{{ data.prenom }}</td>
-            <td class="text-center hidden lg:block">{{ data.email }}</td>
-            <td class="cursor-pointer" @click="deleteProfilValideur(data)">
-              <Trash class="size-5 mx-auto text-red-500" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="italic" v-else>Néant !</div>
-    </div>
+    <div class="h-full w-full flex flex-col gap-4 lg:overflow-auto pr-4">
+      <div class="w-full h-full flex flex-col gap-4">
+        <div class="pt-4 uppercase text-lg text-gray-600 font-medium text-left">Profils autorisés :</div>
+        <table v-if="userAuth.length > 0" class="w-full">
+          <thead>
+            <tr class="font-medium text-base border-b">
+              <th class="text-left pb-4">Nom</th>
+              <th class="text-left pb-4">Prénom</th>
+              <th class="hidden lg:block">Email</th>
+              <th class="w-12"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="cursor-default h-10 border-b hover:bg-slate-100" v-for="data in userAuth" :key="data.id">
+              <td>{{ data.nom }}</td>
+              <td class="text-left">{{ data.prenom }}</td>
+              <td class="text-center hidden lg:block">{{ data.email }}</td>
+              <td class="cursor-pointer" @click="deleteProfilValideur(data)">
+                <Trash class="size-5 mx-auto text-red-500" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-    <div class="w-full flex flex-col gap-4">
-      <div class="pt-4 uppercase text-lg text-gray-600 font-medium text-left">Ajouter un profil :</div>
-      <table v-if="userNotAuth.length > 0" class="w-full">
-        <thead>
-          <tr class="font-medium text-base border-b">
-            <th class="text-left pb-4 flex">Nom</th>
-            <th class="text-left pb-4 w-auto">Prénom</th>
-            <th class="hidden lg:block">Email</th>
-            <th class="w-12">#</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="cursor-default h-10 border-b hover:bg-slate-100" v-for="data in userNotAuth" :key="data.id">
-            <td>{{ data.nom }}</td>
-            <td class="text-left">{{ data.prenom }}</td>
-            <td class="text-center hidden lg:block">{{ data.email }}</td>
-            <td class="cursor-pointer" @click="addProfilValideur(data)">
-              <Add class="size-5 mx-auto text-green-500" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="italic" v-else>Néant !</div>
+        <div class="italic" v-else>Néant !</div>
+      </div>
+
+      <div class="w-full flex flex-col gap-4">
+        <div class="pt-4 uppercase text-lg text-gray-600 font-medium text-left">Ajouter un profil :</div>
+        <table v-if="userNotAuth.length > 0" class="w-full">
+          <thead>
+            <tr class="font-medium text-base border-b">
+              <th class="text-left pb-4 flex">Nom</th>
+              <th class="text-left pb-4 w-auto">Prénom</th>
+              <th class="hidden lg:block">Email</th>
+              <th class="w-12">#</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="cursor-default h-10 border-b hover:bg-slate-100" v-for="data in userNotAuth" :key="data.id">
+              <td>{{ data.nom }}</td>
+              <td class="text-left">{{ data.prenom }}</td>
+              <td class="text-center hidden lg:block">{{ data.email }}</td>
+              <td class="cursor-pointer" @click="addProfilValideur(data)">
+                <Add class="size-5 mx-auto text-green-500" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="italic" v-else>Néant !</div>
+      </div>
     </div>
 
     <AppModalSide :sideModal="sideModalValideurs" :closeSideModal="showSideValideurs">

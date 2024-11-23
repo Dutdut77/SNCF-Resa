@@ -49,31 +49,33 @@ const goToCalendrier = async () => {
     </div>
 
     <!-- PARTIE DROITE -->
-    <div v-if="activeMenu == 1" class="w-full h-full">
-      <ResaAdminVehicules />
+    <div class="w-full">
+      <div v-if="activeMenu == 1" class="w-full h-full">
+        <ResaAdminVehicules />
+      </div>
+
+      <div v-if="activeMenu == 2" class="w-full h-full">
+        <ResaAdminResaVehicules />
+      </div>
+
+      <div v-if="activeMenu == 3" class="w-full h-full">
+        <ResaAdminSalles />
+      </div>
+
+      <div v-if="activeMenu == 4" class="w-full h-full">
+        <ResaAdminResaSalles />
+      </div>
+
+      <div v-if="activeMenu == 5" class="w-full h-full">
+        <ResaAdminReservation />
+      </div>
+
+      <div v-if="activeMenu == 6" class="w-full h-full">
+        <ResaAdminAdministration />
+      </div>
     </div>
 
-    <div v-if="activeMenu == 2" class="w-full h-full">
-      <ResaAdminResaVehicules />
-    </div>
-
-    <div v-if="activeMenu == 3" class="w-full h-full">
-      <ResaAdminSalles />
-    </div>
-
-    <div v-if="activeMenu == 4" class="w-full h-full">
-      <ResaAdminResaSalles />
-    </div>
-
-    <div v-if="activeMenu == 5" class="w-full h-full">
-      <ResaAdminReservation />
-    </div>
-
-    <div v-if="activeMenu == 6" class="w-full h-full">
-      <ResaAdminAdministration />
-    </div>
-
-    <div class="mt-auto lg:hidden block">
+    <div class="h-fit w-full mt-auto lg:hidden flex">
       <AppButtonValidated class="w-full text-sm" theme="cancel" @click="goToCalendrier()"> <template #default> Retour calendrier </template> </AppButtonValidated>
     </div>
   </section>

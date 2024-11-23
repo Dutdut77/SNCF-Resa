@@ -63,17 +63,17 @@ const deleteProfilAdmin = async (data) => {
           <tr class="font-medium text-base border-b">
             <th class="text-left pb-4">Nom</th>
             <th class="text-left pb-4">Prénom</th>
-            <th>Email</th>
-            <th class="text-right"></th>
+            <th class="hidden lg:block">Email</th>
+            <th class="w-12">#</th>
           </tr>
         </thead>
         <tbody>
           <tr class="cursor-default h-10 border-b hover:bg-slate-10" v-for="data in userAdmin" :key="data.id">
             <td>{{ data.nom }}</td>
             <td class="text-left">{{ data.prenom }}</td>
-            <td class="text-center">{{ data.email }}</td>
+            <td class="text-center hidden lg:block">{{ data.email }}</td>
             <td class="cursor-pointer" @click="deleteProfilAdmin(data)">
-              <Trash class="size-5" />
+              <Trash class="size-5 mx-auto text-red-500" />
             </td>
           </tr>
         </tbody>
@@ -87,17 +87,17 @@ const deleteProfilAdmin = async (data) => {
           <tr class="font-medium text-base border-b">
             <th class="text-left pb-4">Nom</th>
             <th class="text-left pb-4">Prénom</th>
-            <th>Email</th>
-            <th class="text-right"></th>
+            <th class="hidden lg:block">Email</th>
+            <th class="w-12">#</th>
           </tr>
         </thead>
         <tbody>
           <tr class="cursor-default h-10 border-b hover:bg-slate-10" v-for="data in userNotAdmin" :key="data.id">
             <td>{{ data.nom }}</td>
             <td class="text-left">{{ data.prenom }}</td>
-            <td class="text-center">{{ data.email }}</td>
+            <td class="text-center hidden lg:block">{{ data.email }}</td>
             <td class="cursor-pointer" @click="addProfilAdmin(data)">
-              <Add class="size-5" />
+              <Add class="size-5 mx-auto text-green-500" />
             </td>
           </tr>
         </tbody>
