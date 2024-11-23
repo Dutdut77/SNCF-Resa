@@ -35,7 +35,7 @@ export const useResaVehicules = () => {
             .select('*, vehicules!inner(*), secteurs!inner(name), profiles!inner(*)')
             .eq('id_secteur', id)
             .order('debut', { ascending: false })
-            // .gte('fin', now);
+            .gte('fin', now);
            if (error) throw error;
            allResaSecteurActuel.value = data
         } catch (err) {
