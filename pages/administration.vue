@@ -23,21 +23,21 @@ const goToCalendrier = async () => {
       <p class="font-medium text-center text-lg">Administration</p>
       <div>
         <p class="font-medium text-base uppercase italic">Véhicules</p>
-        <div class="bg-white border rounded-lg py-4">
+        <div class="bg-slate-50 border rounded-lg py-4">
           <div class="w-full hover:bg-slate-100 cursor-pointer px-4" :class="activeMenu == 1 ? 'text-sky-600 font-medium' : ''" @click="activeMenu = 1">Liste des véhicules</div>
           <div class="w-full hover:bg-slate-100 cursor-pointer px-4" :class="activeMenu == 2 ? 'text-sky-600 font-medium' : ''" @click="activeMenu = 2">Réservations</div>
         </div>
       </div>
       <div>
         <p class="font-medium text-base uppercase italic">Salles</p>
-        <div class="bg-white border rounded-lg py-4">
+        <div class="bg-slate-50 border rounded-lg py-4">
           <div class="w-full hover:bg-slate-100 cursor-pointer px-4" :class="activeMenu == 3 ? 'text-sky-600 font-medium' : ''" @click="activeMenu = 3">Liste des Salles</div>
           <div class="w-full hover:bg-slate-100 cursor-pointer px-4" :class="activeMenu == 4 ? 'text-sky-600 font-medium' : ''" @click="activeMenu = 4">Réservations</div>
         </div>
       </div>
       <div>
         <p class="font-medium text-base uppercase italic">Autorisations</p>
-        <div class="bg-white border rounded-lg py-4">
+        <div class="bg-slate-50 border rounded-lg py-4">
           <div class="w-full hover:bg-slate-100 cursor-pointer px-4" :class="activeMenu == 5 ? 'text-sky-600 font-medium' : ''" @click="activeMenu = 5">Réservations</div>
           <div class="w-full hover:bg-slate-100 cursor-pointer px-4" :class="activeMenu == 6 ? 'text-sky-600 font-medium' : ''" @click="activeMenu = 6">Administration</div>
         </div>
@@ -71,6 +71,10 @@ const goToCalendrier = async () => {
 
     <div v-if="activeMenu == 6" class="w-full h-full flex flex-col gap-4">
       <ResaAdminAdministration />
+    </div>
+
+    <div class="mt-auto lg:hidden block">
+      <AppButtonValidated class="w-full text-sm" theme="cancel" @click="goToCalendrier()"> <template #default> Calendrier </template> </AppButtonValidated>
     </div>
   </section>
 </template>

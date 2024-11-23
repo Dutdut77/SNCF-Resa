@@ -112,21 +112,24 @@ const supprimerSalle = async () => {
       </div>
       <AppButtonValidated class="ml-auto px-4" @click="showSideSalles()"><p class="font-bold text-base">+</p></AppButtonValidated>
     </div>
-    <table v-if="allSallesSecteur.length > 0" class="w-full">
-      <thead>
-        <tr class="font-medium text-base border-b">
-          <th class="text-left w-full pb-4">Nom</th>
-          <th class="px-4 pb-4">Dispo</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="cursor-pointer h-10 border-b hover:bg-slate-100" v-for="data in allSallesSecteur" :key="data.id" @click="showSideSalles(data)">
-          <td>{{ data.name }}</td>
-          <td class="text-center"><Check v-if="data.is_dispo == 1" class="size-4 mx-auto text-green-500" /><Close v-else class="size-5 mx-auto text-red-500" /></td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="italic" v-else>Aucune salle d'enregistrée !</div>
+
+    <div class="bg-slate-50 border rounded-lg p-4 shadow-lg mt-1">
+      <table v-if="allSallesSecteur.length > 0" class="w-full">
+        <thead>
+          <tr class="font-medium text-base border-b">
+            <th class="text-left w-full pb-4">Nom</th>
+            <th class="px-4 pb-4">Dispo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="cursor-pointer h-10 border-b hover:bg-slate-100" v-for="data in allSallesSecteur" :key="data.id" @click="showSideSalles(data)">
+            <td>{{ data.name }}</td>
+            <td class="text-center"><Check v-if="data.is_dispo == 1" class="size-4 mx-auto text-green-500" /><Close v-else class="size-5 mx-auto text-red-500" /></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="italic" v-else>Aucune salle d'enregistrée !</div>
+    </div>
     <AppModalSide :sideModal="sideModalSalles" :closeSideModal="showSideSalles">
       <template #default>
         <AppModalSideContent v-if="sideModalSalles" :closeSideModal="showSideSalles">

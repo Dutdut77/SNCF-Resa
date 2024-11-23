@@ -61,28 +61,36 @@ const validerResaSalle = async (data) => {
       </div>
     </div>
 
-    <table v-if="allSallesResaSecteurActuel.length > 0" class="w-full">
-      <thead>
-        <tr class="font-medium text-base border-b">
-          <th class="w-full text-left pb-4">Salle</th>
-          <th class="px-6 pb-4">Début</th>
-          <th class="px-6 pb-4">Fin</th>
-          <th class="px-4 pb-4">Validée</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="cursor-pointer h-10 border-b hover:bg-slate-100" v-for="data in allSallesResaSecteurActuel" :key="data.id" @click="showSideResaSalle(data)">
-          <td>{{ data.salles.name }}</td>
-          <td class="text-center">{{ timestampToDateFr(data.debut) }}</td>
-          <td class="text-center">{{ timestampToDateFr(data.fin) }}</td>
-          <td class="text-center">
-            <Check v-if="data.is_validated == 1" class="w-3 h-3 mx-auto text-green-500" />
-            <div v-else class="w-4 h-4 mx-auto text-gray-500">?</div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="italic" v-else>Aucune réservation !</div>
+    <div class="w-full overflow-auto p-4 bg-slate-50 rounded-lg shadow-lg border mt-1">
+      <table v-if="allSallesResaSecteurActuel.length > 0" class="w-full">
+        <thead>
+          <tr class="font-medium text-base border-b">
+            <th class="pr-6 text-left pb-4">Salle</th>
+            <th class="text-left pb-4">Réservation</th>
+            <th class="px-6 pb-4">Début</th>
+            <th class="px-6 pb-4">Fin</th>
+            <th class="px-6 pb-4">Observations</th>
+            <th class="px-4 pb-4">Validée</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="cursor-pointer h-10 border-b hover:bg-slate-100" v-for="data in allSallesResaSecteurActuel" :key="data.id">
+            <td>{{ data.salles.name }}</td>
+            <td>{{ data.profiles.nom }} {{ data.profiles.prenom }}</td>
+            <td class="text-center">{{ timestampToDateFr(data.debut) }}</td>
+            <td class="text-center">{{ timestampToDateFr(data.fin) }}</td>
+            <td class="text-center">{{ data.titre }}</td>
+            <td class="text-center h-full">
+              <div class="h-full flex gap-2 justify-center items-center">
+                <AppButtonValidated v-if="data.is_validated == 0" class="md:w-32 w-full text-sm" theme="cancel" @click="validerResaSalle(data)"> <template #default> Valider </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-32 w-full text-sm" theme="delete" @click="supprimerResaSalle(data)"> <template #default> Supprimer </template> </AppButtonValidated>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="italic" v-else>Aucune réservation !</div>
+    </div>
 
     <AppModalSide :sideModal="sideModalResaSalle" :closeSideModal="showSideResaSalle">
       <template #default>

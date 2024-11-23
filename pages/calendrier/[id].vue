@@ -457,15 +457,19 @@ if (userProfil.value.favorite_secteur == "" || userProfil.value.favorite_secteur
     <!-- PARTIE DROITE -->
     <div class="w-full h-full flex flex-col gap-4">
       <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
-        <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
+        <div class="relative w-full text-center lg:text-left lg:w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
           <div class="font-medium text-gray-50">Semaine {{ weekNumber }}</div>
         </div>
         <div class="flex gap-1"><Left class="size-8 cursor-pointer hover:text-sky-500" @click="subSemaine()" /><Right class="size-8 cursor-pointer hover:text-sky-500" @click="addSemaine()" /></div>
         <AppButtonValidated class="w-fit px-4 text-sm lg:ml-auto font-normal" theme="" @click="showSideModal()"> <template #default> Nouvelle Réservation </template> </AppButtonValidated>
       </div>
 
-      <div class="w-full h-full border rounded-xl bg-slate-50 overflow-hidden p-4">
-        <ResaSemaine :startDate="dateIso" :allReservations="filteredReservations" class="overflow-auto" @selectedResa="showSideModal" />
+      <div class="w-full h-full border rounded-xl bg-slate-50 pr-4 overflow-auto">
+        <ResaSemaine :startDate="dateIso" :allReservations="filteredReservations" class="" @selectedResa="showSideModal" />
+      </div>
+
+      <div v-if="userProfil.secteur_admin == route.params.id" class="mt-auto lg:hidden block">
+        <AppButtonValidated class="w-full text-sm" theme="cancel" @click="goToAdministration()"> <template #default> Administration </template> </AppButtonValidated>
       </div>
     </div>
 
@@ -573,7 +577,7 @@ if (userProfil.value.favorite_secteur == "" || userProfil.value.favorite_secteur
             </div>
           </template>
           <template #default>
-            <div class="h-full w-full flex flex-col gap-4">
+            <div class="w-full flex flex-col gap-4">
               <div class="flex h-full"></div>
               <div class="uppercase text-base font-medium pb-2 border-b text-left">Période</div>
               <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-3 text-sm text-gray-700">

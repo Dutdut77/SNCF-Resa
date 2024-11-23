@@ -81,26 +81,28 @@ const supprimerVehicule = async () => {
       </div>
       <AppButtonValidated class="ml-auto px-4" @click="showSideVehicules()"><p class="font-bold text-base">+</p></AppButtonValidated>
     </div>
+    <div class="bg-slate-50 border rounded-lg p-4 shadow-lg mt-1">
+      <table v-if="allVehiculesSecteur.length > 0" class="w-full">
+        <thead>
+          <tr class="font-medium text-base border-b">
+            <th class="text-left pb-4">Marque</th>
+            <th class="px-4 pb-4">Model</th>
+            <th class="w-full pb-4">Immat</th>
+            <th class="px-4 pb-4">Dispo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="cursor-pointer h-10 border-b hover:bg-slate-100" v-for="data in allVehiculesSecteur" :key="data.id" @click="showSideVehicules(data)">
+            <td>{{ data.marque }}</td>
+            <td class="text-center">{{ data.model }}</td>
+            <td class="text-center">{{ data.immat }}</td>
+            <td class="text-center"><Check v-if="data.is_dispo == 1" class="size-4 mx-auto text-green-500" /><Close v-else class="size-5 mx-auto text-red-500" /></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="italic" v-else>Aucun véhicule d'enregistré !</div>
+    </div>
 
-    <table v-if="allVehiculesSecteur.length > 0" class="w-full">
-      <thead>
-        <tr class="font-medium text-base border-b">
-          <th class="text-left pb-4">Marque</th>
-          <th class="px-4 pb-4">Model</th>
-          <th class="w-full pb-4">Immat</th>
-          <th class="px-4 pb-4">Dispo</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="cursor-pointer h-10 border-b hover:bg-slate-100" v-for="data in allVehiculesSecteur" :key="data.id" @click="showSideVehicules(data)">
-          <td>{{ data.marque }}</td>
-          <td class="text-center">{{ data.model }}</td>
-          <td class="text-center">{{ data.immat }}</td>
-          <td class="text-center"><Check v-if="data.is_dispo == 1" class="size-4 mx-auto text-green-500" /><Close v-else class="size-5 mx-auto text-red-500" /></td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="italic" v-else>Aucun véhicule d'enregistré !</div>
     <AppModalSide :sideModal="sideModalVehicules" :closeSideModal="showSideVehicules">
       <template #default>
         <AppModalSideContent v-if="sideModalVehicules" :closeSideModal="showSideVehicules">

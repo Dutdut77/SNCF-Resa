@@ -54,7 +54,7 @@ const supprimerResaVehicule = async (data) => {
 </script>
 
 <template>
-  <section class="w-full h-full flex flex-col gap-4">
+  <section class="w-full h-full flex flex-col gap-4 overflow-hidden">
     <div class="w-full flex">
       <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
         <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
@@ -62,30 +62,36 @@ const supprimerResaVehicule = async (data) => {
         </div>
       </div>
     </div>
-    <table v-if="allResaSecteurActuel.length > 0" class="w-full">
-      <thead>
-        <tr class="font-medium text-base border-b">
-          <th class="text-left w-fit pb-4">Immat</th>
-          <th class="text-left pb-4">Réservation</th>
-          <th class="px-6 pb-4">Début</th>
-          <th class="px-6 pb-4">Fin</th>
-          <th class="px-4 pb-4">Validée</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="cursor-pointer h-10 border-b hover:bg-slate-100" v-for="data in allResaSecteurActuel" :key="data.id" @click="showSideResaVehicule(data)">
-          <td>{{ data.vehicules.immat }}</td>
-          <td>{{ data.profiles.nom }} {{ data.profiles.prenom }}</td>
-          <td class="text-center">{{ timestampToDateFr(data.debut) }}</td>
-          <td class="text-center">{{ timestampToDateFr(data.fin) }}</td>
-          <td class="text-center">
-            <Check v-if="data.is_validated == 1" class="size-4 mx-auto text-green-500" />
-            <div v-else class="size-5 mx-auto text-gray-500">?</div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="italic" v-else>Aucune réservation !</div>
+    <div class="w-full overflow-auto p-4 bg-slate-50 rounded-lg shadow-lg border mt-1">
+      <table v-if="allResaSecteurActuel.length > 0" class="w-full">
+        <thead>
+          <tr class="font-medium text-base border-b">
+            <th class="text-left w-fit pb-4">Immat</th>
+            <th class="text-left pb-4">Réservation</th>
+            <th class="px-6 pb-4">Début</th>
+            <th class="px-6 pb-4">Fin</th>
+            <th class="px-6 pb-4">Observation</th>
+            <th class="px-4 pb-4">Validée</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="cursor-pointer border-b hover:bg-slate-100 h-full" v-for="data in allResaSecteurActuel" :key="data.id">
+            <td>{{ data.vehicules.immat }}</td>
+            <td>{{ data.profiles.nom }} {{ data.profiles.prenom }}</td>
+            <td class="text-center">{{ timestampToDateFr(data.debut) }}</td>
+            <td class="text-center">{{ timestampToDateFr(data.fin) }}</td>
+            <td class="text-center">{{ data.titre }}</td>
+            <td class="text-center h-full">
+              <div class="h-full flex gap-2 justify-center items-center">
+                <AppButtonValidated v-if="data.is_validated == 0" class="md:w-24 w-full text-sm" theme="cancel" @click="validerResaVehicule(data)"> <template #default> Valider </template> </AppButtonValidated>
+                <AppButtonValidated class="md:w-24 w-full text-sm" theme="delete" @click="supprimerResaVehicule(data)"> <template #default> Supprimer </template> </AppButtonValidated>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="italic" v-else>Aucune réservation !</div>
+    </div>
 
     <AppModalSide :sideModal="sideModalResaVehicule" :closeSideModal="showSideResaVehicule">
       <template #default>

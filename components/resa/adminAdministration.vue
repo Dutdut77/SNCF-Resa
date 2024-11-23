@@ -18,6 +18,11 @@ const userAdmin = computed(() => {
   return result;
 });
 
+const userNotAdmin = computed(() => {
+  const result = allProfiles.value.filter((profile) => !userAdmin.value.some((user) => user.id === profile.id));
+  return result;
+});
+
 // Administrateur
 const showSideAdmin = () => {
   sideModalAdmin.value = !sideModalAdmin.value;
@@ -46,27 +51,59 @@ const deleteProfilAdmin = async (data) => {
           <div class="font-medium text-gray-50">Administrateurs</div>
         </div>
       </div>
-      <AppButtonValidated class="ml-auto px-4" @click="showSideAdmin()"
+      <!-- <AppButtonValidated class="ml-auto px-4" @click="showSideAdmin()"
         ><p class="font-bold text-base"><Edit class="size-5" /></p
-      ></AppButtonValidated>
+      ></AppButtonValidated> -->
+    </div>
+    <div class="w-full flex flex-col gap-4">
+      <div class="pt-4 uppercase text-lg text-gray-600 font-medium text-left">Profil Administrateur :</div>
+
+      <table class="w-full">
+        <thead>
+          <tr class="font-medium text-base border-b">
+            <th class="text-left pb-4">Nom</th>
+            <th class="text-left pb-4">Prénom</th>
+            <th>Email</th>
+            <th class="text-right"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="cursor-default h-10 border-b hover:bg-slate-10" v-for="data in userAdmin" :key="data.id">
+            <td>{{ data.nom }}</td>
+            <td class="text-left">{{ data.prenom }}</td>
+            <td class="text-center">{{ data.email }}</td>
+            <td class="cursor-pointer" @click="deleteProfilAdmin(data)">
+              <Trash class="size-5" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="w-full flex flex-col gap-4">
+      <div class="pt-4 uppercase text-lg text-gray-600 font-medium text-left">Ajouter un profil :</div>
+
+      <table class="w-full">
+        <thead>
+          <tr class="font-medium text-base border-b">
+            <th class="text-left pb-4">Nom</th>
+            <th class="text-left pb-4">Prénom</th>
+            <th>Email</th>
+            <th class="text-right"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="cursor-default h-10 border-b hover:bg-slate-10" v-for="data in userNotAdmin" :key="data.id">
+            <td>{{ data.nom }}</td>
+            <td class="text-left">{{ data.prenom }}</td>
+            <td class="text-center">{{ data.email }}</td>
+            <td class="cursor-pointer" @click="addProfilAdmin(data)">
+              <Add class="size-5" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <table class="w-full">
-      <thead>
-        <tr class="font-medium text-base border-b">
-          <th class="text-left pb-4">Nom</th>
-          <th class="text-left pb-4">Prénom</th>
-          <th>Email</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="cursor-default h-10 border-b hover:bg-slate-10" v-for="data in userAdmin" :key="data.id">
-          <td>{{ data.nom }}</td>
-          <td class="text-left">{{ data.prenom }}</td>
-          <td class="text-center">{{ data.email }}</td>
-        </tr>
-      </tbody>
-    </table>
     <AppModalSide :sideModal="sideModalAdmin" :closeSideModal="showSideAdmin">
       <template #default>
         <AppModalSideContent v-if="sideModalAdmin" :closeSideModal="showSideAdmin">

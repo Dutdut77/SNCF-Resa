@@ -260,16 +260,16 @@ const isJourJ = (date) => {
 </script>
 
 <template>
-  <div ref="scrollableDiv" class="w-full h-full grid overflow-auto" :style="{ gridTemplateColumns: 'auto repeat(7, 1fr)' }">
+  <div ref="scrollableDiv" class="w-full h-full grid gap-x-2" :style="{ gridTemplateColumns: 'auto repeat(7, 1fr)' }">
     <div class="sticky top-0 bg-slate-50 z-40"></div>
-    <div v-for="(day, index) in weekDays" :key="index" class="flex flex-col pb-4 border-b border-gray-300 text-center sticky top-0 bg-slate-50 z-40 min-w-20">
+    <div v-for="(day, index) in weekDays" :key="index" class="flex flex-col py-4 border-b border-gray-300 text-center sticky top-0 bg-slate-50 z-40 min-w-20">
       <div class="uppercase text-sm font-normal" :class="isJourJ(day) ? 'text-sky-500' : 'text-gray-600'">{{ days[index] }}</div>
       <div class="text-xl font-bold" :class="isJourJ(day) ? 'text-sky-500' : 'text-gray-600'">{{ day.getDate() }}</div>
     </div>
 
     <!-- Colonne des heures -->
     <div class="flex flex-col w-fit px-4">
-      <div v-for="hour in hours" :key="hour" class="h-5 border-gray-300 even:invisible">
+      <div v-for="hour in hours" :key="hour" class="h-5 even:invisible">
         <div class="">{{ hour }}</div>
       </div>
     </div>
@@ -278,7 +278,7 @@ const isJourJ = (date) => {
       <div v-for="hour in hours" :key="hour" class="h-5 border-b border-gray-300 odd:border-dashed odd:border-gray-200"></div>
       <div v-for="event in events" :key="event">
         <div v-for="e in event" :key="e">
-          <div class="absolute pr-1 cursor-pointer top-0" :style="getEventStyle(e, events, index)" @mouseenter="handleMouseEnter(e.id)" @mouseleave="handleMouseLeave" @click="sendResa(e)">
+          <div class="absolute pr-0.5 cursor-pointer top-0" :style="getEventStyle(e, events, index)" @mouseenter="handleMouseEnter(e.id)" @mouseleave="handleMouseLeave" @click="sendResa(e)">
             <div :id="`id_${index}-${e.id}`" class="rounded-r-md w-full text-white h-full p-2 break-words overflow-hidden border-l-4 border-sncf-primary" :class="e.is_validated == 0 ? 'bg-hachure' : ''" :style="{ backgroundColor: !isHovered(`id_${index}-${e.id}`) ? hexToRgba(e.color, 0.75) : e.color, borderColor: e.color }">
               <div class="w-full h-full text-xs flex flex-col">
                 <div v-if="e.salles" class="uppercase">{{ e.salles.name }}</div>
@@ -294,6 +294,7 @@ const isJourJ = (date) => {
         </div>
       </div>
     </div>
+    <div class="bg-slate-50 h-4"></div>
   </div>
 </template>
 
