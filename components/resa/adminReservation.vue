@@ -70,7 +70,7 @@ const deleteProfilValideur = async (data) => {
           </thead>
           <tbody>
             <tr class="cursor-default h-10 border-b hover:bg-slate-100" v-for="data in userAuth" :key="data.id">
-              <td>{{ data.nom }}</td>
+              <td class="uppercase">{{ data.nom }}</td>
               <td class="text-left">{{ data.prenom }}</td>
               <td class="text-center hidden lg:block">{{ data.email }}</td>
               <td class="cursor-pointer" @click="deleteProfilValideur(data)">
@@ -96,7 +96,7 @@ const deleteProfilValideur = async (data) => {
           </thead>
           <tbody>
             <tr class="cursor-default h-10 border-b hover:bg-slate-100" v-for="data in userNotAuth" :key="data.id">
-              <td>{{ data.nom }}</td>
+              <td class="uppercase">{{ data.nom }}</td>
               <td class="text-left">{{ data.prenom }}</td>
               <td class="text-center hidden lg:block">{{ data.email }}</td>
               <td class="cursor-pointer" @click="addProfilValideur(data)">
