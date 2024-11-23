@@ -94,21 +94,21 @@ const updateProfil = async () => {
 </script>
 
 <template>
-  <section class="w-full h-16 flex items-center text-gray-700">
+  <section class="w-full h-16 flex items-center text-gray-700 bg-white">
     <div class="h-full w-28 pl-4 uppercase font-bold flex flex-col justify-center items-start -mt-0.5">
       <div class="font-traverse text-xl first-letter:text-sncf-primary text-center tracking-widest pl-1">résa</div>
       <div class="text-sm bg-gradient-to-br from-sncf-primary-light to-sncf-primary px-4 text-white rounded w-fit -mt-1">pro</div>
     </div>
 
     <div v-if="route.params.id" class="relative w-full h-full flex flex-col items-center justify-center" @mouseleave="onMouseLeaveSecteur">
-      <div class="relative w-fit h-full flex flex-col items-center justify-center cursor-pointer" @mouseenter="isDropdownOpenSecteur = true">
+      <div class="relative w-fit h-full flex flex-col items-center justify-center cursor-pointer" @mouseenter="isDropdownOpenSecteur = true" @click="isDropdownOpenSecteur = !isDropdownOpenSecteur">
         <div class="font-bold uppercase text-xl">{{ secteurActive?.name }}</div>
         <div class="absolute bottom-0">
           <Right class="size-6 rotate-90" />
         </div>
 
-        <div v-show="isDropdownOpenSecteur" class="absolute -bottom-44 z-40 p-4 w-72 bg-gradient-to-br from-slate-600 to-slate-900 border border-slate-600 rounded-xl grid grid-cols-2 gap-2 shadow-lg">
-          <NuxtLink :to="`/calendrier/${secteur.id}`" class="px-2 py-1 border bg-white uppercase font-medium rounded-lg text-center text-sm hover:text-sncf-primary" v-for="(secteur, index) in secteurs" :key="index">
+        <div v-show="isDropdownOpenSecteur" class="absolute -bottom-44 z-40 p-4 w-72 bg-gradient-to-br from-slate-600 to-slate-900 border border-slate-600 rounded-xl grid grid-cols-2 gap-2 shadow-lg" @click="isDropdownOpenSecteur = !isDropdownOpenSecteur">
+          <NuxtLink :to="`/calendrier/${secteur.id}`" class="px-2 py-1 border bg-white uppercase font-medium rounded-lg text-center text-sm hover:text-sncf-primary" v-for="(secteur, index) in secteurs" :key="index" @click="isDropdownOpenSecteur = !isDropdownOpenSecteur">
             {{ secteur.name }}
           </NuxtLink>
         </div>
@@ -116,7 +116,7 @@ const updateProfil = async () => {
     </div>
 
     <div class="relative w-28 h-full pr-4 flex items-center justify-end ml-auto" @mouseleave="onMouseLeaveProfil">
-      <div class="relative w-fit h-full flex gap-2 justify-center items-center cursor-pointer" @mouseenter="isDropdownOpenProfil = true">
+      <div class="relative w-fit h-full flex gap-2 justify-center items-center cursor-pointer" @mouseenter="isDropdownOpenProfil = true" @click="isDropdownOpenProfil = !isDropdownOpenProfil">
         <div class="flex flex-row-reverse lg:gap-2 lg:flex-row rounded-full lg:rounded-none lg:border-none border border-gray-600 p-2">
           <p class="text-base font-medium lg:hidden">{{ firstLetter(userProfil.nom) }}</p>
           <p class="text-base font-medium lg:hidden">{{ firstLetter(userProfil.prenom) }}</p>
@@ -125,9 +125,9 @@ const updateProfil = async () => {
         </div>
 
         <div v-show="isDropdownOpenProfil" class="absolute -bottom-24 right-0 border rounded-lg bg-white p-4 z-50 shadow-lg text-right w-fit">
-          <p class="cursor-pointer hover:font-medium duration-500 whitespace-nowrap" @click="showModalProfil()">Mon profil</p>
-          <p class="cursor-pointer hover:font-medium duration-500 whitespace-nowrap" @click="showModalPassword()">Changer de mot de passe</p>
-          <p class="cursor-pointer w-fit ml-auto hover:font-medium duration-500 whitespace-nowrap" @click="logout()">Se déconnecter</p>
+          <p class="cursor-pointer hover:font-medium duration-500 whitespace-nowrap" @click="showModalProfil(), (isDropdownOpenProfil = !isDropdownOpenProfil)">Mon profil</p>
+          <p class="cursor-pointer hover:font-medium duration-500 whitespace-nowrap" @click="showModalPassword(), (isDropdownOpenProfil = !isDropdownOpenProfil)">Changer de mot de passe</p>
+          <p class="cursor-pointer w-fit ml-auto hover:font-medium duration-500 whitespace-nowrap" @click="logout(), (isDropdownOpenProfil = !isDropdownOpenProfil)">Se déconnecter</p>
         </div>
       </div>
     </div>

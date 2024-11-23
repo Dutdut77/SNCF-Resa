@@ -53,28 +53,28 @@ const goToCalendrier = async () => {
       <ResaAdminVehicules />
     </div>
 
-    <div v-if="activeMenu == 2" class="w-full h-full flex flex-col gap-4">
+    <div v-if="activeMenu == 2" class="w-full h-full">
       <ResaAdminResaVehicules />
     </div>
 
-    <div v-if="activeMenu == 3" class="w-full h-full flex flex-col gap-4">
+    <div v-if="activeMenu == 3" class="w-full h-full">
       <ResaAdminSalles />
     </div>
 
-    <div v-if="activeMenu == 4" class="w-full h-full flex flex-col gap-4">
+    <div v-if="activeMenu == 4" class="w-full h-full">
       <ResaAdminResaSalles />
     </div>
 
-    <div v-if="activeMenu == 5" class="w-full h-full flex flex-col gap-4">
+    <div v-if="activeMenu == 5" class="w-full h-full">
       <ResaAdminReservation />
     </div>
 
-    <div v-if="activeMenu == 6" class="w-full h-full flex flex-col gap-4">
+    <div v-if="activeMenu == 6" class="w-full h-full">
       <ResaAdminAdministration />
     </div>
 
     <div class="mt-auto lg:hidden block">
-      <AppButtonValidated class="w-full text-sm" theme="cancel" @click="goToCalendrier()"> <template #default> Calendrier </template> </AppButtonValidated>
+      <AppButtonValidated class="w-full text-sm" theme="cancel" @click="goToCalendrier()"> <template #default> Retour calendrier </template> </AppButtonValidated>
     </div>
   </section>
 </template>

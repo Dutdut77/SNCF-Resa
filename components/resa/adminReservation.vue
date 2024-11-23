@@ -44,7 +44,7 @@ const deleteProfilValideur = async (data) => {
 </script>
 
 <template>
-  <section class="w-full h-full flex flex-col gap-4">
+  <section class="w-full h-full flex flex-col gap-4 overflow-hidden">
     <div class="w-full flex">
       <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
         <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
@@ -63,17 +63,17 @@ const deleteProfilValideur = async (data) => {
           <tr class="font-medium text-base border-b">
             <th class="text-left pb-4">Nom</th>
             <th class="text-left pb-4">Prénom</th>
-            <th>Email</th>
-            <th class="text-right"></th>
+            <th class="hidden lg:block">Email</th>
+            <th class="w-12"></th>
           </tr>
         </thead>
         <tbody>
           <tr class="cursor-default h-10 border-b hover:bg-slate-100" v-for="data in userAuth" :key="data.id">
             <td>{{ data.nom }}</td>
             <td class="text-left">{{ data.prenom }}</td>
-            <td class="text-center">{{ data.email }}</td>
+            <td class="text-center hidden lg:block">{{ data.email }}</td>
             <td class="cursor-pointer" @click="deleteProfilValideur(data)">
-              <Trash class="size-5" />
+              <Trash class="size-5 mx-auto text-red-500" />
             </td>
           </tr>
         </tbody>
@@ -86,19 +86,19 @@ const deleteProfilValideur = async (data) => {
       <table v-if="userNotAuth.length > 0" class="w-full">
         <thead>
           <tr class="font-medium text-base border-b">
-            <th class="text-left pb-4">Nom</th>
-            <th class="text-left pb-4">Prénom</th>
-            <th>Email</th>
-            <th class="text-right"></th>
+            <th class="text-left pb-4 flex">Nom</th>
+            <th class="text-left pb-4 w-auto">Prénom</th>
+            <th class="hidden lg:block">Email</th>
+            <th class="w-12">#</th>
           </tr>
         </thead>
         <tbody>
           <tr class="cursor-default h-10 border-b hover:bg-slate-100" v-for="data in userNotAuth" :key="data.id">
             <td>{{ data.nom }}</td>
             <td class="text-left">{{ data.prenom }}</td>
-            <td class="text-center">{{ data.email }}</td>
+            <td class="text-center hidden lg:block">{{ data.email }}</td>
             <td class="cursor-pointer" @click="addProfilValideur(data)">
-              <Add class="size-5" />
+              <Add class="size-5 mx-auto text-green-500" />
             </td>
           </tr>
         </tbody>

@@ -1,6 +1,8 @@
 <script setup>
 import ArrowRight from "@/assets/svg/ArrowRight.vue";
 import Check from "@/assets/svg/Check.vue";
+import Trash from "@/assets/svg/Trash.vue";
+import Add from "@/assets/svg/Add.vue";
 const { setLoader } = useLoader();
 const userProfil = useState("userProfil");
 const { timestampToDateFr, timestampToHeure } = useFormatDate();
@@ -71,7 +73,7 @@ const supprimerResaVehicule = async (data) => {
             <th class="px-6 pb-4">Début</th>
             <th class="px-6 pb-4">Fin</th>
             <th class="px-6 pb-4">Observation</th>
-            <th class="px-4 pb-4">Validée</th>
+            <th class="px-4 pb-4">#</th>
           </tr>
         </thead>
         <tbody>
@@ -83,8 +85,12 @@ const supprimerResaVehicule = async (data) => {
             <td class="text-center">{{ data.titre }}</td>
             <td class="text-center h-full">
               <div class="h-full flex gap-2 justify-center items-center">
-                <AppButtonValidated v-if="data.is_validated == 0" class="md:w-24 w-full text-sm" theme="cancel" @click="validerResaVehicule(data)"> <template #default> Valider </template> </AppButtonValidated>
-                <AppButtonValidated class="md:w-24 w-full text-sm" theme="delete" @click="supprimerResaVehicule(data)"> <template #default> Supprimer </template> </AppButtonValidated>
+                <AppButtonValidated v-if="data.is_validated == 0" class="w-fit text-sm" theme="cancel" @click="validerResaVehicule(data)">
+                  <template #default> <Check class="size-5 text-white" /> </template>
+                </AppButtonValidated>
+                <AppButtonValidated class="w-fit text-sm" theme="delete" @click="supprimerResaVehicule(data)">
+                  <template #default> <Trash class="size-5 text-white" /> </template>
+                </AppButtonValidated>
               </div>
             </td>
           </tr>
