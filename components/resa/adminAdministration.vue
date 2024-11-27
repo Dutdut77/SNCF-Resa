@@ -70,7 +70,7 @@ const deleteProfilAdmin = async (data) => {
             </tr>
           </thead>
           <tbody>
-            <tr class="cursor-default h-10 border-b hover:bg-slate-10" v-for="data in userAdmin" :key="data.id">
+            <tr class="cursor-default h-10 border-b bg-slate-50 hover:bg-slate-100" v-for="data in userAdmin" :key="data.id">
               <td class="uppercase">{{ data.nom }}</td>
               <td class="text-left">{{ data.prenom }}</td>
               <td class="text-center hidden lg:block">{{ data.email }}</td>
@@ -95,7 +95,7 @@ const deleteProfilAdmin = async (data) => {
             </tr>
           </thead>
           <tbody>
-            <tr class="cursor-default h-10 border-b hover:bg-slate-10" v-for="data in userNotAdmin" :key="data.id">
+            <tr class="cursor-default h-10 border-b bg-slate-50 hover:bg-slate-100" v-for="data in userNotAdmin" :key="data.id">
               <td class="uppercase">{{ data.nom }}</td>
               <td class="text-left">{{ data.prenom }}</td>
               <td class="text-center hidden lg:block">{{ data.email }}</td>
