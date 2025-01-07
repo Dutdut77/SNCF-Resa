@@ -94,7 +94,7 @@ const updateProfil = async () => {
 </script>
 
 <template>
-  <section class="w-full h-16 flex items-center text-gray-700 bg-white">
+  <section class="w-full h-16 flex items-center text-gray-700">
     <div class="h-full w-28 pl-4 uppercase font-bold flex flex-col justify-center items-start -mt-0.5">
       <div class="font-traverse text-xl first-letter:text-sncf-primary text-center tracking-widest pl-0.5 lg:pl-1">résa</div>
       <div class="text-sm bg-gradient-to-br from-sncf-primary-light to-sncf-primary px-4 text-white rounded w-fit -mt-1">pro</div>

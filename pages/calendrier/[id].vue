@@ -206,8 +206,8 @@ const showSideModal = (e) => {
     if (typeSelected.value == 2) formValue.value.salle = e.salles.id;
     formValue.value.titre = e.titre;
     formValue.value.update = true;
-    if (typeSelected.value == 1) formValue.value.updateRadioId = e.vehicules.id;
-    if (typeSelected.value == 2) formValue.value.updateRadioId = e.salles.id;
+    if (typeSelected.value == 1) formValue.value.updateRadioId = e.id;
+    if (typeSelected.value == 2) formValue.value.updateRadioId = e.id;
     formValue.value.id_user = e.id_user;
     sideModal.value = true;
   } else {

@@ -28,14 +28,19 @@ const formRadio = computed({
     emits("update:model-value", value);
   },
 });
+console.log("data : ", props.data);
 
 const dispoSalles = computed(() => {
-  // Créer un ensemble (Set) des id_vehicule réservés
-  const reservedSalleIds = new Set(allResaSallesSecteurTime.value.map((reservation) => reservation.id_salle));
-  if (props.data.salle) {
-    reservedSalleIds.delete(props.data.updateRadioId);
-  }
-  // Filtrer les véhicules qui ne sont pas réservés
+  // Créer un ensemble (Set) des id_salle réservés
+
+  const filteredReservations = allResaSallesSecteurTime.value.filter((item) => item.id !== props.data.updateRadioId);
+
+  const reservedSalleIds = new Set(filteredReservations.map((reservation) => reservation.id_salle));
+
+  // if (props.data.salle) {
+  //   reservedSalleIds.delete(props.data.updateRadioId);
+  // }
+  // Filtrer les salles qui ne sont pas réservés
   const availableSalles = salles.value.filter((salle) => !reservedSalleIds.has(salle.id));
 
   return availableSalles;

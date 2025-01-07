@@ -72,7 +72,7 @@ const supprimerVehicule = async () => {
 </script>
 
 <template>
-  <section class="w-full h-full flex flex-col gap-4">
+  <section class="w-full h-full flex flex-col gap-4 lg:overflow-hidden">
     <div class="w-full flex">
       <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
         <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
@@ -81,7 +81,7 @@ const supprimerVehicule = async () => {
       </div>
       <AppButtonValidated class="ml-auto px-4" @click="showSideVehicules()"><p class="font-bold text-base">+</p></AppButtonValidated>
     </div>
-    <div class="bg-slate-50 border rounded-lg p-4 shadow-lg mt-1">
+    <div class="bg-slate-50 border rounded-lg p-4 shadow-lg mt-1 lg:overflow-auto">
       <table v-if="allVehiculesSecteur.length > 0" class="w-full">
         <thead>
           <tr class="font-medium text-base border-b">
