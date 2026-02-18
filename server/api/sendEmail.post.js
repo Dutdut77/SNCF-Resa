@@ -1,14 +1,20 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: parseInt(process.env.SMTP_PORT || '587'),
+  secure: process.env.SMTP_PORT === '465',
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
 export default defineEventHandler(async (event) => {
   try {
-  
-    const body = await readBody(event)
+    const body = await readBody(event);
 
-
-    const data = await resend.emails.send({
+    const data = await transporter.sendMail({
       from: body.from,
       to: body.to,
       subject: body.subject,
@@ -16,10 +22,6 @@ export default defineEventHandler(async (event) => {
     });
 
     return data;
-
-// console.log("simulation Envoi Email");
-// return true
-
   } catch (error) {
     return { error };
   }

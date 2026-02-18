@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:nuxt.com)",
+      "Bash(npm install:*)",
+      "Bash(timeout 30 npm run dev:*)",
+      "Bash(npm view:*)",
+      "Bash(docker system df:*)",
+      "Bash(docker image ls:*)"
+    ]
+  }
+}

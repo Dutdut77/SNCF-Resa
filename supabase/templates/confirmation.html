@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirmez votre adresse email</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f1f5f9;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #334155;
+    }
+
+    .wrapper {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      padding: 32px 40px;
+      text-align: center;
+    }
+
+    .logo-box {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo-title {
+      color: #ffffff;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .logo-sub {
+      background-color: #ffffff;
+      color: #1e293b;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 4px;
+      margin-top: -4px;
+      letter-spacing: 1px;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 12px 0;
+    }
+
+    .text {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #475569;
+      margin: 0 0 24px 0;
+    }
+
+    .btn-wrapper {
+      text-align: center;
+      margin: 32px 0;
+    }
+
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: #ffffff !important;
+      text-decoration: none;
+      padding: 14px 36px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 32px 0;
+    }
+
+    .fallback {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+
+    .fallback a {
+      color: #475569;
+      word-break: break-all;
+    }
+
+    .footer {
+      background-color: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      padding: 20px 40px;
+      text-align: center;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+
+    <div class="header">
+      <div class="logo-box">
+        <span class="logo-title">résa</span>
+        <span class="logo-sub">PRO</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <p class="title">Confirmez votre adresse email</p>
+      <p class="text">
+        Bienvenue sur <strong>Résa Pro</strong>, la plateforme de réservation de véhicules et salles de l'Infrapôle
+        Paris-Est.
+      </p>
+      <p class="text">
+        Pour activer votre compte, cliquez sur le bouton ci-dessous. Ce lien est valable <strong>24 heures</strong>.
+      </p>
+
+      <div class="btn-wrapper">
+        <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup" class="btn">Confirmer mon adresse email</a>
+      </div>
+
+      <hr class="divider" />
+
+      <p class="fallback">
+        Si le bouton ne fonctionne pas, copiez-collez ce lien dans votre navigateur :<br />
+        <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup">{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup</a>
+      </p>
+      <p class="fallback">
+        Si vous n'avez pas créé de compte sur Résa Pro, ignorez cet email.
+      </p>
+    </div>
+
+    <div class="footer">
+      © 2024 Résa Pro — Infrapôle Paris-Est · SNCF Réseau<br />
+      Cet email a été envoyé à {{ .Email }}
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,1 +1,0 @@
-alter table "public"."profiles" alter column "secteur_auth" set default '0'::text;
