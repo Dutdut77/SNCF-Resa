@@ -4,7 +4,6 @@ const { setLoader } = useLoader();
 const { getAll, secteurs } = useSecteurs();
 const { addToast } = useToast();
 const session = useSupabaseSession();
-const auth = useSupabaseUser();
 const supabase = useSupabaseClient();
 const userProfil = useState("userProfil");
 const { updateProfiles } = useAuth();
@@ -14,16 +13,6 @@ if (session.value) {
   await getAll();
   setLoader(false);
 }
-
-watch(() => session.value, async (newSession) => {
-  if (newSession && !userProfil.value) {
-    const userId = auth.value?.id ?? newSession?.user?.id;
-    if (userId) {
-      const { data: user } = await supabase.from("profiles").select("*").eq("id", userId).single();
-      userProfil.value = user;
-    }
-  }
-}, { immediate: true });
 
 const viewDropdown = ref(false);
 const modalPassword = ref(false);
