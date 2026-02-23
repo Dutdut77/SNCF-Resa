@@ -3,504 +3,363 @@ export const useEmail = () => {
     const { addToast } = useToast();
     const { timestampToDateFr, timestampToHeure } = useFormatDate();
 
-    const sendEmail = async (liste, profil, form) => {
-
-        try {
-           
-                
-                    const html = `<html lang="fr">
-                      <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <style>
-                                body {
-                                    font-family: Arial, sans-serif;
-                                    line-height: 1.1;
-                                    color: #333;
-                                    background : #FFF
-                                }
-                                .header {
-                                    background:  #0369a1;
-                                    padding: 10px;
-                                    text-align: center;
-                                    border-bottom: 1px solid #ddd;
-                                    color : #FFF;
-                                }
-                                            a {
-                                color: #FFF; 
-                                text-decoration: none; 
-                            }
-                            .button-link {
-                                display: inline-block;
-                                padding: 10px 20px;
-                                font-size: 16px;
-                                color: #FFF;
-                                background-color: #0369a1;
-                                text-align: center;
-                                text-decoration: none;
-                                border-radius: 5px;
-                            }
-
-
-                            
-
-                            </style>
-                      </head>
-                      <body>
-                        
-                              <div class="header">
-                                <h1>Demande de réservation Résa-Pro</h1>
-                              </div>
-
-                            <h2>Bonjour,</h2>
-                            <p>${profil.prenom} ${profil.nom} (${profil.email}) a effectué une demande de réservation depuis l'application Résa-Pro</p>
-                            <p>En tant qu'administrateur, il vous est demandé de valider / refuser cette demande en vous connectant directement à votre espace administrateur.</p>
-
-                    
-                      </body>
-                    </html>`
-
-                    await $fetch("/api/sendEmail" ,{
-                        method : 'post',
-                        body : {
-                            from : 'ResaPro <noreply@resa-pro.infpe.fr>',
-                            to : liste,
-                            subject : 'Demande de réservation',
-                            html : html
-                        }
-
-                    });
-                 
-   
-
-        } catch (err) {     
-          addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée."});
+    const buildTemplate = ({ headerColor, headerTitle, headerIcon, bodyContent }) => {
+        return `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+            background-color: #f7fafc;
         }
-    }
+        .wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .header {
+            background: ${headerColor};
+            padding: 30px 20px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .header .icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .body-content {
+            padding: 30px 35px;
+        }
+        .greeting {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 15px;
+        }
+        .body-content p {
+            margin: 8px 0;
+            font-size: 15px;
+            color: #4a5568;
+        }
+        .recap-box {
+            background-color: #f7fafc;
+            border-left: 4px solid ${headerColor};
+            border-radius: 4px;
+            padding: 18px 22px;
+            margin: 20px 0;
+        }
+        .recap-box h3 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #718096;
+        }
+        .recap-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .recap-box li {
+            padding: 6px 0;
+            font-size: 14px;
+            color: #2d3748;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .recap-box li:last-child {
+            border-bottom: none;
+        }
+        .recap-box li strong {
+            color: #1a202c;
+            min-width: 130px;
+            display: inline-block;
+        }
+        .footer {
+            background-color: #f7fafc;
+            padding: 20px 35px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+        .footer p {
+            margin: 4px 0;
+            font-size: 12px;
+            color: #a0aec0;
+        }
+        .footer .app-name {
+            font-weight: 600;
+            color: #718096;
+        }
+        .cta-text {
+            background-color: #edf2f7;
+            border-radius: 6px;
+            padding: 14px 20px;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #4a5568;
+        }
+    </style>
+</head>
+<body style="margin:0; padding:20px 0; background-color:#f7fafc;">
+    <div class="wrapper">
+        <div class="header">
+            <div class="icon">${headerIcon}</div>
+            <h1>${headerTitle}</h1>
+        </div>
+        <div class="body-content">
+            ${bodyContent}
+        </div>
+        <div class="footer">
+            <p class="app-name">Résa-Pro</p>
+            <p>Application de réservation SNCF - INFPE</p>
+            <p>Ceci est un email automatique, merci de ne pas y répondre.</p>
+        </div>
+    </div>
+</body>
+</html>`;
+    };
+
+    const formatDates = (data) => ({
+        dateDebut: timestampToDateFr(data.debut),
+        heureDebut: timestampToHeure(data.debut),
+        dateFin: timestampToDateFr(data.fin),
+        heureFin: timestampToHeure(data.fin),
+    });
+
+    const doSend = async (to, subject, html) => {
+        await $fetch("/api/sendEmail", {
+            method: 'post',
+            body: {
+                from: 'ResaPro <noreply@resa-pro.infpe.fr>',
+                to,
+                subject,
+                html,
+            }
+        });
+    };
+
+    const sendEmail = async (liste, profil, form) => {
+        try {
+            const html = buildTemplate({
+                headerColor: '#0369a1',
+                headerTitle: 'Nouvelle demande de réservation',
+                headerIcon: '📋',
+                bodyContent: `
+                    <p class="greeting">Bonjour,</p>
+                    <p><strong>${profil.prenom} ${profil.nom}</strong> a effectué une demande de réservation depuis l'application Résa-Pro.</p>
+                    <div class="recap-box">
+                        <h3>Informations du demandeur</h3>
+                        <ul>
+                            <li><strong>Nom :</strong> ${profil.nom}</li>
+                            <li><strong>Prénom :</strong> ${profil.prenom}</li>
+                            <li><strong>Email :</strong> ${profil.email}</li>
+                        </ul>
+                    </div>
+                    <div class="cta-text">
+                        En tant qu'administrateur, merci de valider ou refuser cette demande depuis votre espace administrateur.
+                    </div>
+                `,
+            });
+
+            await doSend(liste, `Résa-Pro : Nouvelle demande de ${profil.prenom} ${profil.nom}`, html);
+
+        } catch (err) {
+            addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée." });
+        }
+    };
 
     const sendEmailValidationVehicule = async (data) => {
-      const dateDebut = timestampToDateFr(data.debut)
-      const heureDebut = timestampToHeure(data.debut)
-      const dateFin = timestampToDateFr(data.fin)
-      const heureFin = timestampToHeure(data.fin)
-  
-      try {
-  
-                  const html = `<html lang="fr">
-                  <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                          <style>
-                            body {
-                                font-family: Arial, sans-serif;
-                                line-height: 1.1;
-                                color: #333;
-                                background : #FFF
-                            }
-                            .header {
-                                background:  #0369a1;
-                                padding: 10px;
-                                text-align: center;
-                                border-bottom: 1px solid #ddd;
-                                color : #FFF;
-                            }
+        const { dateDebut, heureDebut, dateFin, heureFin } = formatDates(data);
 
-                        </style>
-                  </head>
-                  <body>
-                    
-                            <div class="header">
-                            <h1>Validation de votre réservation</h1>
-                            </div>
-  
-                            <h2>Bonjour ${data.profiles.prenom},</h2>
-                            <p>Le secteur “${data.secteurs.name}” a validé votre demande de réservation d'un vehicule depuis l'application Résa-pro.</p>
-                            <p>&nbsp;</p>
-                            <p>Voici un récapitulatif de votre réservation :&nbsp;</p>
-                            <ul>
-                                <li><strong>Marque :</strong> ${data.vehicules.marque}</li>
-                                <li><strong>Model :</strong> ${data.vehicules.model}</li>
-                                <li><strong>Immatriculation :</strong> ${data.vehicules.immat}</li>
-                                <li><strong>Début :</strong> ${dateDebut}  ${heureDebut}</li>
-                                <li><strong>Fin :</strong> ${dateFin}  ${heureFin}</li>
-                            </ul>
-                            <p>&nbsp;</p>
-                            <p>À bientôt sur Résa-pro.</p>
-                            <p>&nbsp;</p>
+        try {
+            const html = buildTemplate({
+                headerColor: '#16a34a',
+                headerTitle: 'Réservation validée',
+                headerIcon: '✅',
+                bodyContent: `
+                    <p class="greeting">Bonjour ${data.profiles.prenom},</p>
+                    <p>Bonne nouvelle ! Le secteur <strong>${data.secteurs.name}</strong> a validé votre demande de réservation de véhicule.</p>
+                    <div class="recap-box">
+                        <h3>Récapitulatif de votre réservation</h3>
+                        <ul>
+                            <li><strong>Marque :</strong> ${data.vehicules.marque}</li>
+                            <li><strong>Modèle :</strong> ${data.vehicules.model}</li>
+                            <li><strong>Immatriculation :</strong> ${data.vehicules.immat}</li>
+                            <li><strong>Début :</strong> ${dateDebut} à ${heureDebut}</li>
+                            <li><strong>Fin :</strong> ${dateFin} à ${heureFin}</li>
+                        </ul>
+                    </div>
+                    <p>À bientôt sur Résa-Pro.</p>
+                `,
+            });
 
-                  </body>
-                                </html>`
-                
-                  await $fetch("/api/sendEmail" ,{
-                    method : 'post',
-                    body : {
-                        from : 'ResaPro <noreply@resa-pro.infpe.fr>',
-                        to : data.profiles.email,
-                        subject : 'Validation réservation véhicule',
-                        html : html
-                    }
-        
-                  });
-          
-  
-      } catch (err) {     
-        addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée."});
-      }
-  }
+            await doSend(data.profiles.email, `Résa-Pro : Réservation véhicule validée - ${data.profiles.prenom} ${data.profiles.nom}`, html);
 
-  const sendEmailValidationSalle = async (data) => {
-    const dateDebut = timestampToDateFr(data.debut)
-    const heureDebut = timestampToHeure(data.debut)
-    const dateFin = timestampToDateFr(data.fin)
-    const heureFin = timestampToHeure(data.fin)
+        } catch (err) {
+            addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée." });
+        }
+    };
 
-    try {
+    const sendEmailValidationSalle = async (data) => {
+        const { dateDebut, heureDebut, dateFin, heureFin } = formatDates(data);
 
-                const html = `<html lang="fr">
-                <head>
-                  <meta charset="UTF-8">
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <style>
-                          body {
-                              font-family: Arial, sans-serif;
-                              line-height: 1.1;
-                              color: #333;
-                              background : #FFF
-                          }
-                          .header {
-                              background:  #0369a1;
-                              padding: 10px;
-                              text-align: center;
-                              border-bottom: 1px solid #ddd;
-                              color : #FFF;
-                          }
+        try {
+            const html = buildTemplate({
+                headerColor: '#16a34a',
+                headerTitle: 'Réservation validée',
+                headerIcon: '✅',
+                bodyContent: `
+                    <p class="greeting">Bonjour ${data.profiles.prenom},</p>
+                    <p>Bonne nouvelle ! Le secteur <strong>${data.secteurs.name}</strong> a validé votre demande de réservation de salle.</p>
+                    <div class="recap-box">
+                        <h3>Récapitulatif de votre réservation</h3>
+                        <ul>
+                            <li><strong>Salle :</strong> ${data.salles.name}</li>
+                            <li><strong>Adresse :</strong> ${data.salles.adresse}</li>
+                            <li><strong>Début :</strong> ${dateDebut} à ${heureDebut}</li>
+                            <li><strong>Fin :</strong> ${dateFin} à ${heureFin}</li>
+                        </ul>
+                    </div>
+                    <p>À bientôt sur Résa-Pro.</p>
+                `,
+            });
 
-                      </style>
-                </head>
-                <body>
-                  
-                          <div class="header">
-                          <h1>Validation de votre réservation</h1>
-                          </div>
+            await doSend(data.profiles.email, `Résa-Pro : Réservation salle validée - ${data.profiles.prenom} ${data.profiles.nom}`, html);
 
-                          <h2>Bonjour ${data.profiles.prenom},</h2>
-                          <p>Le secteur “${data.secteurs.name}” a validé votre demande de réservation d'une salle depuis l'application Résa-pro.</p>
-                          <p>&nbsp;</p>
-                          <p>Voici un récapitulatif de votre réservation :&nbsp;</p>
-                          <ul>
-                              <li><strong>Nom de la salle :</strong> ${data.salles.name}</li>
-                              <li><strong>Adresse :</strong> ${data.salles.adresse}</li>
-                              <li><strong>Début :</strong> ${dateDebut}  ${heureDebut}</li>
-                              <li><strong>Fin :</strong> ${dateFin}  ${heureFin}</li>
-                          </ul>
-                          <p>&nbsp;</p>
-                          <p>À bientôt sur Résa-pro.</p>
-                          <p>&nbsp;</p>
-             
-                </body>
-                              </html>`
-              
-                await $fetch("/api/sendEmail" ,{
-                  method : 'post',
-                  body : {
-                      from : 'ResaPro <noreply@resa-pro.infpe.fr>',
-                      to : data.profiles.email,
-                      subject : 'Validation réservation salle ',
-                      html : html
-                  }
-      
-                });
-        
+        } catch (err) {
+            addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée." });
+        }
+    };
 
-    } catch (err) {     
-      addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée."});
-    }
-}
-  
-  const sendEmailRefusVehicule = async (data) => {
-    const dateDebut = timestampToDateFr(data.debut)
-    const heureDebut = timestampToHeure(data.debut)
-    const dateFin = timestampToDateFr(data.fin)
-    const heureFin = timestampToHeure(data.fin)
+    const sendEmailRefusVehicule = async (data) => {
+        const { dateDebut, heureDebut, dateFin, heureFin } = formatDates(data);
 
-    try {
+        try {
+            const html = buildTemplate({
+                headerColor: '#dc2626',
+                headerTitle: 'Réservation refusée',
+                headerIcon: '❌',
+                bodyContent: `
+                    <p class="greeting">Bonjour ${data.profiles.prenom},</p>
+                    <p>Le secteur <strong>${data.secteurs.name}</strong> n'a pas pu donner suite à votre demande de réservation de véhicule.</p>
+                    <div class="recap-box">
+                        <h3>Récapitulatif de la réservation</h3>
+                        <ul>
+                            <li><strong>Marque :</strong> ${data.vehicules.marque}</li>
+                            <li><strong>Modèle :</strong> ${data.vehicules.model}</li>
+                            <li><strong>Immatriculation :</strong> ${data.vehicules.immat}</li>
+                            <li><strong>Début :</strong> ${dateDebut} à ${heureDebut}</li>
+                            <li><strong>Fin :</strong> ${dateFin} à ${heureFin}</li>
+                        </ul>
+                    </div>
+                    <div class="cta-text">
+                        Vous pouvez effectuer une nouvelle demande directement depuis l'application Résa-Pro.
+                    </div>
+                    <p>À bientôt sur Résa-Pro.</p>
+                `,
+            });
 
-                const html = `<html lang="fr">
-                <head>
-                  <meta charset="UTF-8">
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <style>
-                          body {
-                              font-family: Arial, sans-serif;
-                              line-height: 1.1;
-                              color: #333;
-                              background : #FFF
-                          }
-                          .header {
-                              background:  #db1237;
-                              padding: 10px;
-                              text-align: center;
-                              border-bottom: 1px solid #ddd;
-                              color : #FFF;
-                          }
+            await doSend(data.profiles.email, `Résa-Pro : Réservation véhicule refusée - ${data.profiles.prenom} ${data.profiles.nom}`, html);
 
-                      </style>
-                </head>
-                <body>
-                  
-                          <div class="header">
-                          <h1>Réservation refusée</h1>
-                          </div>
+        } catch (err) {
+            addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée." });
+        }
+    };
 
-                          <h2>Bonjour ${data.profiles.prenom},</h2>
-                <p>Le secteur “${data.secteurs.name}” a été contraint de refuser votre réservation de vehicule.</p>
-                <p>&nbsp;</p>
-                <p>Voici un récapitulatif de votre réservation :&nbsp;</p>
-                <ul>
-                    <li><strong>Marque :</strong> ${data.vehicules.marque}</li>
-                    <li><strong>Model :</strong> ${data.vehicules.model}</li>
-                    <li><strong>Immatriculation :</strong> ${data.vehicules.immat}</li>
-                    <li><strong>Début :</strong> ${dateDebut}  ${heureDebut}</li>
-                    <li><strong>Fin :</strong> ${dateFin}  ${heureFin}</li>
-                </ul>
-                <p>&nbsp;</p>
-                <p>Vous pouvez reformuler une autre demande directement depuis l'application Résa-Pro.</p>
-                <p>À bientôt.</p>
-                <p>&nbsp;</p>
-              
+    const sendEmailRefusSalle = async (data) => {
+        const { dateDebut, heureDebut, dateFin, heureFin } = formatDates(data);
 
-              
-             
-                </body>
-                              </html>`
-              
-                await $fetch("/api/sendEmail" ,{
-                  method : 'post',
-                  body : {
-                      from : 'ResaPro <noreply@resa-pro.infpe.fr>',
-                      to : data.profiles.email,
-                      subject : 'Refus réservation véhicule',
-                      html : html
-                  }
-      
-                });
-        
+        try {
+            const html = buildTemplate({
+                headerColor: '#dc2626',
+                headerTitle: 'Réservation refusée',
+                headerIcon: '❌',
+                bodyContent: `
+                    <p class="greeting">Bonjour ${data.profiles.prenom},</p>
+                    <p>Le secteur <strong>${data.secteurs.name}</strong> n'a pas pu donner suite à votre demande de réservation de salle.</p>
+                    <div class="recap-box">
+                        <h3>Récapitulatif de la réservation</h3>
+                        <ul>
+                            <li><strong>Salle :</strong> ${data.salles.name}</li>
+                            <li><strong>Adresse :</strong> ${data.salles.adresse}</li>
+                            <li><strong>Début :</strong> ${dateDebut} à ${heureDebut}</li>
+                            <li><strong>Fin :</strong> ${dateFin} à ${heureFin}</li>
+                        </ul>
+                    </div>
+                    <div class="cta-text">
+                        Vous pouvez effectuer une nouvelle demande directement depuis l'application Résa-Pro.
+                    </div>
+                    <p>À bientôt sur Résa-Pro.</p>
+                `,
+            });
 
-    } catch (err) {     
-      addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée."});
-    }
-}
+            await doSend(data.profiles.email, `Résa-Pro : Réservation salle refusée - ${data.profiles.prenom} ${data.profiles.nom}`, html);
 
-const sendEmailRefusSalle = async (data) => {
-  const dateDebut = timestampToDateFr(data.debut)
-  const heureDebut = timestampToHeure(data.debut)
-  const dateFin = timestampToDateFr(data.fin)
-  const heureFin = timestampToHeure(data.fin)
-
-  try {
-
-              const html = `<html lang="fr">
-              <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                      <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            line-height: 1.1;
-                            color: #333;
-                            background : #FFF
-                        }
-                        .header {
-                            background:  #db1237;
-                            padding: 10px;
-                            text-align: center;
-                            border-bottom: 1px solid #ddd;
-                            color : #FFF;
-                        }            
-                    </style>
-              </head>
-              <body>
-                
-                        <div class="header">
-                           <h1>Réservation refusée</h1>
-                        </div>
-
-                        <h2>Bonjour ${data.profiles.prenom},</h2>
-              <p>Le secteur “${data.secteurs.name}” a été contraint de refuser votre  réservation d'une salle depuis l'application Résa-pro.</p>
-              <p>&nbsp;</p>
-              <p>Voici un récapitulatif de votre réservation :&nbsp;</p>
-              <ul>
-                <li><strong>Nom de la salle :</strong> ${data.salles.name}</li>
-                <li><strong>Adresse :</strong> ${data.salles.adresse}</li>
-                <li><strong>Début :</strong> ${dateDebut}  ${heureDebut}</li>
-                <li><strong>Fin :</strong> ${dateFin}  ${heureFin}</li>
-              </ul>
-              <p>&nbsp;</p>
-              <p>Vous pouvez reformuler une autre demande directement depuis l'application Résa-Pro.</p>
-              <p>À bientôt.</p>
-              <p>&nbsp;</p>
-            
-
-           
-              </body>
-                            </html>`
-            
-              await $fetch("/api/sendEmail" ,{
-                method : 'post',
-                body : {
-                    from : 'ResaPro <noreply@resa-pro.infpe.fr>',
-                    to : data.profiles.email,
-                    subject : 'Refus réservation salle ',
-                    html : html
-                }
-    
-              });
-      
-
-  } catch (err) {     
-    addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée."});
-  }
-  }
-
-
-
+        } catch (err) {
+            addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée." });
+        }
+    };
 
     const sendEmailAnnulation = async (data) => {
-      const dateDebut = timestampToDateFr(data.debut)
-      const heureDebut = timestampToHeure(data.debut)
-      const dateFin = timestampToDateFr(data.fin)
-      const heureFin = timestampToHeure(data.fin)
-  
-      try {
-  
-                  const html = `<html lang="fr">
-                  <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                          <style>
-                            body {
-                                font-family: Arial, sans-serif;
-                                line-height: 1.1;
-                                color: #333;
-                                background : #FFF
-                            }
-                            .header {
-                                background:  #db1237;
-                                padding: 10px;
-                                text-align: center;
-                                border-bottom: 1px solid #ddd;
-                                color : #FFF;
-                            }
-  
-                        </style>
-                  </head>
-                  <body>
-                    
-                            <div class="header">
-                            <h1>Réservation de votre véhicule annulée</h1>
-                            </div>
-  
-                            <h2>Bonjour ${data.profiles.prenom},</h2>
-                  <p>Un administrateur a été contraint d'annuler votre réservation.</p>
-       <p>Merci de vous connecter à l'application Résa-Pro pour plus d'informations</p>
+        try {
+            const html = buildTemplate({
+                headerColor: '#dc2626',
+                headerTitle: 'Réservation annulée',
+                headerIcon: '🚫',
+                bodyContent: `
+                    <p class="greeting">Bonjour ${data.profiles.prenom},</p>
+                    <p>Un administrateur a été contraint d'annuler votre réservation.</p>
+                    <p>Merci de vous connecter à l'application Résa-Pro pour plus d'informations.</p>
+                    <div class="cta-text">
+                        Vous pouvez effectuer une nouvelle demande directement depuis l'application Résa-Pro.
+                    </div>
+                    <p>À bientôt sur Résa-Pro.</p>
+                `,
+            });
 
-                  <p>&nbsp;</p>
-                  <p>Vous pouvez reformuler une autre demande directement depuis l'application Résa-Pro.</p>
-                  <p>À bientôt.</p>
-                  <p>&nbsp;</p>
-                
-  
-                
-               
-                  </body>
-                                </html>`
-                
-                  await $fetch("/api/sendEmail" ,{
-                    method : 'post',
-                    body : {
-                        from : 'ResaPro <noreply@resa-pro.infpe.fr>',
-                        to : data.profiles.email,
-                        subject : 'Annulation réservation Résa-Pro',
-                        html : html
-                    }
-        
-                  });
-          
-  
-      } catch (err) {     
-        addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée."});
-      }
-  }
-  const sendEmailModification = async (data) => {
-    const dateDebut = timestampToDateFr(data.debut)
-    const heureDebut = timestampToHeure(data.debut)
-    const dateFin = timestampToDateFr(data.fin)
-    const heureFin = timestampToHeure(data.fin)
-    try {
-  
-     const html = `<html lang="fr">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <style>
-                  body {
-                      font-family: Arial, sans-serif;
-                      line-height: 1.1;
-                      color: #333;
-                      background : #FFF
-                  }
-                  .header {
-                      background:  #db1237;
-                      padding: 10px;
-                      text-align: center;
-                      border-bottom: 1px solid #ddd;
-                      color : #FFF;
-                  }
+            await doSend(data.profiles.email, `Résa-Pro : Réservation annulée - ${data.profiles.prenom} ${data.profiles.nom}`, html);
 
-              </style>
-        </head>
-        <body>
-          
-                  <div class="header">
-                  <h1>Réservation  modifiée</h1>
-                  </div>
+        } catch (err) {
+            addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée." });
+        }
+    };
 
-                  <h2>Bonjour ${data.profiles.prenom},</h2>
-        <p>Un administrateur a été contraint de modifier votre réservation.</p>
-       <p>Merci de vous connecter à l'application Résa-Pro pour plus d'informations</p>
-        <p>&nbsp;</p>
-        <p>À bientôt.</p>
-        <p>&nbsp;</p>
-      
+    const sendEmailModification = async (data) => {
+        try {
+            const html = buildTemplate({
+                headerColor: '#d97706',
+                headerTitle: 'Réservation modifiée',
+                headerIcon: '✏️',
+                bodyContent: `
+                    <p class="greeting">Bonjour ${data.profiles.prenom},</p>
+                    <p>Un administrateur a apporté des modifications à votre réservation.</p>
+                    <p>Merci de vous connecter à l'application Résa-Pro pour consulter les détails de la modification.</p>
+                    <p>À bientôt sur Résa-Pro.</p>
+                `,
+            });
 
-      
-     
-        </body>
-                      </html>`
+            await doSend(data.profiles.email, `Résa-Pro : Réservation modifiée - ${data.profiles.prenom} ${data.profiles.nom}`, html);
 
+        } catch (err) {
+            addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée." });
+        }
+    };
 
+    return { sendEmail, sendEmailValidationVehicule, sendEmailValidationSalle, sendEmailRefusVehicule, sendEmailRefusSalle, sendEmailAnnulation, sendEmailModification }
 
-
-              
-                await $fetch("/api/sendEmail" ,{
-                  method : 'post',
-                  body : {
-                      from : 'ResaPro <noreply@resa-pro.infpe.fr>',
-                      to : data.profiles.email,
-                      subject : 'Modification réservation Résa-Pro',
-                      html : html
-                  }
-      
-                });
-        
-
-    } catch (err) {     
-      addToast({ type: "Error", title: "Problème lors de l'envoi de votre email de confirmation. Votre demande n'est pas enregistrée."});
-    }
 }
-
-
-
-      return { sendEmail,sendEmailValidationVehicule,sendEmailValidationSalle, sendEmailRefusVehicule, sendEmailRefusSalle, sendEmailAnnulation,sendEmailModification}
-      
-  }
