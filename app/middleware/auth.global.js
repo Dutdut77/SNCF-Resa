@@ -18,6 +18,10 @@ if (session.value) {
         const { data: user } = await client.from("profiles").select("*").eq("id", userId).single();
         userProfil.value = user;
 
+        if (!user && to.meta.requiresAuth) {
+            return navigateTo({ path: '/login', query: { redirect: to.fullPath } })
+        }
+
         if (to.meta.isAdmin) {
             if (!user || user.secteur_admin == "" || user.secteur_admin == null) {
                 return navigateTo({ path: '/forbidden' })

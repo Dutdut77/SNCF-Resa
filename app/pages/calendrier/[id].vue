@@ -164,7 +164,7 @@ const filteredReservations = computed(() => {
 });
 
 const isAuthToReserv = computed(() => {
-  if (userProfil.value.secteur_auth) {
+  if (userProfil.value?.secteur_auth) {
     const array = userProfil.value.secteur_auth.split(",").map(Number);
     return array.includes(Number(formValue.value.secteur));
   } else {
@@ -351,16 +351,18 @@ const updateSecteur = async (id) => {
   setLoader(true);
   userProfil.value.favorite_secteur = id;
   await updateProfiles(userProfil.value);
-
-  showModalChoiceSecteur();
-  const url = `/calendrier/${id}`;
-  await navigateTo(url);
+  modalChoiceSecteur.value = false;
   setLoader(false);
+  if (route.params.id != id) {
+    await navigateTo(`/calendrier/${id}`);
+  }
 };
 
-if (userProfil.value.favorite_secteur == "" || userProfil.value.favorite_secteur == null) {
-  modalChoiceSecteur.value = true;
-}
+watch(() => userProfil.value, (profil) => {
+  if (profil && !profil.favorite_secteur) {
+    modalChoiceSecteur.value = true;
+  }
+}, { immediate: true });
 </script>
 
 <template>
@@ -433,7 +435,7 @@ if (userProfil.value.favorite_secteur == "" || userProfil.value.favorite_secteur
         <div class="italic px-4" v-else>Aucune salle.</div>
       </div>
 
-      <div v-if="userProfil.secteur_admin == route.params.id" class="mt-auto hidden lg:block">
+      <div v-if="userProfil?.secteur_admin == route.params.id" class="mt-auto hidden lg:block">
         <AppButtonValidated class="w-full text-sm" theme="cancel" @click="goToAdministration()"> <template #default> Administration </template> </AppButtonValidated>
       </div>
     </div>
@@ -453,7 +455,7 @@ if (userProfil.value.favorite_secteur == "" || userProfil.value.favorite_secteur
         <ResaSemaine :startDate="dateIso" :allReservations="filteredReservations" class="" @selectedResa="showSideModal" />
       </div>
 
-      <div v-if="userProfil.secteur_admin == route.params.id" class="mt-auto lg:hidden block">
+      <div v-if="userProfil?.secteur_admin == route.params.id" class="mt-auto lg:hidden block">
         <AppButtonValidated class="w-full text-sm" theme="cancel" @click="goToAdministration()"> <template #default> Administration </template> </AppButtonValidated>
       </div>
     </div>
@@ -627,7 +629,7 @@ if (userProfil.value.favorite_secteur == "" || userProfil.value.favorite_secteur
           <template #footer>
             <div v-if="formValue.update" class="w-full flex gap-4">
               <AppButtonValidated class="w-full ml-auto md:w-32" theme="cancel" @click="showSideModal()"> <template #default> Fermer </template> </AppButtonValidated>
-              <div v-if="formValue.id_user == userProfil.id || userProfil.secteur_admin == route.params.id" class="flex gap-4">
+              <div v-if="formValue.id_user == userProfil?.id || userProfil?.secteur_admin == route.params.id" class="flex gap-4">
                 <AppButtonValidated v-if="formValue.type == 1" class="w-full md:w-32 flex-none px-4" theme="success" @click="updateVehicule(formValue)"> <template #default> Modifier</template> </AppButtonValidated>
                 <AppButtonValidated v-if="formValue.type == 2" class="w-full md:w-32 flex-none px-4" theme="success" @click="updateSalle(formValue)"> <template #default> Modifier</template> </AppButtonValidated>
 

@@ -4,6 +4,7 @@ const { setLoader } = useLoader();
 const { getAll, secteurs } = useSecteurs();
 const { addToast } = useToast();
 const session = useSupabaseSession();
+const auth = useSupabaseUser();
 const supabase = useSupabaseClient();
 const userProfil = useState("userProfil");
 const { updateProfiles } = useAuth();
@@ -13,6 +14,16 @@ if (session.value) {
   await getAll();
   setLoader(false);
 }
+
+watch(() => session.value, async (newSession) => {
+  if (newSession && !userProfil.value) {
+    const userId = auth.value?.id ?? newSession?.user?.id;
+    if (userId) {
+      const { data: user } = await supabase.from("profiles").select("*").eq("id", userId).single();
+      userProfil.value = user;
+    }
+  }
+}, { immediate: true });
 
 const viewDropdown = ref(false);
 const modalPassword = ref(false);
@@ -57,7 +68,7 @@ const validatedForm = computed(() => {
 });
 
 const validatedFormProfil = computed(() => {
-  return userProfil.value.nom != "" && userProfil.value.prenom ? true : false;
+  return userProfil.value?.nom != "" && userProfil.value?.prenom ? true : false;
 });
 
 const logout = async () => {
@@ -113,7 +124,7 @@ const updateProfil = async () => {
       </div>
     </div>
 
-    <div class="relative w-28 h-full pr-4 flex items-center justify-end ml-auto" @mouseleave="onMouseLeaveProfil">
+    <div v-if="userProfil" class="relative w-28 h-full pr-4 flex items-center justify-end ml-auto" @mouseleave="onMouseLeaveProfil">
       <div class="relative w-fit h-full flex gap-2 justify-center items-center cursor-pointer" @mouseenter="isDropdownOpenProfil = true" @click="isDropdownOpenProfil = !isDropdownOpenProfil">
         <div class="flex flex-row-reverse lg:gap-2 lg:flex-row rounded-full lg:rounded-none lg:border-none border border-gray-600 p-2">
           <p class="text-base font-medium lg:hidden">{{ firstLetter(userProfil.nom) }}</p>
