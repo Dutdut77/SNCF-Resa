@@ -37,19 +37,19 @@ const formRadio = computed({
           <div class="w-3/5 flex flex-col gap-3 p-2">
             <p class="text-center font-medium text-lg">{{ vehicule.marque }} {{ vehicule.model }}</p>
             <div class="flex justify-center gap-4">
-              <div class="flex gap-1 items-center text-sm"><Icon name="material-symbols:group" class="w-4 h-4" />{{ vehicule.capacite }}</div>
+              <div class="flex gap-1 items-center text-sm"><Icon name="material-symbols:group" size="16" />{{ vehicule.capacite }}</div>
               <div v-if="vehicule.id_carburant == 1" class="flex gap-1 items-center text-sm">
-                <Icon name="material-symbols:bolt" class="w-4 h-4" />
+                <Icon name="material-symbols:bolt" size="16" />
                 <p class="first-letter:uppercase">électrique</p>
               </div>
-              <div v-if="vehicule.id_carburant == 2" class="flex gap-1 items-center text-sm"><Icon name="material-symbols:local-gas-station" class="w-4 h-4" />Diesel</div>
-              <div v-if="vehicule.id_carburant == 3" class="flex gap-1 items-center text-sm"><Icon name="material-symbols:local-gas-station" class="w-4 h-4" />Essence</div>
+              <div v-if="vehicule.id_carburant == 2" class="flex gap-1 items-center text-sm"><Icon name="material-symbols:local-gas-station" size="16" />Diesel</div>
+              <div v-if="vehicule.id_carburant == 3" class="flex gap-1 items-center text-sm"><Icon name="material-symbols:local-gas-station" size="16" />Essence</div>
 
               <div v-if="vehicule.vitesse == 0" class="flex gap-1 items-center text-sm">
                 <div class="w-4 h-4 border rounded flex items-center justify-center">A</div>
                 Auto
               </div>
-              <div v-if="vehicule.vitesse == 1" class="flex gap-1 items-center text-sm"><Icon name="material-symbols:tune" class="w-4 h-4" />Manuel</div>
+              <div v-if="vehicule.vitesse == 1" class="flex gap-1 items-center text-sm"><Icon name="material-symbols:tune" size="16" />Manuel</div>
             </div>
           </div>
         </div>

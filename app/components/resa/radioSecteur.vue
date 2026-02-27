@@ -44,7 +44,7 @@ const nbSalles = (id) => {
       <input :id="secteur.id" type="radio" v-model="formRadio" :value="secteur.id" class="hidden peer" />
 
       <label :for="secteur.id" class="h-fit p-4 flex items-center rounded-lg bg-white text-gray-600 border border-slate-300 hover:bg-opacity-75 peer-checked:shadow-lg peer-checked:text-white cursor-pointer transition">
-        <Icon name="material-symbols:train" class="size-8 z-30" />
+        <Icon name="material-symbols:train" size="32" class="z-30" />
         <div class="w-full px-4 z-30">
           <div class="uppercase text-sm font-medium">{{ secteur.name }}</div>
           <div class="text-xs italic">Voiture(s) : {{ nbVehicules(secteur.id) }} - Salle(s) : {{ nbSalles(secteur.id) }}</div>

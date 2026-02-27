@@ -31,7 +31,7 @@ const inputValue = computed({
     <div class="flex gap-2">
       <label :for="id" class="">
         <div class="relative h-3 w-3 p-2 border rounded cursor-pointer" :class="inputValue ? 'border-sky-500 bg-sky-500 ' : 'border-gray-500'">
-          <Icon name="material-symbols:check" class="absolute top-[1px] left-[1px] h-3.5 w-3.5 text-white" :class="inputValue ? 'block ' : 'hidden'" />
+          <Icon name="material-symbols:check" size="14" class="absolute top-[1px] left-[1px] text-white" :class="inputValue ? 'block ' : 'hidden'" />
         </div>
       </label>
       <p class="cursor-default">

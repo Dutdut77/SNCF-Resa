@@ -131,11 +131,11 @@ const sendResetMdp = async () => {
     </div>
 
     <div class="hidden lg:block absolute top-0 bottom-0 w-1/2 z-40 transition-all duration-500" :class="viewSignup ? ' translate-x-full ' : ' translate-x-0 '">
-      <div class="w-full h-full flex flex-col items-center gap-8 justify-center bg-gradient-to-br from-slate-600 to-slate-900">
+      <div class="w-full h-full flex flex-col items-center gap-8 justify-center bg-linear-to-br from-slate-600 to-slate-900">
         <div class="relative w-[150px] h-[150px] flex justify-center items-center">
-          <span class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-slate-700 to-slate-500 rotate-45 rounded-[38%_62%_63%_37%_/_41%_44%_56%_59%]"></span>
-          <span class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-slate-700 to-slate-500 opacity-25 scale-110 rotate-[60deg] rounded-[38%_62%_63%_37%_/_41%_44%_56%_59%]"></span>
-          <span class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-slate-700 to-slate-500 opacity-50 scale-110 rounded-[38%_62%_63%_37%_/_41%_44%_56%_59%]"></span>
+          <span class="absolute top-0 left-0 w-full h-full bg-linear-to-br from-slate-700 to-slate-500 rotate-45 rounded-[38%_62%_63%_37%_/_41%_44%_56%_59%]"></span>
+          <span class="absolute top-0 left-0 w-full h-full bg-linear-to-br from-slate-700 to-slate-500 opacity-25 scale-110 rotate-[60deg] rounded-[38%_62%_63%_37%_/_41%_44%_56%_59%]"></span>
+          <span class="absolute top-0 left-0 w-full h-full bg-linear-to-br from-slate-700 to-slate-500 opacity-50 scale-110 rounded-[38%_62%_63%_37%_/_41%_44%_56%_59%]"></span>
           <span class="absolute top-0 left-0 w-full h-full border rounded-[38%_62%_63%_37%_/_41%_44%_56%_59%]"></span>
 
           <div class="uppercase font-bold text-4xl z-10 text-white text-center flex flex-col">

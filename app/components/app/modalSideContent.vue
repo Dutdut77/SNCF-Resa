@@ -3,15 +3,26 @@ const props = defineProps(["closeSideModal"]);
 </script>
 
 <template>
-  <div id="modalSideContent" class="relative flex items-center w-ful h-dvh text-gray-500 bg-gray-50">
-    <div class="absolute inset-0 bg-cover"></div>
-    <div class="cursor-pointer h-10 w-10 bg-gradient-to-tl from-sky-500 to-sky-700 hover:shadow-lg hover:shadow-sncf-start/50 flex duration-500 justify-center items-center absolute z-50 top-6 -left-5 rounded-xl" @click="props.closeSideModal()"><Icon name="material-symbols:close" class="text-white h-6 w-6" /></div>
-    <div class="relative flex flex-col justify-start items-center gap-4 w-full h-full">
-      <div class="w-full flex flex-col items-center gap-2 p-4"><slot name="header"></slot></div>
-      <div class="w-full flex flex-col p-4 overflow-auto"><slot name="default"></slot></div>
-      <div class="w-full mt-auto p-4"><slot name="footer"></slot></div>
+  <div id="modalSideContent" class="relative flex flex-col w-full h-dvh bg-white shadow-2xl">
+    <!-- Header dark -->
+    <div class="flex-none bg-linear-to-br from-sky-400 to-sncf-primary px-5 py-4 flex items-center gap-3">
+      <slot name="header"></slot>
+      <button
+        class="ml-auto size-8 shrink-0 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+        @click="props.closeSideModal()"
+      >
+        <Icon name="material-symbols:close" size="18" class="text-white" />
+      </button>
+    </div>
+
+    <!-- Contenu scrollable -->
+    <div class="flex-1 overflow-auto px-5 py-5">
+      <slot name="default"></slot>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex-none border-t border-slate-100 bg-white px-5 py-4">
+      <slot name="footer"></slot>
     </div>
   </div>
 </template>
-
-<style></style>

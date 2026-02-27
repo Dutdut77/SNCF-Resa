@@ -1,6 +1,6 @@
 <script setup>
 const props = defineProps(["startDate", "allReservations"]);
-const emits = defineEmits(["selectedResa"]);
+const emits = defineEmits(["selectedResa", "clickDay"]);
 const days = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 const hours = [
   "00h00",
@@ -236,6 +236,18 @@ const sendResa = (e) => {
   emits("selectedResa", e);
 };
 
+const handleColumnClick = (event, dayIndex) => {
+  const rect = event.currentTarget.getBoundingClientRect();
+  const relativeY = event.clientY - rect.top;
+  const halfHourIndex = Math.max(0, Math.min(47, Math.floor(relativeY / 20))); // h-5 = 20px = 30min
+  const minutesFromMidnight = halfHourIndex * 30;
+  const h = Math.floor(minutesFromMidnight / 60);
+  const m = minutesFromMidnight % 60;
+  const day = weekDays.value[dayIndex];
+  const timestamp = new Date(day.getFullYear(), day.getMonth(), day.getDate(), h, m, 0, 0).getTime();
+  emits("clickDay", timestamp);
+};
+
 onMounted(() => {
   const percentage = 20; // Par exemple, pour scroller à 50% de la hauteur
 
@@ -274,11 +286,11 @@ const isJourJ = (date) => {
       </div>
     </div>
 
-    <div v-for="(events, index) in chantiersParJour" :key="index" class="flex flex-col relative border-x border-gray-300">
+    <div v-for="(events, index) in chantiersParJour" :key="index" class="flex flex-col relative border-x border-gray-300 cursor-pointer" @click="handleColumnClick($event, index)">
       <div v-for="hour in hours" :key="hour" class="h-5 border-b border-gray-300 odd:border-dashed odd:border-gray-200"></div>
       <div v-for="event in events" :key="event">
         <div v-for="e in event" :key="e">
-          <div class="absolute pr-0.5 cursor-pointer top-0" :style="getEventStyle(e, events, index)" @mouseenter="handleMouseEnter(e.id)" @mouseleave="handleMouseLeave" @click="sendResa(e)">
+          <div class="absolute pr-0.5 cursor-pointer top-0" :style="getEventStyle(e, events, index)" @mouseenter="handleMouseEnter(e.id)" @mouseleave="handleMouseLeave" @click.stop="sendResa(e)">
             <div :id="`id_${index}-${e.id}`" class="rounded-r-md w-full text-white h-full p-2 wrap-break-words overflow-hidden border-l-4 border-sncf-primary" :class="e.is_validated == 0 ? 'bg-hachure' : ''" :style="{ backgroundColor: !isHovered(`id_${index}-${e.id}`) ? hexToRgba(e.color, 0.75) : e.color, borderColor: e.color }">
               <div class="w-full h-full text-xs flex flex-col">
                 <div v-if="e.salles" class="uppercase">{{ e.salles.name }}</div>

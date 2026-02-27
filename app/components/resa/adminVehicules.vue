@@ -13,6 +13,7 @@ const vehiculeForm = ref({
   secteur: userProfil.value.secteur_admin,
   id_carburant: "",
   is_dispo: false,
+  acces_restreint: false,
 });
 
 setLoader(true);
@@ -24,6 +25,7 @@ const showSideVehicules = (data) => {
   if (data) {
     vehiculeForm.value = data;
     data.is_dispo == 1 ? (vehiculeForm.value.is_dispo = true) : (vehiculeForm.value.is_dispo = false);
+    data.acces_restreint == 1 ? (vehiculeForm.value.acces_restreint = true) : (vehiculeForm.value.acces_restreint = false);
   } else {
     vehiculeForm.value = {
       marque: "",
@@ -34,6 +36,7 @@ const showSideVehicules = (data) => {
       secteur: userProfil.value.secteur_admin,
       id_carburant: "",
       is_dispo: false,
+      acces_restreint: false,
     };
   }
   sideModalVehicules.value = !sideModalVehicules.value;
@@ -46,6 +49,7 @@ const validatedFieldsVehicule = computed(() => {
 const ajouterVehicule = async () => {
   setLoader(true);
   vehiculeForm.value.is_dispo ? (vehiculeForm.value.is_dispo = 1) : (vehiculeForm.value.is_dispo = 0);
+  vehiculeForm.value.acces_restreint ? (vehiculeForm.value.acces_restreint = 1) : (vehiculeForm.value.acces_restreint = 0);
   await addVehicule(vehiculeForm.value);
   await getAllVehiculesBySecteur(userProfil.value.secteur_admin);
   showSideVehicules();
@@ -54,6 +58,7 @@ const ajouterVehicule = async () => {
 const modifierVehicule = async () => {
   setLoader(true);
   vehiculeForm.value.is_dispo ? (vehiculeForm.value.is_dispo = 1) : (vehiculeForm.value.is_dispo = 0);
+  vehiculeForm.value.acces_restreint ? (vehiculeForm.value.acces_restreint = 1) : (vehiculeForm.value.acces_restreint = 0);
   await updateVehicule(vehiculeForm.value);
   await getAllVehiculesBySecteur(userProfil.value.secteur_admin);
   showSideVehicules();
@@ -69,80 +74,206 @@ const supprimerVehicule = async () => {
 </script>
 
 <template>
-  <section class="w-full h-full flex flex-col gap-4 lg:overflow-hidden">
-    <div class="w-full flex">
-      <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
-        <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
-          <div class="font-medium text-gray-50">Liste des véhicules</div>
-        </div>
+  <section class="w-full h-full flex flex-col gap-5 lg:overflow-hidden">
+    <!-- Header -->
+    <div class="flex items-center gap-3">
+      <div class="size-10 rounded-xl bg-sky-500/10 flex items-center justify-center shrink-0">
+        <Icon name="material-symbols:directions-car" size="22" class="text-sky-500" />
       </div>
-      <AppButtonValidated class="ml-auto px-4" @click="showSideVehicules()"><p class="font-bold text-base">+</p></AppButtonValidated>
+      <div>
+        <p class="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Véhicules</p>
+        <p class="text-xl font-bold text-slate-800 leading-tight">Liste des véhicules</p>
+      </div>
+      <button class="ml-auto flex items-center gap-1.5 px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold rounded-lg transition-colors" @click="showSideVehicules()">
+        <Icon name="material-symbols:add" size="18" />
+        Ajouter
+      </button>
     </div>
-    <div class="bg-slate-50 border border-gray-200 rounded-lg p-4 shadow-lg mt-1 lg:overflow-auto">
+
+    <!-- Table -->
+    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden lg:overflow-auto">
       <table v-if="allVehiculesSecteur.length > 0" class="w-full">
         <thead>
-          <tr class="font-medium text-base border-b">
-            <th class="text-left pb-4">Marque</th>
-            <th class="px-4 pb-4">Model</th>
-            <th class="w-full pb-4">Immat</th>
-            <th class="px-4 pb-4">Dispo</th>
+          <tr class="bg-slate-50 border-b border-slate-200">
+            <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Marque</th>
+            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Modèle</th>
+            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Immat</th>
+            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Statut</th>
           </tr>
         </thead>
-        <tbody>
-          <tr class="cursor-pointer h-10 border-b hover:bg-slate-100" v-for="data in allVehiculesSecteur" :key="data.id" @click="showSideVehicules(data)">
-            <td>{{ data.marque }}</td>
-            <td class="text-center">{{ data.model }}</td>
-            <td class="text-center">{{ data.immat }}</td>
-            <td class="text-center"><Icon v-if="data.is_dispo == 1" name="material-symbols:check" class="size-4 mx-auto text-green-500" /><Icon v-else name="material-symbols:close" class="size-5 mx-auto text-red-500" /></td>
+        <tbody class="divide-y divide-slate-100">
+          <tr class="cursor-pointer hover:bg-sky-50/40 transition-colors" v-for="data in allVehiculesSecteur" :key="data.id" @click="showSideVehicules(data)">
+            <td class="px-5 py-3 text-sm font-medium text-slate-800">{{ data.marque }}</td>
+            <td class="px-4 py-3 text-sm text-slate-600 text-center">{{ data.model }}</td>
+            <td class="px-4 py-3 text-center">
+              <span class="font-mono text-xs font-bold px-2 py-0.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-md">{{ data.immat }}</span>
+            </td>
+            <td class="px-4 py-3 text-center">
+              <span v-if="data.is_dispo == 1 && data.acces_restreint == 1" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                <Icon name="material-symbols:lock" size="12" />
+                Valideurs
+              </span>
+              <span v-else-if="data.is_dispo == 1" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <Icon name="material-symbols:check-circle" size="12" />
+                Disponible
+              </span>
+              <span v-else class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-600 border border-red-200">
+                <Icon name="material-symbols:cancel" size="12" />
+                Indisponible
+              </span>
+            </td>
           </tr>
         </tbody>
       </table>
-      <div class="italic" v-else>Aucun véhicule d'enregistré !</div>
+      <div v-else class="px-5 py-8 text-sm text-slate-400 italic text-center">Aucun véhicule enregistré.</div>
     </div>
 
     <AppModalSide :sideModal="sideModalVehicules" :closeSideModal="showSideVehicules">
       <template #default>
         <AppModalSideContent v-if="sideModalVehicules" :closeSideModal="showSideVehicules">
           <template #header>
-            <div v-if="vehiculeForm.id" class="text-center">
-              <div class="font-medium text-xl text-gray-700">{{ vehiculeForm.marque }} {{ vehiculeForm.model }}</div>
-              <div class="font-medium text-xl text-gray-700">{{ vehiculeForm.immat }}</div>
+            <div class="flex items-center gap-3">
+              <div class="size-9 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                <Icon name="material-symbols:directions-car" size="20" class="text-white" />
+              </div>
+              <div>
+                <p class="text-[10px] text-white/70 uppercase tracking-wider">Véhicules</p>
+                <p class="text-base font-semibold text-white leading-tight">
+                  {{ vehiculeForm.id ? vehiculeForm.marque + " " + vehiculeForm.model : "Nouveau véhicule" }}
+                </p>
+              </div>
             </div>
-            <p v-else class="font-medium text-xl text-gray-700 uppercase px-4 text-center">Ajouter un nouveau véhicule</p>
           </template>
           <template #default>
-            <div class="ml-auto flex items-center">
-              <p v-if="vehiculeForm.is_dispo" class="pr-2 text-gray-600 text-sm font-medium">Disponible</p>
-              <p v-else class="pr-2 text-gray-600 text-sm font-medium">Indisponible</p>
-              <label class="w-8 cursor-pointer">
-                <input type="checkbox" class="peer hidden rounded-md" v-model="vehiculeForm.is_dispo" />
-                <span class="w-8 h-5 flex items-center flex-shrink-0 p-1 bg-gray-300 rounded-full duration-300 ease-in-out peer-checked:bg-sky-500 after:w-4 after:h-4 after:bg-white after:rounded-full after:shadow-md after:duration-300 peer-checked:after:translate-x-2.5"></span>
-              </label>
+            <!-- Sélecteur disponibilité 3 états -->
+            <div class="flex flex-col gap-2 p-3 bg-slate-50 rounded-xl border border-slate-200 mb-5">
+              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Disponibilité</p>
+              <div class="grid grid-cols-3 gap-1.5">
+                <!-- Indisponible -->
+                <button
+                  type="button"
+                  class="flex flex-col items-center gap-1 px-2 py-2.5 rounded-lg text-xs font-medium transition-colors border"
+                  :class="!vehiculeForm.is_dispo ? 'bg-red-50 border-red-200 text-red-600' : 'bg-white border-slate-200 text-slate-400 hover:bg-slate-50'"
+                  @click="vehiculeForm.is_dispo = false; vehiculeForm.acces_restreint = false"
+                >
+                  <Icon name="material-symbols:cancel" size="20" />
+                  Indisponible
+                </button>
+                <!-- Disponible pour tous -->
+                <button
+                  type="button"
+                  class="flex flex-col items-center gap-1 px-2 py-2.5 rounded-lg text-xs font-medium transition-colors border"
+                  :class="vehiculeForm.is_dispo && !vehiculeForm.acces_restreint ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-white border-slate-200 text-slate-400 hover:bg-slate-50'"
+                  @click="vehiculeForm.is_dispo = true; vehiculeForm.acces_restreint = false"
+                >
+                  <Icon name="material-symbols:check-circle" size="20" />
+                  Tous
+                </button>
+                <!-- Valideurs uniquement -->
+                <button
+                  type="button"
+                  class="flex flex-col items-center gap-1 px-2 py-2.5 rounded-lg text-xs font-medium transition-colors border"
+                  :class="vehiculeForm.is_dispo && vehiculeForm.acces_restreint ? 'bg-amber-50 border-amber-200 text-amber-600' : 'bg-white border-slate-200 text-slate-400 hover:bg-slate-50'"
+                  @click="vehiculeForm.is_dispo = true; vehiculeForm.acces_restreint = true"
+                >
+                  <Icon name="material-symbols:lock" size="20" />
+                  Valideurs
+                </button>
+              </div>
             </div>
-            <AppInput class="pt-4" name="marque" type="text" title="Marque : " v-model="vehiculeForm.marque" />
-            <AppInput class="pt-4" name="model" type="text" title="Model : " v-model="vehiculeForm.model" />
-            <AppInput class="pt-4" name="immat" type="text" title="Immatriculation : " v-model="vehiculeForm.immat" />
-            <AppInput class="pt-4" name="capa" type="text" title="Nb de sièges : " v-model="vehiculeForm.capacite" />
-            <div class="grid grid-cols-1 gap-8 mt-3 text-sm text-gray-700">
-              <AppRadio :name="['auto', 'manuel']" :value="[0, 1]" :radioTitle="['Automatique', 'Manuel']" title="Transmission :" v-model="vehiculeForm.vitesse" />
+
+            <!-- Informations -->
+            <div class="flex items-center gap-2 pb-2 mb-3 border-b border-slate-100">
+              <Icon name="material-symbols:info-outline-rounded" size="14" class="text-sky-500" />
+              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Informations</p>
             </div>
-            <div class="grid grid-cols-1 gap-8 mt-3 text-sm text-gray-700">
-              <AppRadio :name="['elec', 'gazoil', 'essence']" :value="[1, 2, 3]" :radioTitle="['Electrique', 'Gazoil', 'Essence']" title="Carburant :" v-model="vehiculeForm.id_carburant" />
+            <AppInput name="marque" type="text" title="Marque : " v-model="vehiculeForm.marque" />
+            <AppInput class="pt-3" name="model" type="text" title="Modèle : " v-model="vehiculeForm.model" />
+            <AppInput class="pt-3" name="immat" type="text" title="Immatriculation : " v-model="vehiculeForm.immat" />
+            <AppInput class="pt-3" name="capa" type="text" title="Nb de sièges : " v-model="vehiculeForm.capacite" />
+
+            <!-- Caractéristiques -->
+            <div class="flex items-center gap-2 pb-2 mt-5 mb-3 border-b border-slate-100">
+              <Icon name="material-symbols:settings" size="14" class="text-sky-500" />
+              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Caractéristiques</p>
             </div>
-            <div class="pt-4">
-              <p class="text-sm font-medium text-gray-700">Divers :</p>
-              <textarea class="mt-1 appearance-none border text-sm text-gray-600 border-gray-400 rounded-lg p-4 w-full focus:outline-none focus:border-gray-600 focus:ring-0" name="emplacementba" id="" cols="50" rows="5" v-model="vehiculeForm.autres" placeholder=""></textarea>
+
+            <!-- Transmission -->
+            <p class="text-xs font-medium text-slate-500 mb-2">Transmission</p>
+            <div class="grid grid-cols-2 gap-2 items-stretch">
+              <div class="relative flex">
+                <input id="vitesse-0" type="radio" v-model="vehiculeForm.vitesse" :value="0" class="hidden peer" name="vitesse" />
+                <label for="vitesse-0" class="flex flex-1 items-center gap-2.5 px-3 py-3 rounded-xl border-2 border-slate-200 bg-white hover:border-sky-200 peer-checked:border-sky-400 peer-checked:bg-sky-50 cursor-pointer transition-all duration-150">
+                  <span class="size-7 rounded-lg bg-slate-100 border border-slate-200 text-sm font-bold text-slate-500 flex items-center justify-center shrink-0">A</span>
+                  <span class="text-sm font-medium text-slate-600">Automatique</span>
+                </label>
+                <div class="absolute top-2.5 right-2.5 size-4 rounded-full bg-sky-500 flex items-center justify-center scale-0 peer-checked:scale-100 transition-transform duration-150 pointer-events-none">
+                  <Icon name="material-symbols:check" size="10" class="text-white" />
+                </div>
+              </div>
+              <div class="relative flex">
+                <input id="vitesse-1" type="radio" v-model="vehiculeForm.vitesse" :value="1" class="hidden peer" name="vitesse" />
+                <label for="vitesse-1" class="flex flex-1 items-center gap-2.5 px-3 py-3 rounded-xl border-2 border-slate-200 bg-white hover:border-sky-200 peer-checked:border-sky-400 peer-checked:bg-sky-50 cursor-pointer transition-all duration-150">
+                  <Icon name="material-symbols:tune" size="20" class="text-slate-400 shrink-0" />
+                  <span class="text-sm font-medium text-slate-600">Manuel</span>
+                </label>
+                <div class="absolute top-2.5 right-2.5 size-4 rounded-full bg-sky-500 flex items-center justify-center scale-0 peer-checked:scale-100 transition-transform duration-150 pointer-events-none">
+                  <Icon name="material-symbols:check" size="10" class="text-white" />
+                </div>
+              </div>
             </div>
+
+            <!-- Carburant -->
+            <p class="text-xs font-medium text-slate-500 mt-4 mb-2">Carburant</p>
+            <div class="grid grid-cols-3 gap-2">
+              <div class="relative">
+                <input id="carb-1" type="radio" v-model="vehiculeForm.id_carburant" :value="1" class="hidden peer" name="carburant" />
+                <label for="carb-1" class="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border-2 border-slate-200 bg-white hover:border-emerald-200 peer-checked:border-emerald-400 peer-checked:bg-emerald-50 cursor-pointer transition-all duration-150">
+                  <Icon name="material-symbols:bolt" size="22" class="text-slate-400" />
+                  <span class="text-xs font-medium text-slate-600 text-center leading-tight">Électrique</span>
+                </label>
+                <div class="absolute top-2 right-2 size-4 rounded-full bg-emerald-500 flex items-center justify-center scale-0 peer-checked:scale-100 transition-transform duration-150 pointer-events-none">
+                  <Icon name="material-symbols:check" size="10" class="text-white" />
+                </div>
+              </div>
+              <div class="relative">
+                <input id="carb-2" type="radio" v-model="vehiculeForm.id_carburant" :value="2" class="hidden peer" name="carburant" />
+                <label for="carb-2" class="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border-2 border-slate-200 bg-white hover:border-sky-200 peer-checked:border-sky-400 peer-checked:bg-sky-50 cursor-pointer transition-all duration-150">
+                  <Icon name="material-symbols:local-gas-station" size="22" class="text-slate-400" />
+                  <span class="text-xs font-medium text-slate-600 text-center leading-tight">Gazoil</span>
+                </label>
+                <div class="absolute top-2 right-2 size-4 rounded-full bg-sky-500 flex items-center justify-center scale-0 peer-checked:scale-100 transition-transform duration-150 pointer-events-none">
+                  <Icon name="material-symbols:check" size="10" class="text-white" />
+                </div>
+              </div>
+              <div class="relative">
+                <input id="carb-3" type="radio" v-model="vehiculeForm.id_carburant" :value="3" class="hidden peer" name="carburant" />
+                <label for="carb-3" class="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border-2 border-slate-200 bg-white hover:border-orange-200 peer-checked:border-orange-400 peer-checked:bg-orange-50 cursor-pointer transition-all duration-150">
+                  <Icon name="material-symbols:local-gas-station" size="22" class="text-slate-400" />
+                  <span class="text-xs font-medium text-slate-600 text-center leading-tight">Essence</span>
+                </label>
+                <div class="absolute top-2 right-2 size-4 rounded-full bg-orange-500 flex items-center justify-center scale-0 peer-checked:scale-100 transition-transform duration-150 pointer-events-none">
+                  <Icon name="material-symbols:check" size="10" class="text-white" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Divers -->
+            <div class="flex items-center gap-2 pb-2 mt-5 mb-3 border-b border-slate-100">
+              <Icon name="material-symbols:notes" size="14" class="text-sky-500" />
+              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Notes</p>
+            </div>
+            <textarea class="appearance-none border text-sm text-slate-600 border-slate-200 rounded-xl p-3 w-full focus:outline-none focus:border-sky-400 focus:ring-0 resize-none bg-slate-50" rows="4" v-model="vehiculeForm.autres" placeholder="Informations complémentaires..."></textarea>
           </template>
           <template #footer>
-            <div v-if="!vehiculeForm.id" class="flex gap-4 w-full justify-end pt-6">
-              <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideVehicules()"> <template #default> Annuler </template> </AppButtonValidated>
-              <AppButtonValidated :validated="validatedFieldsVehicule" class="md:w-32 w-full text-sm" theme="" @click="ajouterVehicule()"> <template #default> Enregistrer </template> </AppButtonValidated>
+            <div v-if="!vehiculeForm.id" class="flex gap-3 w-full justify-end">
+              <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideVehicules()"><template #default>Annuler</template></AppButtonValidated>
+              <AppButtonValidated :validated="validatedFieldsVehicule" class="md:w-32 w-full text-sm" theme="" @click="ajouterVehicule()"><template #default>Enregistrer</template></AppButtonValidated>
             </div>
-            <div v-else class="flex gap-2 w-full justify-end pt-6">
-              <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideVehicules()"> <template #default> Annuler </template> </AppButtonValidated>
-              <AppButtonValidated :validated="validatedFieldsVehicule" class="md:w-32 w-full text-sm" theme="" @click="modifierVehicule()"> <template #default> Modifier </template> </AppButtonValidated>
-              <AppButtonValidated class="md:w-32 w-full text-sm" theme="delete" @click="supprimerVehicule()"> <template #default> Supprimer </template> </AppButtonValidated>
+            <div v-else class="flex gap-3 w-full justify-end">
+              <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideVehicules()"><template #default>Annuler</template></AppButtonValidated>
+              <AppButtonValidated :validated="validatedFieldsVehicule" class="md:w-32 w-full text-sm" theme="" @click="modifierVehicule()"><template #default>Modifier</template></AppButtonValidated>
+              <AppButtonValidated class="md:w-32 w-full text-sm" theme="delete" @click="supprimerVehicule()"><template #default>Supprimer</template></AppButtonValidated>
             </div>
           </template>
         </AppModalSideContent>

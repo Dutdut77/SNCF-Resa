@@ -53,14 +53,14 @@ watch(formValue.value, async (newValue, oldValue) => {
 
         <div class="flex items-center justify-center pb-2 pt-2">
           <div class="w-1/2 flex justify-center items-center py-2 px-2">
-            <Icon name="material-symbols:chevron-left" class="mr-auto h-6 w-6 cursor-pointer" @click="month--" :class="month > 0 ? 'visible' : 'invisible'" />
+            <Icon name="material-symbols:chevron-left" size="24" class="mr-auto cursor-pointer" @click="month--" :class="month > 0 ? 'visible' : 'invisible'" />
             <p class="text-center font-medium">{{ months[month] }}</p>
-            <Icon name="material-symbols:chevron-right" class="ml-auto h-6 w-6 cursor-pointer" @click="month++" :class="month < 11 ? 'visible' : 'invisible'" />
+            <Icon name="material-symbols:chevron-right" size="24" class="ml-auto cursor-pointer" @click="month++" :class="month < 11 ? 'visible' : 'invisible'" />
           </div>
           <div class="w-1/2 flex justify-center items-center py-2 px-2">
-            <Icon name="material-symbols:chevron-left" class="mr-auto h-6 w-6 cursor-pointer" @click="year--" />
+            <Icon name="material-symbols:chevron-left" size="24" class="mr-auto cursor-pointer" @click="year--" />
             <p class="text-center font-medium">{{ year }}</p>
-            <Icon name="material-symbols:chevron-right" class="ml-auto h-6 w-6 cursor-pointer" @click="year++" />
+            <Icon name="material-symbols:chevron-right" size="24" class="ml-auto cursor-pointer" @click="year++" />
           </div>
         </div>
 

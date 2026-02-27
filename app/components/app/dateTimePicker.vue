@@ -8,8 +8,8 @@ const choiceDay = ref(formValue && formValue.value ? new Date(formValue.value).g
 const selectedMonth = ref(choiceMonth.value);
 const selectedYear = ref(choiceYear.value);
 const selectedDay = ref(choiceDay.value);
-const selectedHeure = ref(new Date().getHours());
-const selectedMinute = ref("00");
+const selectedHeure = ref(formValue && formValue.value ? new Date(formValue.value).getHours() : new Date().getHours());
+const selectedMinute = ref(formValue && formValue.value ? (new Date(formValue.value).getMinutes() >= 30 ? "30" : "00") : "00");
 
 const days = ["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"];
 const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Décembre"];
@@ -102,14 +102,14 @@ const changeMinute = () => {
         <div class="w-full h-full px-2">
           <div class="flex items-center justify-center">
             <div class="w-1/2 flex justify-center items-center py-2 px-2">
-              <Icon name="material-symbols:chevron-left" class="mr-auto h-6 w-6 cursor-pointer" @click="choiceMonth--" :class="choiceMonth > 0 ? 'visible' : 'invisible'" />
+              <Icon name="material-symbols:chevron-left" size="24" class="mr-auto cursor-pointer" @click="choiceMonth--" :class="choiceMonth > 0 ? 'visible' : 'invisible'" />
               <p class="text-center font-medium">{{ months[choiceMonth] }}</p>
-              <Icon name="material-symbols:chevron-right" class="ml-auto h-6 w-6 cursor-pointer" @click="choiceMonth++" :class="choiceMonth < 11 ? 'visible' : 'invisible'" />
+              <Icon name="material-symbols:chevron-right" size="24" class="ml-auto cursor-pointer" @click="choiceMonth++" :class="choiceMonth < 11 ? 'visible' : 'invisible'" />
             </div>
             <div class="w-1/2 flex justify-center items-center py-2 px-2">
-              <Icon name="material-symbols:chevron-left" class="mr-auto h-6 w-6 cursor-pointer" @click="choiceYear--" />
+              <Icon name="material-symbols:chevron-left" size="24" class="mr-auto cursor-pointer" @click="choiceYear--" />
               <p class="text-center font-medium">{{ choiceYear }}</p>
-              <Icon name="material-symbols:chevron-right" class="ml-auto h-6 w-6 cursor-pointer" @click="choiceYear++" />
+              <Icon name="material-symbols:chevron-right" size="24" class="ml-auto cursor-pointer" @click="choiceYear++" />
             </div>
           </div>
 
@@ -128,9 +128,9 @@ const changeMinute = () => {
           <div class="p-2 text-center">
             <div class="text-center font-medium">Heures</div>
             <div class="h-full w-16 flex flex-col items-center justify-center pb-8">
-              <Icon name="material-symbols:chevron-left" class="size-8 rotate-90 text-gray-600 cursor-pointer hover:text-sky-500" @click="subHour()" />
+              <Icon name="material-symbols:chevron-left" size="32" class="rotate-90 text-gray-600 cursor-pointer hover:text-sky-500" @click="addHour()" />
               <p class="text-lg font-bold text-white bg-sncf-primary-light rounded px-4 py-1 cursor-default">{{ selectedHeure }}</p>
-              <Icon name="material-symbols:chevron-left" class="size-8 -rotate-90 text-gray-600 cursor-pointer hover:text-sky-500" @click="addHour()" />
+              <Icon name="material-symbols:chevron-left" size="32" class="-rotate-90 text-gray-600 cursor-pointer hover:text-sky-500" @click="subHour()" />
               <!-- <AppDatePickerIos class="w-20" :items="heures" v-model="selectedHeure" :viewIndex="activeIndexHeure" /> -->
             </div>
           </div>
@@ -138,9 +138,9 @@ const changeMinute = () => {
           <div class="p-2 text-center">
             <div class="text-center font-medium">Minutes</div>
             <div class="h-full w-16 flex flex-col items-center justify-center pb-8">
-              <Icon name="material-symbols:chevron-left" class="size-8 rotate-90 text-gray-600 cursor-pointer hover:text-sky-500" @click="changeMinute()" />
+              <Icon name="material-symbols:chevron-left" size="32" class="rotate-90 text-gray-600 cursor-pointer hover:text-sky-500" @click="changeMinute()" />
               <p class="text-lg font-bold text-white bg-sncf-primary-light rounded px-4 py-1 cursor-default">{{ selectedMinute }}</p>
-              <Icon name="material-symbols:chevron-left" class="size-8 -rotate-90 text-gray-600 cursor-pointer hover:text-sky-500" @click="changeMinute" />
+              <Icon name="material-symbols:chevron-left" size="32" class="-rotate-90 text-gray-600 cursor-pointer hover:text-sky-500" @click="changeMinute" />
               <!-- <AppDatePickerIos class="w-20" :items="minutes" v-model="selectedMinute" :viewIndex="activeIndexMinute" /> -->
             </div>
           </div>

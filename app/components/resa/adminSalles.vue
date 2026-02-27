@@ -100,81 +100,182 @@ const supprimerSalle = async () => {
 </script>
 
 <template>
-  <section class="w-full h-full flex flex-col gap-4">
-    <div class="w-full flex">
-      <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
-        <div class="relative w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2">
-          <div class="font-medium text-gray-50">Liste des salles</div>
-        </div>
+  <section class="w-full h-full flex flex-col gap-5">
+    <!-- Header -->
+    <div class="flex items-center gap-3">
+      <div class="size-10 rounded-xl bg-sky-500/10 flex items-center justify-center shrink-0">
+        <Icon name="material-symbols:meeting-room" size="22" class="text-sky-500" />
       </div>
-      <AppButtonValidated class="ml-auto px-4" @click="showSideSalles()"><p class="font-bold text-base">+</p></AppButtonValidated>
+      <div>
+        <p class="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Salles</p>
+        <p class="text-xl font-bold text-slate-800 leading-tight">Liste des salles</p>
+      </div>
+      <button class="ml-auto flex items-center gap-1.5 px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold rounded-lg transition-colors" @click="showSideSalles()">
+        <Icon name="material-symbols:add" size="18" />
+        Ajouter
+      </button>
     </div>
 
-    <div class="bg-slate-50 border border-gray-200 rounded-lg p-4 shadow-lg mt-1">
+    <!-- Table -->
+    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
       <table v-if="allSallesSecteur.length > 0" class="w-full">
         <thead>
-          <tr class="font-medium text-base border-b">
-            <th class="text-left w-full pb-4">Nom</th>
-            <th class="px-4 pb-4">Dispo</th>
+          <tr class="bg-slate-50 border-b border-slate-200">
+            <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide w-full">Nom de la salle</th>
+            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Statut</th>
           </tr>
         </thead>
-        <tbody>
-          <tr class="cursor-pointer h-10 border-b hover:bg-slate-100" v-for="data in allSallesSecteur" :key="data.id" @click="showSideSalles(data)">
-            <td>{{ data.name }}</td>
-            <td class="text-center"><Icon v-if="data.is_dispo == 1" name="material-symbols:check" class="size-4 mx-auto text-green-500" /><Icon v-else name="material-symbols:close" class="size-5 mx-auto text-red-500" /></td>
+        <tbody class="divide-y divide-slate-100">
+          <tr class="cursor-pointer hover:bg-sky-50/40 transition-colors" v-for="data in allSallesSecteur" :key="data.id" @click="showSideSalles(data)">
+            <td class="px-5 py-3 text-sm font-medium text-slate-800">{{ data.name }}</td>
+            <td class="px-4 py-3 text-center">
+              <span v-if="data.is_dispo == 1" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <Icon name="material-symbols:check-circle" size="12" />
+                Disponible
+              </span>
+              <span v-else class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-600 border border-red-200">
+                <Icon name="material-symbols:cancel" size="12" />
+                Indisponible
+              </span>
+            </td>
           </tr>
         </tbody>
       </table>
-      <div class="italic" v-else>Aucune salle d'enregistrée !</div>
+      <div v-else class="px-5 py-8 text-sm text-slate-400 italic text-center">Aucune salle enregistrée.</div>
     </div>
+
     <AppModalSide :sideModal="sideModalSalles" :closeSideModal="showSideSalles">
       <template #default>
         <AppModalSideContent v-if="sideModalSalles" :closeSideModal="showSideSalles">
           <template #header>
-            <div v-if="salleForm.id" class="text-center">
-              <div class="font-medium text-xl text-gray-700">{{ salleForm.name }}</div>
-              <div class="font-medium text-sm text-gray-700">{{ salleForm.adresse }}</div>
-            </div>
-            <p v-else class="font-medium text-xl text-gray-700 uppercase px-4 text-center">Ajouter une nouvelle salle</p>
-          </template>
-          <template #default>
-            <div class="ml-auto flex items-center">
-              <p v-if="salleForm.is_dispo" class="pr-2 text-gray-600 text-sm font-medium">Disponible</p>
-              <p v-else class="pr-2 text-gray-600 text-sm font-medium">Indisponible</p>
-              <label class="w-8 cursor-pointer">
-                <input type="checkbox" class="peer hidden rounded-md" v-model="salleForm.is_dispo" />
-                <span class="w-8 h-5 flex items-center flex-shrink-0 p-1 bg-gray-300 rounded-full duration-300 ease-in-out peer-checked:bg-sky-500 after:w-4 after:h-4 after:bg-white after:rounded-full after:shadow-md after:duration-300 peer-checked:after:translate-x-2.5"></span>
-              </label>
-            </div>
-            <AppInput class="pt-4" name="name" type="text" title="Nom de la salle : " v-model="salleForm.name" />
-            <AppInput class="pt-4" name="adresse" type="text" title="Adresse : " v-model="salleForm.adresse" />
-            <AppInput class="pt-4" name="capa" type="text" title="Nb de places : " v-model="salleForm.capacite" />
-            <div class="w-full">
-              <div class="pt-4 uppercase text-sm text-gray-600 font-medium py-2 border-b text-left">Installations :</div>
-              <div class="mt-3 text-sm text-gray-700 w-full grid grid-cols-2 gap-2">
-                <AppCheckbox v-model="salleForm.clim" label="Climatisation" id="clim" />
-                <AppCheckbox v-model="salleForm.wifi" label="Wifi" id="wifi" />
-                <AppCheckbox v-model="salleForm.jabra" label="Jabra" id="jabra" />
-                <AppCheckbox v-model="salleForm.white_board" label="Tableau blanc" id="white_board" />
-                <AppCheckbox v-model="salleForm.pmr" label="PMR" id="pmr" />
-                <AppCheckbox v-model="salleForm.video_proj" label="Vidéo-projecteur" id="video_proj" />
-                <AppCheckbox v-model="salleForm.webcam" label="Webcam" id="webcam" />
+            <div class="flex items-center gap-3">
+              <div class="size-9 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                <Icon name="material-symbols:meeting-room" size="20" class="text-white" />
+              </div>
+              <div>
+                <p class="text-[10px] text-white/70 uppercase tracking-wider">Salles</p>
+                <p class="text-base font-semibold text-white leading-tight">
+                  {{ salleForm.id ? salleForm.name : "Nouvelle salle" }}
+                </p>
               </div>
             </div>
-            <div class="pt-4">
-              <p class="text-sm font-medium text-gray-700">Divers :</p>
-              <textarea class="mt-1 appearance-none border text-sm text-gray-600 border-gray-400 rounded-lg p-4 w-full focus:outline-none focus:border-gray-600 focus:ring-0" name="emplacementba" id="" cols="50" rows="5" v-model="salleForm.autres" placeholder=""></textarea>
+          </template>
+          <template #default>
+            <!-- Toggle disponibilité -->
+            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200 mb-5">
+              <div class="flex-1">
+                <p class="text-sm font-medium text-slate-700">Disponibilité</p>
+                <p class="text-xs text-slate-400">{{ salleForm.is_dispo ? "Salle disponible à la réservation" : "Salle indisponible" }}</p>
+              </div>
+              <label class="w-8 cursor-pointer shrink-0">
+                <input type="checkbox" class="peer hidden" v-model="salleForm.is_dispo" />
+                <span class="w-8 h-5 flex items-center flex-shrink-0 p-1 bg-slate-300 rounded-full duration-300 ease-in-out peer-checked:bg-sky-500 after:w-4 after:h-4 after:bg-white after:rounded-full after:shadow-md after:duration-300 peer-checked:after:translate-x-2.5"></span>
+              </label>
             </div>
+
+            <!-- Informations -->
+            <div class="flex items-center gap-2 pb-2 mb-3 border-b border-slate-100">
+              <Icon name="material-symbols:info-outline-rounded" size="14" class="text-sky-500" />
+              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Informations</p>
+            </div>
+            <AppInput name="name" type="text" title="Nom de la salle : " v-model="salleForm.name" />
+            <AppInput class="pt-3" name="adresse" type="text" title="Adresse : " v-model="salleForm.adresse" />
+            <AppInput class="pt-3" name="capa" type="text" title="Nb de places : " v-model="salleForm.capacite" />
+
+            <!-- Installations -->
+            <div class="flex items-center gap-2 pb-2 mt-5 mb-3 border-b border-slate-100">
+              <Icon name="material-symbols:settings" size="14" class="text-sky-500" />
+              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Installations</p>
+            </div>
+            <div class="grid grid-cols-2 gap-2 items-stretch">
+              <div class="relative flex">
+                <input id="chk-clim" type="checkbox" v-model="salleForm.clim" class="hidden peer" />
+                <label for="chk-clim" class="flex flex-1 items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 border-slate-200 bg-white hover:border-sky-200 peer-checked:border-sky-400 peer-checked:bg-sky-50 cursor-pointer transition-all duration-150">
+                  <Icon name="material-symbols:ac-unit" size="18" class="text-slate-400 shrink-0" />
+                  <span class="text-sm font-medium text-slate-600">Climatisation</span>
+                </label>
+                <div class="absolute top-2.5 right-2.5 size-4 rounded-full bg-sky-500 flex items-center justify-center scale-0 peer-checked:scale-100 transition-transform duration-150 pointer-events-none">
+                  <Icon name="material-symbols:check" size="10" class="text-white" />
+                </div>
+              </div>
+              <div class="relative flex">
+                <input id="chk-wifi" type="checkbox" v-model="salleForm.wifi" class="hidden peer" />
+                <label for="chk-wifi" class="flex flex-1 items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 border-slate-200 bg-white hover:border-sky-200 peer-checked:border-sky-400 peer-checked:bg-sky-50 cursor-pointer transition-all duration-150">
+                  <Icon name="material-symbols:wifi" size="18" class="text-slate-400 shrink-0" />
+                  <span class="text-sm font-medium text-slate-600">Wifi</span>
+                </label>
+                <div class="absolute top-2.5 right-2.5 size-4 rounded-full bg-sky-500 flex items-center justify-center scale-0 peer-checked:scale-100 transition-transform duration-150 pointer-events-none">
+                  <Icon name="material-symbols:check" size="10" class="text-white" />
+                </div>
+              </div>
+              <div class="relative flex">
+                <input id="chk-jabra" type="checkbox" v-model="salleForm.jabra" class="hidden peer" />
+                <label for="chk-jabra" class="flex flex-1 items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 border-slate-200 bg-white hover:border-sky-200 peer-checked:border-sky-400 peer-checked:bg-sky-50 cursor-pointer transition-all duration-150">
+                  <Icon name="material-symbols:headset-mic" size="18" class="text-slate-400 shrink-0" />
+                  <span class="text-sm font-medium text-slate-600">Jabra</span>
+                </label>
+                <div class="absolute top-2.5 right-2.5 size-4 rounded-full bg-sky-500 flex items-center justify-center scale-0 peer-checked:scale-100 transition-transform duration-150 pointer-events-none">
+                  <Icon name="material-symbols:check" size="10" class="text-white" />
+                </div>
+              </div>
+              <div class="relative flex">
+                <input id="chk-white_board" type="checkbox" v-model="salleForm.white_board" class="hidden peer" />
+                <label for="chk-white_board" class="flex flex-1 items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 border-slate-200 bg-white hover:border-sky-200 peer-checked:border-sky-400 peer-checked:bg-sky-50 cursor-pointer transition-all duration-150">
+                  <Icon name="material-symbols:draw" size="18" class="text-slate-400 shrink-0" />
+                  <span class="text-sm font-medium text-slate-600">Tableau blanc</span>
+                </label>
+                <div class="absolute top-2.5 right-2.5 size-4 rounded-full bg-sky-500 flex items-center justify-center scale-0 peer-checked:scale-100 transition-transform duration-150 pointer-events-none">
+                  <Icon name="material-symbols:check" size="10" class="text-white" />
+                </div>
+              </div>
+              <div class="relative flex">
+                <input id="chk-pmr" type="checkbox" v-model="salleForm.pmr" class="hidden peer" />
+                <label for="chk-pmr" class="flex flex-1 items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 border-slate-200 bg-white hover:border-sky-200 peer-checked:border-sky-400 peer-checked:bg-sky-50 cursor-pointer transition-all duration-150">
+                  <Icon name="material-symbols:accessible" size="18" class="text-slate-400 shrink-0" />
+                  <span class="text-sm font-medium text-slate-600">PMR</span>
+                </label>
+                <div class="absolute top-2.5 right-2.5 size-4 rounded-full bg-sky-500 flex items-center justify-center scale-0 peer-checked:scale-100 transition-transform duration-150 pointer-events-none">
+                  <Icon name="material-symbols:check" size="10" class="text-white" />
+                </div>
+              </div>
+              <div class="relative flex">
+                <input id="chk-video_proj" type="checkbox" v-model="salleForm.video_proj" class="hidden peer" />
+                <label for="chk-video_proj" class="flex flex-1 items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 border-slate-200 bg-white hover:border-sky-200 peer-checked:border-sky-400 peer-checked:bg-sky-50 cursor-pointer transition-all duration-150">
+                  <Icon name="material-symbols:connected-tv" size="18" class="text-slate-400 shrink-0" />
+                  <span class="text-sm font-medium text-slate-600">Vidéo-proj.</span>
+                </label>
+                <div class="absolute top-2.5 right-2.5 size-4 rounded-full bg-sky-500 flex items-center justify-center scale-0 peer-checked:scale-100 transition-transform duration-150 pointer-events-none">
+                  <Icon name="material-symbols:check" size="10" class="text-white" />
+                </div>
+              </div>
+              <div class="relative flex">
+                <input id="chk-webcam" type="checkbox" v-model="salleForm.webcam" class="hidden peer" />
+                <label for="chk-webcam" class="flex flex-1 items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 border-slate-200 bg-white hover:border-sky-200 peer-checked:border-sky-400 peer-checked:bg-sky-50 cursor-pointer transition-all duration-150">
+                  <Icon name="material-symbols:videocam" size="18" class="text-slate-400 shrink-0" />
+                  <span class="text-sm font-medium text-slate-600">Webcam</span>
+                </label>
+                <div class="absolute top-2.5 right-2.5 size-4 rounded-full bg-sky-500 flex items-center justify-center scale-0 peer-checked:scale-100 transition-transform duration-150 pointer-events-none">
+                  <Icon name="material-symbols:check" size="10" class="text-white" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="flex items-center gap-2 pb-2 mt-5 mb-3 border-b border-slate-100">
+              <Icon name="material-symbols:notes" size="14" class="text-sky-500" />
+              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Notes</p>
+            </div>
+            <textarea class="appearance-none border text-sm text-slate-600 border-slate-200 rounded-xl p-3 w-full focus:outline-none focus:border-sky-400 focus:ring-0 resize-none bg-slate-50" rows="4" v-model="salleForm.autres" placeholder="Informations complémentaires..."></textarea>
           </template>
           <template #footer>
-            <div v-if="!salleForm.id" class="flex gap-4 w-full justify-end pt-6">
-              <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideSalles()"> <template #default> Annuler </template> </AppButtonValidated>
-              <AppButtonValidated :validated="validatedFieldsSalles" class="md:w-32 w-full text-sm" theme="" @click="ajouterSalle()"> <template #default> Enregistrer </template> </AppButtonValidated>
+            <div v-if="!salleForm.id" class="flex gap-3 w-full justify-end">
+              <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideSalles()"><template #default>Annuler</template></AppButtonValidated>
+              <AppButtonValidated :validated="validatedFieldsSalles" class="md:w-32 w-full text-sm" theme="" @click="ajouterSalle()"><template #default>Enregistrer</template></AppButtonValidated>
             </div>
-            <div v-else class="flex gap-2 w-full justify-end pt-6">
-              <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideSalles()"> <template #default> Annuler </template> </AppButtonValidated>
-              <AppButtonValidated :validated="validatedFieldsSalles" class="md:w-32 w-full text-sm" theme="" @click="modifierSalle()"> <template #default> Modifier </template> </AppButtonValidated>
-              <AppButtonValidated class="md:w-32 w-full text-sm" theme="delete" @click="supprimerSalle()"> <template #default> Supprimer </template> </AppButtonValidated>
+            <div v-else class="flex gap-3 w-full justify-end">
+              <AppButtonValidated class="md:w-32 w-full text-sm" theme="cancel" @click="showSideSalles()"><template #default>Annuler</template></AppButtonValidated>
+              <AppButtonValidated :validated="validatedFieldsSalles" class="md:w-32 w-full text-sm" theme="" @click="modifierSalle()"><template #default>Modifier</template></AppButtonValidated>
+              <AppButtonValidated class="md:w-32 w-full text-sm" theme="delete" @click="supprimerSalle()"><template #default>Supprimer</template></AppButtonValidated>
             </div>
           </template>
         </AppModalSideContent>

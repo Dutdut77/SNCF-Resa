@@ -21,11 +21,11 @@ const props = defineProps({
 </script>
 
 <template>
-  <button v-if="props.theme == 'delete'" :type="props.type" :disabled="!props.validated" class="text-center rounded-lg h-auto p-2 duration-300" :class="props.validated ? ' hover:shadow-md hover:shadow-red-800/50 cursor-pointer text-white bg-gradient-to-br from-red-500 to-red-800' : 'bg-gray-200 text-gray-600  cursor-not-allowed '">
+  <button v-if="props.theme == 'delete'" :type="props.type" :disabled="!props.validated" class="text-center rounded-lg h-auto p-2 duration-300" :class="props.validated ? ' hover:shadow-md hover:shadow-red-800/50 cursor-pointer text-white bg-linear-to-br from-red-500 to-red-800' : 'bg-gray-200 text-gray-600  cursor-not-allowed '">
     <span v-if="props.loading">Connexion en cours</span>
     <span v-else><slot name="default"></slot></span>
   </button>
-  <button v-else-if="props.theme == 'cancel'" :type="props.type" :disabled="!props.validated" class="text-center rounded-lg h-auto p-2 duration-300" :class="props.validated ? ' hover:shadow-md hover:shadow-slate-800/50 cursor-pointer text-white bg-gradient-to-br from-slate-600 to-slate-900' : 'bg-gray-200 text-gray-600  cursor-not-allowed '">
+  <button v-else-if="props.theme == 'cancel'" :type="props.type" :disabled="!props.validated" class="text-center rounded-lg h-auto p-2 duration-300" :class="props.validated ? ' hover:shadow-md hover:shadow-slate-800/50 cursor-pointer text-white bg-linear-to-br from-slate-600 to-slate-900' : 'bg-gray-200 text-gray-600  cursor-not-allowed '">
     <span v-if="props.loading">Connexion en cours</span>
     <span v-else><slot name="default"></slot></span>
   </button>
@@ -41,7 +41,7 @@ const props = defineProps({
     <span v-if="props.loading">Connexion en cours</span>
     <span v-else><slot name="default"></slot></span>
   </button>
-  <button v-else :type="props.type" :disabled="!props.validated" class="text-center rounded-lg h-auto p-2 duration-300" :class="props.validated ? ' hover:shadow-md hover:shadow-sncf-primary/30 cursor-pointer text-white bg-gradient-to-br from-sncf-primary-light to-sncf-primary' : 'bg-gray-200 text-gray-600  cursor-not-allowed '">
+  <button v-else :type="props.type" :disabled="!props.validated" class="text-center rounded-lg h-auto p-2 duration-300" :class="props.validated ? ' hover:shadow-md hover:shadow-sncf-primary/30 cursor-pointer text-white bg-linear-to-br from-sncf-primary-light to-sncf-primary' : 'bg-gray-200 text-gray-600  cursor-not-allowed '">
     <span v-if="props.loading">Connexion en cours</span>
     <span v-else><slot name="default"></slot></span>
   </button>

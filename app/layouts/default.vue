@@ -1,7 +1,6 @@
 <script setup></script>
 <template>
-  <div class="relative h-dvh w-full">
-    <div class="print:hidden absolute -z-40 inset-0 bg-[url('@/assets/img/pattern3.png')] bg-cover"></div>
+  <div class="relative h-dvh w-full bg-slate-50 print:bg-white">
     <!-- START : NAVBAR -->
     <navbar class="fixed left-0 right-0 z-50 top-0" />
     <!-- END : NAVBAR -->

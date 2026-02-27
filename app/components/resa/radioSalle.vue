@@ -19,21 +19,11 @@ const formRadio = computed({
     emits("update:model-value", value);
   },
 });
-// console.log("data : ", props.data);
 
 const dispoSalles = computed(() => {
-  // Créer un ensemble (Set) des id_salle réservés
-
   const filteredReservations = allResaSallesSecteurTime.value.filter((item) => item.id !== props.data.updateRadioId);
-
   const reservedSalleIds = new Set(filteredReservations.map((reservation) => reservation.id_salle));
-
-  // if (props.data.salle) {
-  //   reservedSalleIds.delete(props.data.updateRadioId);
-  // }
-  // Filtrer les salles qui ne sont pas réservés
   const availableSalles = salles.value.filter((salle) => !reservedSalleIds.has(salle.id));
-
   return availableSalles;
 });
 
@@ -43,72 +33,56 @@ watch(props.data, async (newValue, oldValue) => {
 </script>
 
 <template>
-  <div class="w-full h-fit grid grid-cols-1 lg:grid-cols-2 gap-2 px-4">
-    <div v-if="dispoSalles.length > 0" class="relative w-full h-fit" v-for="(salle, index) in dispoSalles" :key="index">
-      <input :id="salle.id" type="radio" v-model="formRadio" :value="salle.id" class="hidden peer" />
-      <label :for="salle.id" class="rounded-lg shadow-lg overflow-hidden flex flex-col items-center border border-gray-200 justify-center bg-white hover:bg-opacity-75 peer-checked:text-white cursor-pointer transition">
-        <div class="w-full h-30 cursor-pointer flex z-30">
-          <div class="w-2/5 border-r text-lg p-2 flex flex-col items-center justify-center gap-2">
-            <p>{{ salle.name }}</p>
-            <div class="mt-auto">
-              <!-- <p class="font-bold text-sm">Adresse :</p> -->
-              <p class="text-xs italic text-center">{{ salle.adresse }}</p>
-            </div>
+  <div class="w-full h-fit grid grid-cols-1 lg:grid-cols-2 gap-2">
+    <template v-if="dispoSalles.length > 0">
+      <div v-for="(salle, index) in dispoSalles" :key="index" class="relative w-full">
+        <input :id="salle.id" type="radio" v-model="formRadio" :value="salle.id" class="hidden peer" />
+        <label
+          :for="salle.id"
+          class="block rounded-xl border-2 border-slate-200 bg-white hover:border-sky-300 hover:shadow-sm peer-checked:border-sky-500 peer-checked:bg-sky-50/60 peer-checked:shadow-md peer-checked:shadow-sky-100/60 cursor-pointer transition-all duration-200 p-3"
+        >
+          <!-- Nom + adresse -->
+          <div class="mb-2.5">
+            <p class="font-semibold text-slate-800 text-sm leading-tight">{{ salle.name }}</p>
+            <p v-if="salle.adresse" class="text-[10px] text-slate-400 mt-0.5 truncate">{{ salle.adresse }}</p>
           </div>
-          <div class="w-3/5 flex flex-col gap-3 p-2">
-            <!-- <div>
-              <p class="font-bold text-sm">Adresse :</p>
-              <p class="text-xs">{{ salle.adresse }}</p>
-            </div> -->
-            <div>
-              <p class="font-bold text-sm">Informations :</p>
-              <div class="grid grid-cols-3 gap-2 text-xs pt-1">
-                <div class="flex gap-1">
-                  <Icon name="material-symbols:group" class="w-4 h-4" />
-                  <p>{{ salle.capacite }}</p>
-                </div>
-                <div class="flex gap-1">
-                  <Icon name="material-symbols:wifi" class="w-4 h-4" />
-                  <p :class="salle.wifi ? '' : 'line-through  decoration-slate-900 decoration-2'">Wifi</p>
-                </div>
-                <div class="flex gap-1">
-                  <Icon name="material-symbols:accessible" class="w-4 h-4" />
-                  <p :class="salle.pmr ? '' : 'line-through  decoration-slate-900 decoration-2'">PMR</p>
-                </div>
-                <div class="flex gap-1">
-                  <Icon name="material-symbols:ac-unit" class="w-4 h-4" />
-                  <p :class="salle.clim ? '' : 'line-through  decoration-slate-900 decoration-2'">Clim</p>
-                </div>
-                <div class="flex gap-1">
-                  <Icon name="material-symbols:connected-tv" class="w-4 h-4" />
-                  <p :class="salle.video_proj ? '' : 'line-through decoration-slate-900  decoration-2 '">VP</p>
-                </div>
-                <div class="flex gap-1">
-                  <Icon name="material-symbols:headset-mic" class="w-4 h-4" />
-                  <p :class="salle.jabra ? '' : 'line-through  decoration-slate-900 decoration-2'">Jabra</p>
-                </div>
-                <div class="flex gap-1">
-                  <Icon name="material-symbols:draw" class="w-4 h-4" />
-                  <p :class="salle.white_board ? '' : 'line-through  decoration-slate-900 decoration-2'">Tableau</p>
-                </div>
-                <div class="flex gap-1">
-                  <Icon name="material-symbols:videocam" class="w-4 h-4" />
-                  <p :class="salle.webcam ? '' : 'line-through  decoration-slate-900 decoration-2'">Webcam</p>
-                </div>
-              </div>
-            </div>
+          <!-- Capacité + features -->
+          <div class="flex flex-wrap gap-1.5">
+            <!-- Capacité toujours visible -->
+            <span class="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-sky-50 border border-sky-200 text-sky-700">
+              <Icon name="material-symbols:group" size="12" />
+              {{ salle.capacite }}
+            </span>
+            <!-- Features : visible seulement si actif -->
+            <span v-if="salle.wifi" class="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700">
+              <Icon name="material-symbols:wifi" size="12" />Wifi
+            </span>
+            <span v-if="salle.pmr" class="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700">
+              <Icon name="material-symbols:accessible" size="12" />PMR
+            </span>
+            <span v-if="salle.clim" class="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700">
+              <Icon name="material-symbols:ac-unit" size="12" />Clim
+            </span>
+            <span v-if="salle.video_proj" class="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700">
+              <Icon name="material-symbols:connected-tv" size="12" />VP
+            </span>
+            <span v-if="salle.jabra" class="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700">
+              <Icon name="material-symbols:headset-mic" size="12" />Jabra
+            </span>
+            <span v-if="salle.white_board" class="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700">
+              <Icon name="material-symbols:draw" size="12" />Tableau
+            </span>
+            <span v-if="salle.webcam" class="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700">
+              <Icon name="material-symbols:videocam" size="12" />Webcam
+            </span>
           </div>
+        </label>
+        <!-- Indicateur sélectionné -->
+        <div class="absolute top-2.5 right-3 size-5 rounded-full bg-sky-500 flex items-center justify-center scale-0 peer-checked:scale-100 transition-transform duration-150 delay-75 pointer-events-none">
+          <Icon name="material-symbols:check" size="12" class="text-white" />
         </div>
-      </label>
-      <div class="absolute top-0 left-0 w-0 h-full bg-sky-500 peer-checked:shadow-sky-500/30 peer-checked:w-full transition-all duration-300 rounded-lg shadow-lg overflow-hidden"></div>
-      <div class="flex absolute top-2 right-2 bottom-0 w-5 h-5 text-white rounded-full border-2 scale-0 peer-checked:scale-100 transition delay-100">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-3 text my-auto mx-auto" viewBox="0 0 16 16">
-          <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z" />
-        </svg>
       </div>
-    </div>
-    <div v-else class="italic">Aucune salle de disponible.</div>
+    </template>
+    <p v-else class="text-sm text-slate-400 italic">Aucune salle disponible.</p>
   </div>
 </template>
-
-<style></style>

@@ -43,35 +43,35 @@ const formRadio = computed({
               <p class="font-bold text-sm">Informations :</p>
               <div class="grid grid-cols-3 gap-2 text-xs">
                 <div class="flex gap-1">
-                  <Icon name="material-symbols:group" class="w-4 h-4" />
+                  <Icon name="material-symbols:group" size="16" />
                   <p>{{ salle.capacite }}</p>
                 </div>
                 <div class="flex gap-1">
-                  <Icon name="material-symbols:wifi" class="w-4 h-4" />
+                  <Icon name="material-symbols:wifi" size="16" />
                   <p :class="salle.wifi ? '' : 'line-through  decoration-slate-900 decoration-2'">Wifi</p>
                 </div>
                 <div class="flex gap-1">
-                  <Icon name="material-symbols:accessible" class="w-4 h-4" />
+                  <Icon name="material-symbols:accessible" size="16" />
                   <p :class="salle.pmr ? '' : 'line-through  decoration-slate-900 decoration-2'">PMR</p>
                 </div>
                 <div class="flex gap-1">
-                  <Icon name="material-symbols:ac-unit" class="w-4 h-4" />
+                  <Icon name="material-symbols:ac-unit" size="16" />
                   <p :class="salle.clim ? '' : 'line-through  decoration-slate-900 decoration-2'">Clim</p>
                 </div>
                 <div class="flex gap-1">
-                  <Icon name="material-symbols:connected-tv" class="w-4 h-4" />
+                  <Icon name="material-symbols:connected-tv" size="16" />
                   <p :class="salle.video_proj ? '' : 'line-through decoration-slate-900  decoration-2 '">VP</p>
                 </div>
                 <div class="flex gap-1">
-                  <Icon name="material-symbols:headset-mic" class="w-4 h-4" />
+                  <Icon name="material-symbols:headset-mic" size="16" />
                   <p :class="salle.jabra ? '' : 'line-through  decoration-slate-900 decoration-2'">Jabra</p>
                 </div>
                 <div class="flex gap-1">
-                  <Icon name="material-symbols:draw" class="w-4 h-4" />
+                  <Icon name="material-symbols:draw" size="16" />
                   <p :class="salle.white_board ? '' : 'line-through  decoration-slate-900 decoration-2'">Tableau</p>
                 </div>
                 <div class="flex gap-1">
-                  <Icon name="material-symbols:videocam" class="w-4 h-4" />
+                  <Icon name="material-symbols:videocam" size="16" />
                   <p :class="salle.webcam ? '' : 'line-through  decoration-slate-900 decoration-2'">Webcam</p>
                 </div>
               </div>

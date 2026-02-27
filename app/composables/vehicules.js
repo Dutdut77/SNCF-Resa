@@ -63,7 +63,7 @@ export const useVehicules = () => {
         const { data : tache, error } = await supabase
         .from('vehicules')
         .insert([
-            { is_dispo : form.is_dispo, id_secteur : form.secteur, capacite : form.capacite, immat : form.immat, marque : form.marque, model: form.model, autres : form.autres, id_carburant : form.id_carburant, vitesse : form.vitesse}
+            { is_dispo : form.is_dispo, acces_restreint : form.acces_restreint, id_secteur : form.secteur, capacite : form.capacite, immat : form.immat, marque : form.marque, model: form.model, autres : form.autres, id_carburant : form.id_carburant, vitesse : form.vitesse}
         ])
         .select() 
         .single() 
@@ -79,7 +79,7 @@ export const useVehicules = () => {
     
           const { data, error } = await supabase
           .from('vehicules')
-          .update({ is_dispo : form.is_dispo, capacite : form.capacite, immat : form.immat, marque : form.marque, model: form.model, autres : form.autres, id_carburant : form.id_carburant, vitesse : form.vitesse })
+          .update({ is_dispo : form.is_dispo, acces_restreint : form.acces_restreint, capacite : form.capacite, immat : form.immat, marque : form.marque, model: form.model, autres : form.autres, id_carburant : form.id_carburant, vitesse : form.vitesse })
           .eq('id', form.id)
           .select()
           if (error) throw error;      

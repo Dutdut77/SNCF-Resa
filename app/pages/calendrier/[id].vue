@@ -217,7 +217,7 @@ const showModalChoiceSecteur = () => {
 };
 const showDatePickerDebut = (e) => {
   if (e && formValue.value.dateFin == "") {
-    formValue.value.dateFin = e;
+    formValue.value.dateFin = e + 60 * 60 * 1000;
   }
   datePickerDebutIsVisible.value = !datePickerDebutIsVisible.value;
 };
@@ -306,6 +306,23 @@ const updateVehicule = async (data) => {
   setLoader(false);
 };
 
+const handleDayClick = (timestamp) => {
+  formValue.value = {
+    id: "",
+    secteur: route.params.id,
+    type: typeSelected.value,
+    dateDebut: timestamp,
+    dateFin: timestamp + 60 * 60 * 1000,
+    vehicule: "",
+    salle: "",
+    titre: "",
+    update: false,
+    updateRadioId: "",
+    id_user: "",
+  };
+  sideModal.value = true;
+};
+
 const addSemaine = () => {
   // Créer une instance de Date à partir de l'objet
   const currentDate = new Date(selectedDate.value.year, selectedDate.value.month, selectedDate.value.day);
@@ -358,11 +375,15 @@ const updateSecteur = async (id) => {
   }
 };
 
-watch(() => userProfil.value, (profil) => {
-  if (profil && !profil.favorite_secteur) {
-    modalChoiceSecteur.value = true;
-  }
-}, { immediate: true });
+watch(
+  () => userProfil.value,
+  (profil) => {
+    if (profil && !profil.favorite_secteur) {
+      modalChoiceSecteur.value = true;
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -370,13 +391,13 @@ watch(() => userProfil.value, (profil) => {
     <!-- PARTIE GAUCHE -->
     <div class="w-full lg:w-72 flex-none h-fit lg:h-full flex flex-col gap-4">
       <div class="flex gap-4">
-        <div class="w-full p-2 h-24 border border-gray-200 flex flex-col justify-center gap-2 items-center rounded-xl cursor-pointer uppercase text-xl font-bold" :class="typeSelected == 1 ? 'text-white bg-gradient-to-br from-slate-600 to-slate-900 ' : 'bg-white text-gray-400'" @click="((typeSelected = 1), (formValue.type = 1))">
+        <div class="w-full p-2 h-24 border border-gray-200 flex flex-col justify-center gap-2 items-center rounded-xl cursor-pointer uppercase text-xl font-bold" :class="typeSelected == 1 ? 'text-white bg-linear-to-br from-slate-600 to-slate-900 ' : 'bg-white text-gray-400'" @click="((typeSelected = 1), (formValue.type = 1))">
           <p>Véhicules</p>
-          <div class="font-traverse text-xl rounded-xl w-full text-center pt-1" :class="typeSelected == 1 ? 'text-white bg-gradient-to-br from-sncf-primary-light to-sncf-primary border-0 ' : 'bg-white text-gray-400 border'">{{ allVehiculesWithColors.length }}</div>
+          <div class="font-traverse text-xl rounded-xl w-full text-center pt-1" :class="typeSelected == 1 ? 'text-white bg-linear-to-br from-sncf-primary-light to-sncf-primary border-0 ' : 'bg-white text-gray-400 border'">{{ allVehiculesWithColors.length }}</div>
         </div>
-        <div class="w-full p-2 h-24 border border-gray-200 flex flex-col justify-center gap-2 items-center rounded-xl cursor-pointer uppercase text-xl font-bold" :class="typeSelected == 2 ? 'text-white bg-gradient-to-br from-slate-600 to-slate-900 ' : 'bg-white text-gray-400'" @click="((typeSelected = 2), (formValue.type = 2))">
+        <div class="w-full p-2 h-24 border border-gray-200 flex flex-col justify-center gap-2 items-center rounded-xl cursor-pointer uppercase text-xl font-bold" :class="typeSelected == 2 ? 'text-white bg-linear-to-br from-slate-600 to-slate-900 ' : 'bg-white text-gray-400'" @click="((typeSelected = 2), (formValue.type = 2))">
           <p>Salles</p>
-          <div class="font-traverse text-xl rounded-xl w-full text-center pt-1" :class="typeSelected == 2 ? 'text-white bg-gradient-to-br from-sncf-primary-light to-sncf-primary border-0 ' : 'bg-white text-gray-400 border'">{{ allSallesWithColors.length }}</div>
+          <div class="font-traverse text-xl rounded-xl w-full text-center pt-1" :class="typeSelected == 2 ? 'text-white bg-linear-to-br from-sncf-primary-light to-sncf-primary border-0 ' : 'bg-white text-gray-400 border'">{{ allSallesWithColors.length }}</div>
         </div>
       </div>
 
@@ -394,13 +415,13 @@ watch(() => userProfil.value, (profil) => {
             <div class="w-full flex gap-2">
               <label :for="vehicule.immat" class="">
                 <div class="relative h-3 w-3 p-2 border rounded-sm cursor-pointer" :style="{ backgroundColor: listeVehiculesSelected.includes(vehicule.id) ? vehicule.color : '', borderColor: listeVehiculesSelected.includes(vehicule.id) ? vehicule.color : '#6b7280' }">
-                  <Icon name="material-symbols:check" class="absolute top-px left-px h-3.5 w-3.5 text-white" :class="listeVehiculesSelected.includes(vehicule.id) ? 'block ' : 'hidden'" />
+                  <Icon name="material-symbols:check" size="14" class="absolute top-px left-px text-white" :class="listeVehiculesSelected.includes(vehicule.id) ? 'block ' : 'hidden'" />
                 </div>
               </label>
               <div class="cursor-default hover:bg-gray-200 flex w-full px-1" @click="showModalVehicule(vehicule)">
                 <div>{{ vehicule.immat }} - {{ vehicule.model }}</div>
                 <div class="ml-auto text-gray-400 flex gap-2 text-xs">
-                  <div class="flex gap-1 items-center"><Icon name="material-symbols:group" class="w-4 h-4" />{{ vehicule.capacite }}</div>
+                  <div class="flex gap-1 items-center"><Icon name="material-symbols:group" size="16" />{{ vehicule.capacite }}</div>
                 </div>
               </div>
             </div>
@@ -420,13 +441,13 @@ watch(() => userProfil.value, (profil) => {
             <div class="w-full flex gap-2">
               <label :for="salle.name" class="">
                 <div class="relative h-3 w-3 p-2 border rounded-sm cursor-pointer" :style="{ backgroundColor: listeSallesSelected.includes(salle.id) ? salle.color : '', borderColor: listeSallesSelected.includes(salle.id) ? salle.color : '#6b7280' }">
-                  <Icon name="material-symbols:check" class="absolute top-[1px] left-[1px] h-3.5 w-3.5 text-white" :class="listeSallesSelected.includes(salle.id) ? 'block ' : 'hidden'" />
+                  <Icon name="material-symbols:check" size="14" class="absolute top-[1px] left-[1px] text-white" :class="listeSallesSelected.includes(salle.id) ? 'block ' : 'hidden'" />
                 </div>
               </label>
               <div class="cursor-default hover:bg-gray-200 flex w-full px-1" @click="showModalSalle(salle)">
                 <div>{{ salle.name }}</div>
                 <div class="ml-auto text-gray-400 flex gap-2 text-xs">
-                  <div class="flex gap-1 items-center"><Icon name="material-symbols:group" class="w-4 h-4" />{{ salle.capacite }}</div>
+                  <div class="flex gap-1 items-center"><Icon name="material-symbols:group" size="16" />{{ salle.capacite }}</div>
                 </div>
               </div>
             </div>
@@ -443,16 +464,16 @@ watch(() => userProfil.value, (profil) => {
     <!-- PARTIE DROITE -->
     <div class="w-full h-full flex flex-col gap-4">
       <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
-        <div class="relative w-full text-center lg:text-left lg:w-fit text-xl -skew-x-[20deg] uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-gradient-to-br from-slate-600 to-slate-900 px-8 py-2 flex items-center justify-center gap-4">
+        <div class="relative w-full text-center lg:text-left lg:w-fit text-xl -skew-x-20 uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-linear-to-br from-slate-600 to-slate-900 px-8 py-2 flex items-center justify-center gap-4">
           <div class="font-medium text-gray-50">Semaine {{ weekNumber }}</div>
-          <div class="ml-auto flex lg:hidden gap-1"><Icon name="material-symbols:chevron-left" class="size-8 cursor-pointer text-gray-50" @click="subSemaine()" /><Icon name="material-symbols:chevron-right" class="size-8 cursor-pointer text-gray-50" @click="addSemaine()" /></div>
+          <div class="ml-auto flex lg:hidden gap-1"><Icon name="material-symbols:chevron-left" size="32" class="cursor-pointer text-gray-50" @click="subSemaine()" /><Icon name="material-symbols:chevron-right" size="32" class="cursor-pointer text-gray-50" @click="addSemaine()" /></div>
         </div>
-        <div class="hidden lg:flex gap-1"><Icon name="material-symbols:chevron-left" class="size-8 cursor-pointer hover:text-sky-500" @click="subSemaine()" /><Icon name="material-symbols:chevron-right" class="size-8 cursor-pointer hover:text-sky-500" @click="addSemaine()" /></div>
+        <div class="hidden lg:flex gap-1"><Icon name="material-symbols:chevron-left" size="32" class="cursor-pointer hover:text-sky-500" @click="subSemaine()" /><Icon name="material-symbols:chevron-right" size="32" class="cursor-pointer hover:text-sky-500" @click="addSemaine()" /></div>
         <AppButtonValidated class="w-fit px-4 text-sm lg:ml-auto font-normal uppercase" theme="" @click="showSideModal()"> <template #default> Nouvelle Réservation </template> </AppButtonValidated>
       </div>
 
       <div class="w-full h-full border border-gray-200 rounded-xl bg-slate-50 pr-4 overflow-auto">
-        <ResaSemaine :startDate="dateIso" :allReservations="filteredReservations" class="" @selectedResa="showSideModal" />
+        <ResaSemaine :startDate="dateIso" :allReservations="filteredReservations" class="" @selectedResa="showSideModal" @clickDay="handleDayClick" />
       </div>
 
       <div v-if="userProfil?.secteur_admin == route.params.id" class="mt-auto lg:hidden block">
@@ -462,94 +483,111 @@ watch(() => userProfil.value, (profil) => {
 
     <AppModal v-if="modalSalle" :closeModal="showModalSalle">
       <template #title>
-        <div class="w-full flex flex-col items-center text-lg text-slate-700">
-          <p class="font-medium">Salle : {{ selectedSalle.name }}</p>
+        <div class="flex items-center gap-3">
+          <div class="size-10 rounded-xl bg-sky-500/10 flex items-center justify-center shrink-0">
+            <Icon name="material-symbols:meeting-room" size="22" class="text-sky-500" />
+          </div>
+          <div>
+            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-normal">Salle</p>
+            <p class="text-base font-semibold text-slate-800 leading-tight">{{ selectedSalle.name }}</p>
+          </div>
         </div>
       </template>
       <template #default>
-        <div class="w-full flex flex-col gap-4 px-2">
-          <div class="px-2">
-            <p class="font-bold text-slate-700 underline underline-offset-4 text-sm">Adresse :</p>
-            <p class="text-sm pt-1 text-slate-700">{{ selectedSalle.adresse }}</p>
+        <div class="w-full flex flex-col gap-4 px-4 pb-2">
+          <!-- Adresse -->
+          <div class="flex items-start gap-2 text-sm text-slate-500 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5">
+            <Icon name="material-symbols:location-on" size="16" class="text-slate-400 mt-0.5 shrink-0" />
+            <span>{{ selectedSalle.adresse || "Adresse non renseignée" }}</span>
           </div>
-          <div class="bg-gradient-to-br from-slate-600 to-slate-900 p-4 rounded-lg border text-white text-sm">
-            <div class="grid grid-cols-3 gap-2">
-              <div class="flex gap-1">
-                <Icon name="material-symbols:group" class="w-4 h-4" />
-                <p>{{ selectedSalle.capacite }}</p>
-              </div>
-              <div class="flex gap-1">
-                <Icon name="material-symbols:wifi" class="w-4 h-4" />
-                <p :class="selectedSalle.wifi ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">Wifi</p>
-              </div>
-              <div class="flex gap-1">
-                <Icon name="material-symbols:accessible" class="w-4 h-4" />
-                <p :class="selectedSalle.pmr ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">PMR</p>
-              </div>
-              <div class="flex gap-1">
-                <Icon name="material-symbols:ac-unit" class="w-4 h-4" />
-                <p :class="selectedSalle.clim ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">Clim</p>
-              </div>
-              <div class="flex gap-1">
-                <Icon name="material-symbols:connected-tv" class="w-4 h-4" />
-                <p :class="selectedSalle.video_proj ? '' : 'line-through decoration-white  decoration-2  text-slate-300 '">VP</p>
-              </div>
-              <div class="flex gap-1">
-                <Icon name="material-symbols:headset-mic" class="w-4 h-4" />
-                <p :class="selectedSalle.jabra ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">Jabra</p>
-              </div>
-              <div class="flex gap-1">
-                <Icon name="material-symbols:draw" class="w-4 h-4" />
-                <p :class="selectedSalle.white_board ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">Tableau</p>
-              </div>
-              <div class="flex gap-1">
-                <Icon name="material-symbols:videocam" class="w-4 h-4" />
-                <p :class="selectedSalle.webcam ? '' : 'line-through  decoration-white decoration-2 text-slate-300'">Webcam</p>
+          <!-- Capacité -->
+          <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
+            <Icon name="material-symbols:group" size="20" class="text-sky-500 shrink-0" />
+            <span class="text-sm text-slate-500">Capacité</span>
+            <div class="ml-auto flex items-baseline gap-1">
+              <span class="text-2xl font-bold text-slate-800">{{ selectedSalle.capacite }}</span>
+              <span class="text-xs text-slate-400">pers.</span>
+            </div>
+          </div>
+          <!-- Équipements -->
+          <div>
+            <p class="text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-2">Équipements</p>
+            <div class="grid grid-cols-2 gap-2">
+              <div
+                v-for="feature in [
+                  { label: 'Wifi', icon: 'material-symbols:wifi', active: selectedSalle.wifi },
+                  { label: 'PMR', icon: 'material-symbols:accessible', active: selectedSalle.pmr },
+                  { label: 'Climatisation', icon: 'material-symbols:ac-unit', active: selectedSalle.clim },
+                  { label: 'Vidéoprojecteur', icon: 'material-symbols:connected-tv', active: selectedSalle.video_proj },
+                  { label: 'Jabra', icon: 'material-symbols:headset-mic', active: selectedSalle.jabra },
+                  { label: 'Tableau blanc', icon: 'material-symbols:draw', active: selectedSalle.white_board },
+                  { label: 'Webcam', icon: 'material-symbols:videocam', active: selectedSalle.webcam },
+                ]"
+                :key="feature.label"
+                class="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm"
+                :class="feature.active ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-slate-50 border-slate-200 text-slate-400'"
+              >
+                <Icon :name="feature.icon" size="15" />
+                <span class="truncate">{{ feature.label }}</span>
+                <Icon v-if="feature.active" name="material-symbols:check" size="14" class="ml-auto shrink-0 text-emerald-500" />
               </div>
             </div>
           </div>
-        </div>
-        <div class="w-full text-gray-700 -space-y-1 px-4">
-          <p class="font-bold underline underline-offset-2 text-sm">Divers :</p>
-          <p v-if="selectedSalle.autres" class="text-sm">{{ selectedSalle.autres }}</p>
-          <p v-else class="text-sm italic pt-1">Néant</p>
+          <!-- Divers -->
+          <div v-if="selectedSalle.autres" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5">
+            <p class="text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1">Divers</p>
+            <p class="text-sm text-slate-600">{{ selectedSalle.autres }}</p>
+          </div>
         </div>
       </template>
     </AppModal>
 
     <AppModal v-if="modalVehicule" :closeModal="showModalVehicule">
       <template #title>
-        <div class="w-full flex flex-col items-center text-lg text-slate-700">
-          <p class="font-medium">{{ selectedVehicule.marque }} {{ selectedVehicule.model }} - {{ selectedVehicule.immat }}</p>
+        <div class="flex items-center gap-3 w-full pt-6 px-4">
+          <div class="size-10 rounded-xl bg-sky-500/10 flex items-center justify-center shrink-0">
+            <Icon name="material-symbols:directions-car" size="22" class="text-sky-500" />
+          </div>
+          <div>
+            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-normal">{{ selectedVehicule.marque }}</p>
+            <p class="text-base font-semibold text-slate-800 leading-tight">{{ selectedVehicule.model }}</p>
+          </div>
+          <div class="ml-auto px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg font-mono text-sm font-bold tracking-widest shrink-0">
+            {{ selectedVehicule.immat }}
+          </div>
         </div>
       </template>
       <template #default>
-        <div class="px-2 w-full">
-          <div class="w-full flex flex-col gap-3 p-4 text-white bg-gradient-to-br from-slate-600 to-slate-900 rounded-lg border">
-            <div class="flex justify-center gap-4">
-              <div class="flex gap-1 items-center text-sm"><Icon name="material-symbols:group" class="w-4 h-4" />{{ selectedVehicule.capacite }}</div>
-              <div v-if="selectedVehicule.id_carburant == 1" class="flex gap-1 items-center text-sm">
-                <Icon name="material-symbols:bolt" class="w-4 h-4" />
-                <p class="first-letter:uppercase">électrique</p>
-              </div>
-
-              <div v-if="selectedVehicule.id_carburant == 2" class="flex gap-1 items-center text-sm"><Icon name="material-symbols:local-gas-station" class="w-4 h-4" />Diesel</div>
-              <div v-if="selectedVehicule.id_carburant == 3" class="flex gap-1 items-center text-sm"><Icon name="material-symbols:local-gas-station" class="w-4 h-4" />Essence</div>
-
-              <div v-if="selectedVehicule.vitesse == 0" class="flex gap-1 items-center text-sm">
-                <div class="w-4 h-4 border rounded flex items-center justify-center">A</div>
-                Auto
-              </div>
-
-              <div v-if="selectedVehicule.vitesse == 1" class="flex gap-1 items-center text-sm"><Icon name="material-symbols:tune" class="w-4 h-4" />Manuel</div>
+        <div class="w-full flex flex-col gap-4 px-4 pb-2">
+          <!-- Caractéristiques -->
+          <div class="grid grid-cols-3 gap-2">
+            <div class="flex flex-col items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl py-3 px-2">
+              <Icon name="material-symbols:group" size="22" class="text-sky-500" />
+              <span class="text-lg font-bold text-slate-800 leading-none">{{ selectedVehicule.capacite }}</span>
+              <span class="text-[10px] text-slate-400 uppercase tracking-wide">places</span>
+            </div>
+            <div class="flex flex-col items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl py-3 px-2">
+              <Icon v-if="selectedVehicule.id_carburant == 1" name="material-symbols:bolt" size="22" class="text-emerald-500" />
+              <Icon v-else name="material-symbols:local-gas-station" size="22" class="text-orange-500" />
+              <span class="text-xs font-semibold text-slate-800 text-center leading-none">
+                <template v-if="selectedVehicule.id_carburant == 1">Électrique</template>
+                <template v-else-if="selectedVehicule.id_carburant == 2">Diesel</template>
+                <template v-else>Essence</template>
+              </span>
+              <span class="text-[10px] text-slate-400 uppercase tracking-wide">Carburant</span>
+            </div>
+            <div class="flex flex-col items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl py-3 px-2">
+              <Icon v-if="selectedVehicule.vitesse == 1" name="material-symbols:tune" size="22" class="text-slate-500" />
+              <div v-else class="size-5.5 border-2 border-slate-400 rounded flex items-center justify-center text-xs font-bold text-slate-500">A</div>
+              <span class="text-xs font-semibold text-slate-800 leading-none">{{ selectedVehicule.vitesse == 1 ? "Manuel" : "Auto" }}</span>
+              <span class="text-[10px] text-slate-400 uppercase tracking-wide">Boîte</span>
             </div>
           </div>
-        </div>
-
-        <div class="w-full text-gray-700 -space-y-1 px-4">
-          <p class="font-bold underline underline-offset-2 text-sm">Divers :</p>
-          <p v-if="selectedVehicule.autres" class="text-sm pt-1">{{ selectedVehicule.autres }}</p>
-          <p v-else class="text-sm italic pt-1">Néant</p>
+          <!-- Divers -->
+          <div v-if="selectedVehicule.autres" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5">
+            <p class="text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1">Divers</p>
+            <p class="text-sm text-slate-600">{{ selectedVehicule.autres }}</p>
+          </div>
         </div>
       </template>
     </AppModal>
@@ -558,23 +596,31 @@ watch(() => userProfil.value, (profil) => {
       <template #default>
         <AppModalSideContent v-if="sideModal" :closeSideModal="showSideModal">
           <template #header>
-            <div class="w-full text-center">
-              <p class="text-xl font-medium">{{ secteurActive.name }}</p>
-              <p>Réservation</p>
+            <div class="size-9 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+              <Icon :name="typeSelected == 1 ? 'material-symbols:directions-car' : 'material-symbols:meeting-room'" size="20" class="text-white" />
             </div>
+            <div>
+              <p class="text-[10px] text-sky-100 uppercase tracking-wider">{{ secteurActive.name }}</p>
+              <p class="text-sm font-semibold text-white">{{ formValue.update ? "Modifier la réservation" : "Nouvelle réservation" }}</p>
+            </div>
+            <span class="text-[10px] px-2.5 py-1 rounded-full font-semibold bg-white/20 text-white">
+              {{ typeSelected == 1 ? "Véhicule" : "Salle" }}
+            </span>
           </template>
           <template #default>
-            <div class="w-full flex flex-col gap-4">
-              <div class="flex h-full"></div>
-              <div class="uppercase text-base font-medium pb-2 border-b text-left">Période</div>
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-3 text-sm text-gray-700">
-                <div class="w-full break-inside-avoid">
-                  <label for="dateDebut" class="block text-sm">Date début :</label>
-                  <div class="mt-1">
-                    <div class="w-full py-2 px-4 border border-gray-300 bg-slate-50 text-sm text-gray-700 rounded-md cursor-pointer" @click="showDatePickerDebut()">
-                      <div v-if="formValue.dateDebut" class="first-letter:uppercase">{{ formatedDate(formValue.dateDebut).jourName }} {{ formatedDate(formValue.dateDebut).jour }} {{ formatedDate(formValue.dateDebut).mois }} {{ formatedDate(formValue.dateDebut).annee }} - {{ formatedDate(formValue.dateDebut).heure }}h{{ formatedDate(formValue.dateDebut).minute }}</div>
-                      <div v-else class="text-gray-400">Selectionnez une date</div>
-                    </div>
+            <div class="w-full flex flex-col gap-5">
+              <!-- Section Période -->
+              <div class="flex items-center gap-2 pb-2 border-b border-slate-200">
+                <Icon name="material-symbols:calendar-month" size="16" class="text-sky-500" />
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Période</span>
+              </div>
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 text-sm">
+                <div class="w-full">
+                  <label class="block text-xs font-medium text-slate-400 mb-1.5">Date de début</label>
+                  <div class="w-full py-2.5 px-3 border border-slate-200 bg-slate-50 rounded-xl text-sm cursor-pointer flex items-center gap-2 hover:border-sky-400 transition-colors group" @click="showDatePickerDebut()">
+                    <Icon name="material-symbols:calendar-today" size="15" class="text-slate-400 shrink-0 group-hover:text-sky-500 transition-colors" />
+                    <span v-if="formValue.dateDebut" class="first-letter:uppercase text-slate-700"> {{ formatedDate(formValue.dateDebut).jourName }} {{ formatedDate(formValue.dateDebut).jour }} {{ formatedDate(formValue.dateDebut).mois }} — {{ formatedDate(formValue.dateDebut).heure }}h{{ formatedDate(formValue.dateDebut).minute }} </span>
+                    <span v-else class="text-slate-400">Sélectionnez une date</span>
                   </div>
                   <div v-if="datePickerDebutIsVisible" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-40">
                     <div class="w-full h-full flex justify-center items-center">
@@ -584,13 +630,12 @@ watch(() => userProfil.value, (profil) => {
                     </div>
                   </div>
                 </div>
-                <div class="w-full break-inside-avoid">
-                  <label for="dateFin" class="block text-sm">Date fin :</label>
-                  <div class="mt-1">
-                    <div class="w-full py-2 px-4 border border-gray-300 bg-slate-50 text-sm text-gray-700 rounded-md cursor-pointer" @click="showDatePickerFin()">
-                      <div v-if="formValue.dateFin" class="first-letter:uppercase">{{ formatedDate(formValue.dateFin).jourName }} {{ formatedDate(formValue.dateFin).jour }} {{ formatedDate(formValue.dateFin).mois }} {{ formatedDate(formValue.dateFin).annee }} - {{ formatedDate(formValue.dateFin).heure }}h{{ formatedDate(formValue.dateFin).minute }}</div>
-                      <div v-else class="text-gray-400">Selectionnez une date</div>
-                    </div>
+                <div class="w-full">
+                  <label class="block text-xs font-medium text-slate-400 mb-1.5">Date de fin</label>
+                  <div class="w-full py-2.5 px-3 border border-slate-200 bg-slate-50 rounded-xl text-sm cursor-pointer flex items-center gap-2 hover:border-sky-400 transition-colors group" @click="showDatePickerFin()">
+                    <Icon name="material-symbols:event" size="15" class="text-slate-400 shrink-0 group-hover:text-sky-500 transition-colors" />
+                    <span v-if="formValue.dateFin" class="first-letter:uppercase text-slate-700"> {{ formatedDate(formValue.dateFin).jourName }} {{ formatedDate(formValue.dateFin).jour }} {{ formatedDate(formValue.dateFin).mois }} — {{ formatedDate(formValue.dateFin).heure }}h{{ formatedDate(formValue.dateFin).minute }} </span>
+                    <span v-else class="text-slate-400">Sélectionnez une date</span>
                   </div>
                   <div v-if="datePickerFinIsVisible" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-40 overscroll-none">
                     <div class="w-full h-full flex justify-center items-center">
@@ -602,27 +647,40 @@ watch(() => userProfil.value, (profil) => {
                 </div>
               </div>
 
-              <div v-if="formValue.type == 1" class="h-full w-full pt-8 xl:pt-12">
-                <div class="uppercase text-base font-medium py-2 border-b text-left">Divers</div>
-                <AppInput name="titre" type="text" title="Objet de la réservation :" placeholder="" v-model="formValue.titre" class="pt-4 pb-6" />
+              <!-- Section Véhicules -->
+              <div v-if="formValue.type == 1" class="flex flex-col gap-4 pt-2">
+                <div class="flex items-center gap-2 pb-2 border-b border-slate-200">
+                  <Icon name="material-symbols:info-outline-rounded" size="16" class="text-sky-500" />
+                  <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Objet</span>
+                </div>
+                <AppInput name="titre" type="text" title="Objet de la réservation :" placeholder="" v-model="formValue.titre" />
 
-                <div class="uppercase text-base font-medium py-2 border-b text-left">Véhicules disponible</div>
-                <div v-if="valideDate" class="w-full h-fit flex flex-col justify-center py-6">
+                <div class="flex items-center gap-2 pb-2 border-b border-slate-200 mt-2">
+                  <Icon name="material-symbols:directions-car" size="16" class="text-sky-500" />
+                  <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Véhicules disponibles</span>
+                </div>
+                <div v-if="valideDate" class="w-full">
                   <ResaRadioVehicule :data="formValue" v-model="formValue.vehicule" />
                 </div>
-                <div v-else class="py-6">Aucun véhicule de disponible pour ces dates.</div>
+                <div v-else class="text-sm text-slate-400 italic">Sélectionnez une période pour voir les véhicules disponibles.</div>
               </div>
-              <div v-if="formValue.type == 2" class="h-full w-full pt-8">
-                <div class="uppercase text-base font-medium py-2 border-b text-left">Divers</div>
-                <AppInput name="titre" type="text" title="Objet de la réunion :" placeholder="" v-model="formValue.titre" class="pt-4 pb-6" />
 
-                <div class="uppercase text-base font-medium py-2 border-b text-left">Salles disponible</div>
-                <div class="w-full h-fit flex flex-col justify-center py-6">
-                  <div v-if="valideDate" class="w-full h-fit flex flex-col justify-center">
-                    <ResaRadioSalle :data="formValue" v-model="formValue.salle" />
-                  </div>
-                  <div v-else class="font-normal text-sm text-gray-600">Aucune salle de disponible pour ces dates.</div>
+              <!-- Section Salles -->
+              <div v-if="formValue.type == 2" class="flex flex-col gap-4 pt-2">
+                <div class="flex items-center gap-2 pb-2 border-b border-slate-200">
+                  <Icon name="material-symbols:info-outline-rounded" size="16" class="text-sky-500" />
+                  <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Objet</span>
                 </div>
+                <AppInput name="titre" type="text" title="Objet de la réunion :" placeholder="" v-model="formValue.titre" />
+
+                <div class="flex items-center gap-2 pb-2 border-b border-slate-200 mt-2">
+                  <Icon name="material-symbols:meeting-room" size="16" class="text-sky-500" />
+                  <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Salles disponibles</span>
+                </div>
+                <div v-if="valideDate">
+                  <ResaRadioSalle :data="formValue" v-model="formValue.salle" />
+                </div>
+                <div v-else class="text-sm text-slate-400 italic">Sélectionnez une période pour voir les salles disponibles.</div>
               </div>
             </div>
           </template>
@@ -656,7 +714,7 @@ watch(() => userProfil.value, (profil) => {
       <template #default>
         <div class="p-2 w-full flex gap-4 flex-wrap justify-center">
           <p class="py-2 text-gray-500 text-sm italic text-justify">Veuillez choisir votre secteur préféré afin d'accéder directement à son calendrier. Ce choix pourra être modifié ultérieurement dans votre page profil.</p>
-          <div class="border bg-gradient-to-tl from-sky-600 to-sky-500 uppercase font-medium rounded-lg text-center text-sm hover:text-white cursor-pointer px-4 py-2 duration-300" v-for="(secteur, index) in secteurs" :key="index" @click="updateSecteur(secteur.id)">
+          <div class="border bg-linear-to-tl from-sky-600 to-sky-500 uppercase font-medium rounded-lg text-center text-sm hover:text-white cursor-pointer px-4 py-2 duration-300" v-for="(secteur, index) in secteurs" :key="index" @click="updateSecteur(secteur.id)">
             {{ secteur.name }}
           </div>
         </div>
