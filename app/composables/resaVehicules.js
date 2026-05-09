@@ -4,10 +4,28 @@ export const useResaVehicules = () => {
     const supabase = useSupabaseClient();
     const userProfil = useState("userProfil");
   
-    const allResaSecteurTime = useState('allResaSecteurTime', () => [])  
+    const allResaSecteurTime = useState('allResaSecteurTime', () => [])
     const allResaUserActuel= useState('allResaUserActuel', () => [])
-    const allResaSecteurVehicule = useState('allResaSecteurVehicule', () => [])  
-    const allResaSecteurActuel = useState('allResaSecteurActuel', () => [])  
+    const allResaVehiculesUserAll = useState('allResaVehiculesUserAll', () => [])
+    const allResaSecteurVehicule = useState('allResaSecteurVehicule', () => [])
+    const allResaSecteurActuel = useState('allResaSecteurActuel', () => [])
+    const allResaByVehicule = useState('allResaByVehicule', () => [])
+
+    const getUpcomingResaByVehicule = async (idVehicule) => {
+        try {
+            const now = Date.now()
+            const { data, error } = await supabase
+            .from('resa_vehicules')
+            .select('*, profiles!inner(id, nom, prenom)')
+            .eq('id_vehicule', idVehicule)
+            .gte('fin', now)
+            .order('debut', { ascending: true })
+           if (error) throw error;
+           allResaByVehicule.value = data
+        } catch (err) {
+            console.log("erreurs :", err);
+        }
+    }
 
 
     const getAllResaSecteurVehicule = async (id) => {
@@ -44,6 +62,20 @@ export const useResaVehicules = () => {
         }
     }
 
+
+    const getAllVehiculesResaUser = async () => {
+        try {
+            const { data, error } = await supabase
+            .from('resa_vehicules')
+            .select('*, vehicules!inner(*), secteurs!inner(name)')
+            .eq('id_user', userProfil.value.id)
+            .order('debut', { ascending: false });
+           if (error) throw error;
+           allResaVehiculesUserAll.value = data
+        } catch (err) {
+            console.log("erreurs :", err);
+        }
+    }
 
     const getAllVehiculesResaUserActuel = async () => {
         try {
@@ -151,6 +183,6 @@ export const useResaVehicules = () => {
      
   
   
-      return {getAllResaSecteurVehicule,  getAllResaSecteurTime,  addResaVehicule, getAllVehiculesResaSecteurActuel, getAllVehiculesResaUserActuel ,deleteResaVehicule,updateResaVehicule, validResaVehicule, allResaSecteurTime, allResaUserActuel,allResaSecteurVehicule, allResaSecteurActuel}
+      return {getAllResaSecteurVehicule,  getAllResaSecteurTime,  addResaVehicule, getAllVehiculesResaSecteurActuel, getAllVehiculesResaUserActuel, getAllVehiculesResaUser, getUpcomingResaByVehicule, deleteResaVehicule,updateResaVehicule, validResaVehicule, allResaSecteurTime, allResaUserActuel, allResaVehiculesUserAll, allResaSecteurVehicule, allResaSecteurActuel, allResaByVehicule}
       
   }

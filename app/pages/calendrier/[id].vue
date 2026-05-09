@@ -20,20 +20,21 @@ const { getAllVehiculesBySecteur, allVehiculesSecteur } = useVehicules();
 const { addResaVehicule, getAllResaSecteurVehicule, deleteResaVehicule, updateResaVehicule, allResaSecteurVehicule } = useResaVehicules();
 const { getAllSallesBySecteur, allSallesSecteur } = useSalles();
 const { addResaSalles, getAllResaSecteurSalle, deleteResaSalle, updateResaSalle, allResaSecteurSalle } = useResaSalles();
-const { sendEmail, sendEmailAnnulation, sendEmailModification } = useEmail();
+const { sendEmail, sendEmailConfirmationVehicule, sendEmailConfirmationSalle, sendEmailAnnulation, sendEmailModification } = useEmail();
 const { updateProfiles } = useAuth();
+const { etatsByVehicule, getEtatsByVehicule } = useVehiculeEtats();
 
 const selectedDate = ref({
   year: new Date().getFullYear(),
   month: new Date().getMonth(),
   day: new Date().getDate(),
 });
-const modalVehicule = ref(false);
 const modalSalle = ref(false);
+const modalVehicule = ref(false);
 const modalResa = ref(false);
 const modalChoiceSecteur = ref(false);
-const selectedVehicule = ref("");
 const selectedSalle = ref("");
+const selectedVehicule = ref(null);
 const selectedResa = ref("");
 const listeVehiculesSelected = ref([]);
 const listeSallesSelected = ref([]);
@@ -74,15 +75,6 @@ await getAllResaSecteurSalle(route.params.id);
 await getAll();
 setLoader(false);
 
-const showModalVehicule = (data) => {
-  if (data) {
-    selectedVehicule.value = data;
-    modalVehicule.value = !modalVehicule.value;
-  } else {
-    selectedVehicule.value = "";
-    modalVehicule.value = !modalVehicule.value;
-  }
-};
 const showModalSalle = (data) => {
   if (data) {
     selectedSalle.value = data;
@@ -91,6 +83,26 @@ const showModalSalle = (data) => {
     selectedSalle.value = "";
     modalSalle.value = !modalSalle.value;
   }
+};
+
+const showModalVehicule = async (data) => {
+  if (data) {
+    selectedVehicule.value = data;
+    modalVehicule.value = true;
+    await getEtatsByVehicule(data.id);
+  } else {
+    selectedVehicule.value = null;
+    modalVehicule.value = false;
+  }
+};
+
+const carburantLabel = (v) => {
+  if (!v) return "";
+  if (v.carburant?.name) return v.carburant.name;
+  if (v.id_carburant == 1) return "Électrique";
+  if (v.id_carburant == 2) return "Gazoil";
+  if (v.id_carburant == 3) return "Essence";
+  return "—";
 };
 
 const secteurActive = computed(() => {
@@ -212,6 +224,40 @@ const showSideModal = (e) => {
   }
 };
 
+const router = useRouter();
+
+onMounted(() => {
+  if (!route.query.resa) return;
+  const id = Number(route.query.resa);
+  const kind = String(route.query.type ?? "");
+  let target = null;
+  if (kind === "1") {
+    target = allResaSecteurVehicule.value.find((r) => r.id === id);
+    if (target) {
+      typeSelected.value = 1;
+      formValue.value.type = 1;
+      if (!listeVehiculesSelected.value.includes(target.id_vehicule)) {
+        listeVehiculesSelected.value.push(target.id_vehicule);
+      }
+    }
+  } else if (kind === "2") {
+    target = allResaSecteurSalle.value.find((r) => r.id === id);
+    if (target) {
+      typeSelected.value = 2;
+      formValue.value.type = 2;
+      if (!listeSallesSelected.value.includes(target.id_salle)) {
+        listeSallesSelected.value.push(target.id_salle);
+      }
+    }
+  }
+  if (target) {
+    const d = new Date(Number(target.debut));
+    selectedDate.value = { year: d.getFullYear(), month: d.getMonth(), day: d.getDate() };
+    showSideModal(target);
+  }
+  router.replace({ path: route.path, query: {} });
+});
+
 const showModalChoiceSecteur = () => {
   modalChoiceSecteur.value = !modalChoiceSecteur.value;
 };
@@ -242,6 +288,16 @@ const addResa = async () => {
     if (!isAuthToReserv.value) {
       const listes = await getMailSuperviseursSecteur(formValue.value.secteur);
       await sendEmail(listes, userProfil.value, formValue.value);
+    } else {
+      const salle = allSallesSecteur.value.find((s) => s.id == formValue.value.salle);
+      const secteur = secteurs.value.find((s) => s.id == formValue.value.secteur);
+      await sendEmailConfirmationSalle({
+        profiles: userProfil.value,
+        secteurs: secteur,
+        salles: salle,
+        debut: formValue.value.dateDebut,
+        fin: formValue.value.dateFin,
+      });
     }
 
     await addResaSalles(formValue.value);
@@ -253,6 +309,16 @@ const addResa = async () => {
     if (!isAuthToReserv.value) {
       const listes = await getMailSuperviseursSecteur(formValue.value.secteur);
       await sendEmail(listes, userProfil.value, formValue.value);
+    } else {
+      const vehicule = allVehiculesSecteur.value.find((v) => v.id == formValue.value.vehicule);
+      const secteur = secteurs.value.find((s) => s.id == formValue.value.secteur);
+      await sendEmailConfirmationVehicule({
+        profiles: userProfil.value,
+        secteurs: secteur,
+        vehicules: vehicule,
+        debut: formValue.value.dateDebut,
+        fin: formValue.value.dateFin,
+      });
     }
 
     await addResaVehicule(formValue.value);
@@ -344,10 +410,6 @@ const subSemaine = () => {
   selectedDate.value.month = currentDate.getMonth(); // getMonth() renvoie un index (0 pour janvier)
   selectedDate.value.day = currentDate.getDate();
 };
-const goToAdministration = async () => {
-  await navigateTo("/administration");
-};
-
 const selectAllVehicules = async () => {
   if (listeVehiculesSelected.value.length > 0) {
     listeVehiculesSelected.value = [];
@@ -387,9 +449,9 @@ watch(
 </script>
 
 <template>
-  <section class="w-full h-full flex flex-col lg:flex-row gap-4 p-4 text-sm text-gray-700 overflow-auto">
+  <section class="w-full h-full flex flex-col lg:flex-row gap-4 p-4 text-sm text-gray-700 overflow-auto lg:overflow-hidden">
     <!-- PARTIE GAUCHE -->
-    <div class="w-full lg:w-72 flex-none h-fit lg:h-full flex flex-col gap-4">
+    <div class="w-full lg:w-72 flex-none h-fit lg:h-full lg:min-h-0 lg:overflow-auto flex flex-col gap-4">
       <div class="flex gap-4">
         <div class="w-full p-2 h-24 border border-gray-200 flex flex-col justify-center gap-2 items-center rounded-xl cursor-pointer uppercase text-xl font-bold" :class="typeSelected == 1 ? 'text-white bg-linear-to-br from-slate-600 to-slate-900 ' : 'bg-white text-gray-400'" @click="((typeSelected = 1), (formValue.type = 1))">
           <p>Véhicules</p>
@@ -418,12 +480,12 @@ watch(
                   <Icon name="material-symbols:check" size="14" class="absolute top-px left-px text-white" :class="listeVehiculesSelected.includes(vehicule.id) ? 'block ' : 'hidden'" />
                 </div>
               </label>
-              <div class="cursor-default hover:bg-gray-200 flex w-full px-1" @click="showModalVehicule(vehicule)">
-                <div>{{ vehicule.immat }} - {{ vehicule.model }}</div>
-                <div class="ml-auto text-gray-400 flex gap-2 text-xs">
-                  <div class="flex gap-1 items-center"><Icon name="material-symbols:group" size="16" />{{ vehicule.capacite }}</div>
-                </div>
-              </div>
+              <label :for="vehicule.immat" class="flex-1 min-w-0 px-1 cursor-pointer truncate">
+                <div class="truncate">{{ vehicule.immat }} - {{ vehicule.model }}</div>
+              </label>
+              <button type="button" class="ml-auto text-slate-400 hover:text-sky-500 cursor-pointer p-0.5 -mr-0.5 shrink-0" title="Détails et signalements" @click.stop="showModalVehicule(vehicule)">
+                <Icon name="material-symbols:info-outline" size="18" />
+              </button>
             </div>
           </div>
         </div>
@@ -444,25 +506,22 @@ watch(
                   <Icon name="material-symbols:check" size="14" class="absolute top-[1px] left-[1px] text-white" :class="listeSallesSelected.includes(salle.id) ? 'block ' : 'hidden'" />
                 </div>
               </label>
-              <div class="cursor-default hover:bg-gray-200 flex w-full px-1" @click="showModalSalle(salle)">
-                <div>{{ salle.name }}</div>
-                <div class="ml-auto text-gray-400 flex gap-2 text-xs">
-                  <div class="flex gap-1 items-center"><Icon name="material-symbols:group" size="16" />{{ salle.capacite }}</div>
-                </div>
-              </div>
+              <label :for="salle.name" class="flex-1 min-w-0 px-1 cursor-pointer truncate">
+                <div class="truncate">{{ salle.name }}</div>
+              </label>
+              <button type="button" class="ml-auto text-slate-400 hover:text-sky-500 cursor-pointer p-0.5 -mr-0.5 shrink-0" title="Détails de la salle" @click.stop="showModalSalle(salle)">
+                <Icon name="material-symbols:info-outline" size="18" />
+              </button>
             </div>
           </div>
         </div>
         <div class="italic px-4" v-else>Aucune salle.</div>
       </div>
 
-      <div v-if="userProfil?.secteur_admin == route.params.id" class="mt-auto hidden lg:block">
-        <AppButtonValidated class="w-full text-sm" theme="cancel" @click="goToAdministration()"> <template #default> Administration </template> </AppButtonValidated>
-      </div>
     </div>
 
     <!-- PARTIE DROITE -->
-    <div class="w-full h-full flex flex-col gap-4">
+    <div class="w-full lg:h-full lg:min-h-0 flex flex-col gap-4">
       <div class="font-bold text-xl flex flex-col lg:flex-row items-center gap-4 pl-2">
         <div class="relative w-full text-center lg:text-left lg:w-fit text-xl -skew-x-20 uppercase rounded-lg border-gray-400 shadow-xl cursor-pointer border bg-linear-to-br from-slate-600 to-slate-900 px-8 py-2 flex items-center justify-center gap-4">
           <div class="font-medium text-gray-50">Semaine {{ weekNumber }}</div>
@@ -476,9 +535,6 @@ watch(
         <ResaSemaine :startDate="dateIso" :allReservations="filteredReservations" class="" @selectedResa="showSideModal" @clickDay="handleDayClick" />
       </div>
 
-      <div v-if="userProfil?.secteur_admin == route.params.id" class="mt-auto lg:hidden block">
-        <AppButtonValidated class="w-full text-sm" theme="cancel" @click="goToAdministration()"> <template #default> Administration </template> </AppButtonValidated>
-      </div>
     </div>
 
     <AppModal v-if="modalSalle" :closeModal="showModalSalle">
@@ -542,51 +598,68 @@ watch(
       </template>
     </AppModal>
 
-    <AppModal v-if="modalVehicule" :closeModal="showModalVehicule">
+    <AppModal v-if="modalVehicule && selectedVehicule" :closeModal="showModalVehicule">
       <template #title>
-        <div class="flex items-center gap-3 w-full pt-6 px-4">
+        <div class="flex items-center gap-3">
           <div class="size-10 rounded-xl bg-sky-500/10 flex items-center justify-center shrink-0">
             <Icon name="material-symbols:directions-car" size="22" class="text-sky-500" />
           </div>
           <div>
-            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-normal">{{ selectedVehicule.marque }}</p>
-            <p class="text-base font-semibold text-slate-800 leading-tight">{{ selectedVehicule.model }}</p>
-          </div>
-          <div class="ml-auto px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg font-mono text-sm font-bold tracking-widest shrink-0">
-            {{ selectedVehicule.immat }}
+            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-normal">Véhicule</p>
+            <p class="text-base font-semibold text-slate-800 leading-tight">{{ selectedVehicule.marque }} {{ selectedVehicule.model }}</p>
           </div>
         </div>
       </template>
       <template #default>
         <div class="w-full flex flex-col gap-4 px-4 pb-2">
+          <!-- Immatriculation -->
+          <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5">
+            <Icon name="material-symbols:badge" size="16" class="text-slate-400 shrink-0" />
+            <span class="text-sm text-slate-500">Immatriculation</span>
+            <span class="ml-auto font-mono text-xs font-bold px-2 py-0.5 bg-amber-50 border border-amber-200 text-amber-700 rounded">{{ selectedVehicule.immat }}</span>
+          </div>
           <!-- Caractéristiques -->
-          <div class="grid grid-cols-3 gap-2">
-            <div class="flex flex-col items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl py-3 px-2">
-              <Icon name="material-symbols:group" size="22" class="text-sky-500" />
-              <span class="text-lg font-bold text-slate-800 leading-none">{{ selectedVehicule.capacite }}</span>
-              <span class="text-[10px] text-slate-400 uppercase tracking-wide">places</span>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5">
+              <Icon name="material-symbols:event-seat-outline" size="16" class="text-sky-500 shrink-0" />
+              <span class="text-xs text-slate-500">Sièges</span>
+              <span class="ml-auto text-sm font-semibold text-slate-800">{{ selectedVehicule.capacite || "—" }}</span>
             </div>
-            <div class="flex flex-col items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl py-3 px-2">
-              <Icon v-if="selectedVehicule.id_carburant == 1" name="material-symbols:bolt" size="22" class="text-emerald-500" />
-              <Icon v-else name="material-symbols:local-gas-station" size="22" class="text-orange-500" />
-              <span class="text-xs font-semibold text-slate-800 text-center leading-none">
-                <template v-if="selectedVehicule.id_carburant == 1">Électrique</template>
-                <template v-else-if="selectedVehicule.id_carburant == 2">Diesel</template>
-                <template v-else>Essence</template>
-              </span>
-              <span class="text-[10px] text-slate-400 uppercase tracking-wide">Carburant</span>
+            <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5">
+              <Icon :name="selectedVehicule.id_carburant == 1 ? 'material-symbols:bolt' : 'material-symbols:local-gas-station'" size="16" class="text-sky-500 shrink-0" />
+              <span class="text-xs text-slate-500">Carburant</span>
+              <span class="ml-auto text-sm font-semibold text-slate-800 truncate">{{ carburantLabel(selectedVehicule) }}</span>
             </div>
-            <div class="flex flex-col items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl py-3 px-2">
-              <Icon v-if="selectedVehicule.vitesse == 1" name="material-symbols:tune" size="22" class="text-slate-500" />
-              <div v-else class="size-5.5 border-2 border-slate-400 rounded flex items-center justify-center text-xs font-bold text-slate-500">A</div>
-              <span class="text-xs font-semibold text-slate-800 leading-none">{{ selectedVehicule.vitesse == 1 ? "Manuel" : "Auto" }}</span>
-              <span class="text-[10px] text-slate-400 uppercase tracking-wide">Boîte</span>
+            <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5">
+              <Icon name="material-symbols:tune" size="16" class="text-sky-500 shrink-0" />
+              <span class="text-xs text-slate-500">Boîte</span>
+              <span class="ml-auto text-sm font-semibold text-slate-800">{{ selectedVehicule.vitesse === 0 ? "Auto." : selectedVehicule.vitesse === 1 ? "Manuelle" : "—" }}</span>
+            </div>
+            <div class="flex items-center gap-2 rounded-xl border px-3 py-2.5" :class="selectedVehicule.is_dispo == 1 ? (selectedVehicule.acces_restreint == 1 ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-emerald-50 border-emerald-200 text-emerald-700') : 'bg-red-50 border-red-200 text-red-600'">
+              <Icon :name="selectedVehicule.is_dispo == 1 ? (selectedVehicule.acces_restreint == 1 ? 'material-symbols:lock' : 'material-symbols:check-circle') : 'material-symbols:cancel'" size="16" class="shrink-0" />
+              <span class="text-xs">Statut</span>
+              <span class="ml-auto text-sm font-semibold">{{ selectedVehicule.is_dispo == 1 ? (selectedVehicule.acces_restreint == 1 ? "Valideurs" : "Disponible") : "Indisponible" }}</span>
             </div>
           </div>
           <!-- Divers -->
           <div v-if="selectedVehicule.autres" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5">
             <p class="text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1">Divers</p>
-            <p class="text-sm text-slate-600">{{ selectedVehicule.autres }}</p>
+            <p class="text-sm text-slate-600 whitespace-pre-line">{{ selectedVehicule.autres }}</p>
+          </div>
+
+          <!-- Signalements (lecture seule) -->
+          <div class="pt-3 border-t border-slate-200">
+            <div class="flex items-center gap-2 mb-3">
+              <Icon name="material-symbols:warning-outline" size="16" class="text-amber-500" />
+              <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Signalements</h3>
+              <span v-if="etatsByVehicule.length" class="text-xs text-slate-400">({{ etatsByVehicule.length }})</span>
+            </div>
+            <div v-if="etatsByVehicule.length === 0" class="text-center text-sm text-slate-400 py-6 border border-dashed border-slate-200 rounded-lg italic">
+              Aucun signalement pour ce véhicule.
+            </div>
+            <div v-else class="flex flex-col gap-2">
+              <ResaEtatCard v-for="etat in etatsByVehicule" :key="etat.id" :etat="etat" />
+            </div>
           </div>
         </div>
       </template>

@@ -8,7 +8,7 @@ const showModalFooter = () => {
 <template>
   <section class="w-full h-full flex justify-between items-center px-8 print:hidden bg-transparent border-t border-slate-200/60">
     <div class="text-xs text-slate-500 flex-1 flex gap-2">
-      Copyright © 2024
+      Copyright © 2026
       <p class="hidden lg:block">- Tous droits réservés</p>
     </div>
     <div class="text-xs text-slate-500 hover:text-sky-600 transition-colors h-full flex-1 flex justify-end items-center cursor-pointer" @click="showModalFooter()">Mentions légales</div>

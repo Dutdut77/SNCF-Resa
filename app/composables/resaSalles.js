@@ -6,6 +6,7 @@ export const useResaSalles = () => {
   
     const allResaSallesSecteurTime = useState('allResaSallesSecteurTime', () => [])
     const allResaSallesUserActuel= useState('allResaSallesUserActuel', () => [])
+    const allResaSallesUserAll = useState('allResaSallesUserAll', () => [])
     const allResaSecteurSalle= useState('allResaSecteurSalle', () => [])
     const allSallesResaSecteurActuel= useState('allSallesResaSecteurActuel', () => [])
 
@@ -26,6 +27,20 @@ export const useResaSalles = () => {
         }
     }
 
+
+    const getAllSallesResaUser = async () => {
+        try {
+            const { data, error } = await supabase
+            .from('resa_salles')
+            .select('*, salles!inner(*), secteurs!inner(name)')
+            .eq('id_user', userProfil.value.id)
+            .order('debut', { ascending: false });
+           if (error) throw error;
+           allResaSallesUserAll.value = data
+        } catch (err) {
+            console.log("erreurs :", err);
+        }
+    }
 
     const getAllSallesResaUserActuel = async () => {
         try {
@@ -151,6 +166,6 @@ export const useResaSalles = () => {
      
   
   
-      return { getAllResaSecteurSalle, getAllResaSallesSecteurTime,  addResaSalles,getAllSallesResaSecteurActuel, getAllSallesResaUserActuel,deleteResaSalle,updateResaSalle, validResaSalle, allResaSallesSecteurTime, allResaSallesUserActuel, allResaSecteurSalle, allSallesResaSecteurActuel}
+      return { getAllResaSecteurSalle, getAllResaSallesSecteurTime,  addResaSalles,getAllSallesResaSecteurActuel, getAllSallesResaUserActuel, getAllSallesResaUser, deleteResaSalle,updateResaSalle, validResaSalle, allResaSallesSecteurTime, allResaSallesUserActuel, allResaSallesUserAll, allResaSecteurSalle, allSallesResaSecteurActuel}
       
   }

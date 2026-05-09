@@ -49,11 +49,26 @@ export const useVehicules = () => {
 
            if (error) throw error;
            allVehiculesSecteur.value = data
-         
+
             // addToast({ type: "Success", title: "Félicitation", message: "Votre catégorie a correctement été ajoutée." });
         } catch (err) {
             console.log("erreurs :", err);
         //   addToast({ type: "Error", title: "Problème lors de l'ajout d'une catégorie.",  message: err.message  });
+        }
+      }
+
+    const getVehiculeById = async (id) => {
+        try {
+            const { data, error } = await supabase
+            .from('vehicules')
+            .select('*, carburant(name), secteurs(id, name)')
+            .eq('id', id)
+            .single()
+           if (error) throw error;
+           return data
+        } catch (err) {
+            console.log("erreurs :", err);
+            return null
         }
       }
 
@@ -107,6 +122,6 @@ export const useVehicules = () => {
   
   
   
-      return { getAllSecteurDispo,getAllVehicules, getAllVehiculesBySecteur,addVehicule,updateVehicule,deleteVehicule, vehicules, allVehiculesSecteur, allVehicules}
+      return { getAllSecteurDispo,getAllVehicules, getAllVehiculesBySecteur, getVehiculeById, addVehicule,updateVehicule,deleteVehicule, vehicules, allVehiculesSecteur, allVehicules}
       
   }

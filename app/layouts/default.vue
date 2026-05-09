@@ -1,20 +1,17 @@
 <script setup></script>
 <template>
-  <div class="relative h-dvh w-full bg-slate-50 print:bg-white">
-    <!-- START : NAVBAR -->
-    <navbar class="fixed left-0 right-0 z-50 top-0" />
-    <!-- END : NAVBAR -->
+  <div class="h-dvh w-full bg-slate-50 print:bg-white flex flex-col">
+    <!-- NAVBAR -->
+    <navbar class="shrink-0 z-50" />
 
-    <!-- START : PAGE -->
-    <div class="w-full h-dvh overflow-hidden pt-16 pb-10">
+    <!-- MAIN -->
+    <main class="flex-1 min-h-0 w-full overflow-hidden">
       <slot />
-    </div>
+    </main>
 
-    <!-- END : PAGE -->
-    <!-- START : FOOTER -->
-    <div class="fixed bottom-0 z-30 w-full h-10 print:hidden">
-      <Footer class="" />
+    <!-- FOOTER -->
+    <div class="shrink-0 w-full h-10 z-30 print:hidden">
+      <Footer />
     </div>
-    <!-- END : FOOTER -->
   </div>
 </template>
