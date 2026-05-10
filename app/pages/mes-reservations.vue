@@ -133,11 +133,11 @@ onMounted(async () => {
               <p class="text-xs text-slate-500 mt-0.5">{{ fmtPlage(resa.debut, resa.fin) }}</p>
               <p class="text-[10px] text-slate-400 uppercase tracking-wider mt-0.5">Secteur · {{ resa.secteurs?.name }}</p>
             </div>
-            <button v-if="resa._kind === 'vehicule' && resa.vehicules" type="button" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-300 text-amber-700 transition cursor-pointer shrink-0" title="Signaler une anomalie sur ce véhicule" @click.stop="openAnomaly(resa)">
-              <Icon name="material-symbols:warning-outline" size="16" class="shrink-0" />
+            <button v-if="resa._kind === 'vehicule' && resa.vehicules" type="button" class="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-amber-500/10 hover:bg-amber-500/20 border border-amber-300 text-amber-700 transition cursor-pointer shrink-0" title="Signaler une anomalie sur ce véhicule" @click.stop="openAnomaly(resa)">
+              <Icon name="material-symbols:warning-outline" size="14" class="shrink-0" />
               <span class="hidden sm:block text-[11px] font-semibold uppercase tracking-wider">Signaler</span>
             </button>
-            <span class="px-2 py-1 rounded-md text-[11px] font-semibold shrink-0" :class="resa.is_validated == 1 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'">
+            <span class="inline-flex items-center h-7 px-2.5 rounded-md text-[11px] font-semibold border shrink-0" :class="resa.is_validated == 1 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'">
               {{ resa.is_validated == 1 ? "Validée" : "En attente" }}
             </span>
           </div>

@@ -101,7 +101,7 @@ watch(modalOpen, async (val) => {
 
   <AppModal v-if="modalOpen" :closeModal="closeModal">
     <template #title>
-      <div class="flex items-center gap-3 w-full pt-6 px-4">
+      <div class="flex items-center gap-3 w-full">
         <div class="size-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
           <Icon name="material-symbols:warning-outline" size="22" class="text-amber-500" />
         </div>

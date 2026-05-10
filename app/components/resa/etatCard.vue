@@ -53,6 +53,14 @@ const TYPE_COLORS = {
   5: "bg-slate-50 border-slate-200 text-slate-700",
 };
 
+const TYPE_TEXT_COLORS = {
+  1: "text-red-700",
+  2: "text-amber-700",
+  3: "text-orange-700",
+  4: "text-sky-700",
+  5: "text-slate-700",
+};
+
 const typeIcon = computed(() => {
   const map = props.kind === "salle" ? SALLE_TYPE_ICONS : VEHICULE_TYPE_ICONS;
   return map[props.etat.type] ?? "material-symbols:info-outline";
@@ -61,49 +69,45 @@ const typeIcon = computed(() => {
 
 <template>
   <article class="border border-slate-200 rounded-lg overflow-hidden bg-white">
-    <div class="flex items-stretch">
-      <!-- Bandeau type (largeur fixe + pleine hauteur) -->
-      <div class="w-28 shrink-0 flex flex-col items-center justify-center gap-1 px-2 py-3 border-r text-[11px] font-semibold uppercase tracking-wide text-center" :class="TYPE_COLORS[etat.type]">
-        <Icon :name="typeIcon" size="22" />
-        <span class="leading-tight">{{ labelOfType(etat.type) }}</span>
+    <!-- En-tête : type + auteur/date + supprimer -->
+    <div class="flex items-center gap-3 p-3" :class="(etat.commentaire || photos?.length) ? 'border-b border-slate-100' : ''">
+      <div class="size-10 rounded-lg flex items-center justify-center shrink-0 border" :class="TYPE_COLORS[etat.type]">
+        <Icon :name="typeIcon" size="20" />
       </div>
-
-      <!-- Contenu -->
-      <div class="flex-1 min-w-0 p-3 flex flex-col gap-1.5 justify-center">
-        <div class="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-slate-500">
-          <Icon name="material-symbols:person-outline" size="14" class="text-slate-400 shrink-0" />
-          <span class="font-semibold text-slate-700">{{ etat.profiles?.prenom }} {{ etat.profiles?.nom }}</span>
+      <div class="flex-1 min-w-0">
+        <p class="text-[11px] font-bold uppercase tracking-wider leading-tight" :class="TYPE_TEXT_COLORS[etat.type]">{{ labelOfType(etat.type) }}</p>
+        <div class="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-slate-500 mt-0.5">
+          <Icon name="material-symbols:person-outline" size="13" class="text-slate-400 shrink-0" />
+          <span class="font-semibold text-slate-700 truncate">{{ etat.profiles?.prenom }} {{ etat.profiles?.nom }}</span>
           <span class="text-slate-300">·</span>
-          <Icon name="material-symbols:schedule-outline" size="13" class="text-slate-400 shrink-0" />
-          <span>{{ timestampToDateFr(new Date(etat.created_at).getTime()) }} à {{ timestampToHeure(new Date(etat.created_at).getTime()) }}</span>
-        </div>
-        <p v-if="etat.commentaire" class="text-sm text-slate-700 whitespace-pre-line">{{ etat.commentaire }}</p>
-      </div>
-
-      <!-- Photos (à droite) -->
-      <div v-if="photos?.length" class="shrink-0 flex items-center p-2 border-l border-slate-100 bg-slate-50/40">
-        <div class="grid grid-cols-2 gap-1.5">
-          <button
-            v-for="(photo, i) in photos"
-            :key="photo.id"
-            type="button"
-            class="block p-0 border-0 bg-transparent cursor-pointer"
-            @click.stop="openLightbox(i)"
-          >
-            <img :src="photo.url" class="size-12 object-cover rounded-md border border-slate-200 hover:border-sky-400 transition" />
-          </button>
+          <Icon name="material-symbols:schedule-outline" size="12" class="text-slate-400 shrink-0" />
+          <span>{{ timestampToDateFr(new Date(etat.created_at).getTime()) }} · {{ timestampToHeure(new Date(etat.created_at).getTime()) }}</span>
         </div>
       </div>
-
-      <!-- Action supprimer -->
       <button
         v-if="deletable"
         type="button"
-        class="shrink-0 px-4 flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer border-l border-slate-100"
+        class="shrink-0 size-9 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer"
         title="Supprimer ce signalement"
         @click="emit('delete', etat)"
       >
         <Icon name="material-symbols:delete-outline" size="20" />
+      </button>
+    </div>
+
+    <!-- Commentaire -->
+    <p v-if="etat.commentaire" class="text-sm text-slate-700 whitespace-pre-line px-3 pt-3" :class="photos?.length ? '' : 'pb-3'">{{ etat.commentaire }}</p>
+
+    <!-- Photos en pleine largeur -->
+    <div v-if="photos?.length" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 p-3">
+      <button
+        v-for="(photo, i) in photos"
+        :key="photo.id"
+        type="button"
+        class="aspect-square block p-0 border-0 bg-transparent cursor-pointer"
+        @click.stop="openLightbox(i)"
+      >
+        <img :src="photo.url" class="w-full h-full object-cover rounded-md border border-slate-200 hover:border-sky-400 transition" />
       </button>
     </div>
 

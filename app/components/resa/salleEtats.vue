@@ -98,7 +98,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="w-full flex flex-col gap-4 px-4 pb-4">
     <!-- Bandeau titre / action -->
-    <div class="flex items-center justify-between pt-3 border-t border-slate-200">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-slate-200">
       <div class="flex items-center gap-2">
         <h3 class="text-sm font-semibold text-slate-700 uppercase tracking-wider">État de la salle</h3>
         <span v-if="etatsBySalle.length" class="text-xs text-slate-400">({{ etatsBySalle.length }})</span>
@@ -106,7 +106,7 @@ onBeforeUnmount(() => {
       <button
         v-if="!showForm"
         type="button"
-        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-700 text-xs font-semibold uppercase tracking-wider transition cursor-pointer"
+        class="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-700 text-xs font-semibold uppercase tracking-wider transition cursor-pointer"
         @click="showForm = true"
       >
         <Icon name="material-symbols:add" size="16" />

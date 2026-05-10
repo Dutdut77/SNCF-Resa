@@ -144,15 +144,36 @@ onBeforeUnmount(() => {
       </span>
     </div>
 
+    <!-- Backdrop mobile uniquement -->
     <Transition
-      enter-active-class="transition duration-150 ease-out"
-      enter-from-class="opacity-0 -translate-y-1"
-      enter-to-class="opacity-100 translate-y-0"
-      leave-active-class="transition duration-100 ease-in"
-      leave-from-class="opacity-100 translate-y-0"
-      leave-to-class="opacity-0 -translate-y-1"
+      enter-active-class="transition-opacity duration-200"
+      enter-from-class="opacity-0"
+      leave-active-class="transition-opacity duration-150"
+      leave-to-class="opacity-0"
     >
-      <div v-if="open" class="absolute z-50 left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden flex flex-col max-h-[min(22rem,60vh)]">
+      <div v-if="open" class="lg:hidden fixed inset-0 bg-slate-900/40 z-40" @click="close" />
+    </Transition>
+
+    <Transition
+      enter-active-class="transition duration-200 ease-out"
+      enter-from-class="lg:opacity-0 lg:-translate-y-1 translate-y-full"
+      enter-to-class="lg:opacity-100 lg:translate-y-0 translate-y-0"
+      leave-active-class="transition duration-150 ease-in"
+      leave-from-class="lg:opacity-100 lg:translate-y-0 translate-y-0"
+      leave-to-class="lg:opacity-0 lg:-translate-y-1 translate-y-full"
+    >
+      <div
+        v-if="open"
+        class="z-50 bg-white shadow-xl flex flex-col overflow-hidden border-slate-200
+               fixed inset-x-0 bottom-0 max-h-[85vh] rounded-t-2xl border-t
+               lg:absolute lg:inset-x-auto lg:bottom-auto lg:left-0 lg:right-0 lg:top-full
+               lg:mt-1.5 lg:max-h-[min(22rem,60vh)] lg:rounded-xl lg:border"
+      >
+        <!-- Drag handle mobile -->
+        <div class="lg:hidden flex justify-center pt-3 pb-1 shrink-0">
+          <div class="w-10 h-1 rounded-full bg-slate-300"></div>
+        </div>
+
         <!-- Recherche -->
         <div class="relative border-b border-slate-100 shrink-0">
           <Icon name="material-symbols:search-rounded" size="16" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
