@@ -131,27 +131,31 @@ const updateProfil = async () => {
         <div class="text-[10px] bg-linear-to-br from-sky-400 to-sky-600 px-2.5 py-0.5 text-white rounded w-14 text-center ml-0.5 font-bold uppercase tracking-widest leading-none">pro</div>
       </NuxtLink>
 
-      <!-- Spacer : pousse tout à droite -->
+      <!-- Chip secteur (contexte courant) - desktop -->
+      <div v-if="secteurs.length" class="hidden md:block relative ml-3" @mouseleave="onMouseLeaveSecteur">
+        <button type="button" class="flex items-center gap-2.5 pl-3 pr-2 h-10 rounded-lg border bg-white transition cursor-pointer" :class="isDropdownOpenSecteur ? 'border-sky-300 ring-2 ring-sky-100 bg-sky-50/60' : 'border-slate-200 hover:bg-slate-50 hover:border-slate-300'" @mouseenter="isDropdownOpenSecteur = true" @click="isDropdownOpenSecteur = !isDropdownOpenSecteur">
+          <Icon name="material-symbols:location-on-outline" size="18" class="shrink-0 text-sncf-primary" />
+          <div class="flex flex-col items-start leading-none">
+            <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Secteur</span>
+            <span class="text-sm font-semibold text-slate-700 truncate max-w-36 mt-0.5">{{ secteurActive?.name ?? "—" }}</span>
+          </div>
+          <Icon name="material-symbols:expand-more-rounded" size="18" class="shrink-0 text-slate-400 transition-transform duration-200" :class="isDropdownOpenSecteur ? 'rotate-180' : ''" />
+        </button>
+
+        <Transition enter-active-class="transition ease-out duration-150" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
+          <div v-show="isDropdownOpenSecteur" class="absolute top-full left-0 mt-2 z-50 p-2 w-72 bg-white border border-slate-200 rounded-xl shadow-lg grid grid-cols-2 gap-1">
+            <NuxtLink v-for="(secteur, index) in secteurs" :key="index" :to="`/calendrier/${secteur.id}`" class="px-3 py-2 rounded-lg text-sm font-medium text-center transition-colors" :class="secteur.id == activeSecteurId ? 'bg-sncf-primary/10 text-sncf-primary' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'" @click="isDropdownOpenSecteur = false">
+              {{ secteur.name }}
+            </NuxtLink>
+          </div>
+        </Transition>
+      </div>
+
+      <!-- Spacer : pousse les onglets de navigation à droite -->
       <div class="flex-1" />
 
       <!-- Liens desktop -->
       <div class="hidden md:flex items-stretch h-full">
-        <!-- Selector secteur -->
-        <div v-if="secteurs.length" class="relative h-full" @mouseleave="onMouseLeaveSecteur">
-          <div class="group h-full flex flex-col items-center justify-center gap-1 px-4 cursor-pointer transition-colors border-b-2 -mb-px" :class="isDropdownOpenSecteur ? 'border-sncf-primary bg-sky-50/60' : 'border-transparent hover:bg-slate-50'" @mouseenter="isDropdownOpenSecteur = true" @click="isDropdownOpenSecteur = !isDropdownOpenSecteur">
-            <Icon name="material-symbols:grid-view-rounded" size="22" class="shrink-0 transition-colors" :class="isDropdownOpenSecteur ? 'text-sncf-primary' : 'text-slate-500 group-hover:text-slate-700'" />
-            <span class="font-semibold uppercase text-[10px] tracking-wider transition-colors" :class="isDropdownOpenSecteur ? 'text-sncf-primary' : 'text-slate-600 group-hover:text-slate-800'">{{ secteurActive?.name ?? "Secteur" }}</span>
-          </div>
-
-          <Transition enter-active-class="transition ease-out duration-150" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
-            <div v-show="isDropdownOpenSecteur" class="absolute top-full left-1/2 -translate-x-1/2 z-50 p-2 w-72 bg-white border border-slate-200 rounded-xl shadow-lg grid grid-cols-2 gap-1">
-              <NuxtLink v-for="(secteur, index) in secteurs" :key="index" :to="`/calendrier/${secteur.id}`" class="px-3 py-2 rounded-lg text-sm font-medium text-center transition-colors" :class="secteur.id == activeSecteurId ? 'bg-sncf-primary/10 text-sncf-primary' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'" @click="isDropdownOpenSecteur = false">
-                {{ secteur.name }}
-              </NuxtLink>
-            </div>
-          </Transition>
-        </div>
-
         <!-- Calendrier -->
         <NuxtLink :to="defaultCalendrierPath" class="group h-full flex flex-col items-center justify-center gap-1 px-4 cursor-pointer transition-colors border-b-2 -mb-px" :class="isOnCalendrier ? 'border-sncf-primary bg-sky-50/60' : 'border-transparent hover:bg-slate-50'">
           <Icon name="material-symbols:calendar-month-outline" size="22" class="shrink-0 transition-colors" :class="isOnCalendrier ? 'text-sncf-primary' : 'text-slate-500 group-hover:text-slate-700'" />
@@ -249,17 +253,21 @@ const updateProfil = async () => {
     <Transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 -translate-y-2" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 -translate-y-2">
       <div v-if="mobileMenuOpen" class="md:hidden fixed top-16 inset-x-0 bottom-0 z-40 bg-white border-t border-slate-200 shadow-lg overflow-auto">
         <div class="p-2 flex flex-col gap-1">
-          <div v-if="secteurs.length" class="rounded-lg overflow-hidden">
-            <button type="button" class="w-full flex items-center justify-between gap-3 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer" @click="mobileSecteursOpen = !mobileSecteursOpen">
+          <!-- Carte contexte secteur -->
+          <div v-if="secteurs.length" class="rounded-xl overflow-hidden border border-slate-200 bg-slate-50/70 mb-2">
+            <button type="button" class="w-full flex items-center justify-between gap-3 px-3 py-2.5 hover:bg-slate-100 transition-colors cursor-pointer" @click="mobileSecteursOpen = !mobileSecteursOpen">
               <span class="flex items-center gap-3">
-                <Icon name="material-symbols:grid-view-rounded" size="20" class="shrink-0" />
-                Secteur <span v-if="secteurActive" class="text-slate-500 font-normal">· {{ secteurActive.name }}</span>
+                <Icon name="material-symbols:location-on-outline" size="22" class="shrink-0 text-sncf-primary" />
+                <span class="flex flex-col items-start leading-tight text-left">
+                  <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Secteur</span>
+                  <span class="text-sm font-semibold text-slate-700">{{ secteurActive?.name ?? "—" }}</span>
+                </span>
               </span>
               <Icon name="material-symbols:expand-more-rounded" size="18" class="text-slate-400 transition-transform duration-200" :class="mobileSecteursOpen ? 'rotate-180' : ''" />
             </button>
             <div class="grid transition-[grid-template-rows] duration-300 ease-out" :class="mobileSecteursOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'">
               <div class="overflow-hidden">
-                <div class="flex flex-col gap-1 px-2 pb-2">
+                <div class="flex flex-col gap-1 px-2 pt-2 pb-2 border-t border-slate-200/80 bg-white">
                   <NuxtLink v-for="secteur in secteurs" :key="secteur.id" :to="`/calendrier/${secteur.id}`" class="px-4 py-2.5 rounded-lg text-sm font-medium transition-colors" :class="secteur.id == activeSecteurId ? 'bg-sncf-primary/10 text-sncf-primary' : 'text-slate-600 hover:bg-slate-100'">
                     {{ secteur.name }}
                   </NuxtLink>
