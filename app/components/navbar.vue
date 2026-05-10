@@ -128,7 +128,7 @@ const updateProfil = async () => {
       <!-- Logo -->
       <NuxtLink :to="defaultCalendrierPath" class="h-full flex flex-col justify-center items-start shrink-0">
         <div class="font-traverse text-xl first-letter:text-sky-600 tracking-widest pl-0.5 text-slate-800 leading-none">résa</div>
-        <div class="text-[10px] bg-linear-to-br from-sky-400 to-sky-600 px-2.5 py-0.5 text-white rounded w-14 text-center mt-1 font-bold uppercase tracking-widest leading-none">pro</div>
+        <div class="text-[10px] bg-linear-to-br from-sky-400 to-sky-600 px-2.5 py-0.5 text-white rounded w-14 text-center ml-0.5 font-bold uppercase tracking-widest leading-none">pro</div>
       </NuxtLink>
 
       <!-- Spacer : pousse tout à droite -->

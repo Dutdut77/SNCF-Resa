@@ -6,6 +6,7 @@ const {
   ETAT_TYPES,
   getEtatsBySecteur,
   deleteEtat,
+  labelOfType,
 } = useVehiculeEtats();
 
 const TYPE_ICONS = {
@@ -52,8 +53,20 @@ const refresh = async () => {
   await getEtatsBySecteur(userProfil.value.secteur_admin);
 };
 
-const askDelete = async (etat) => {
-  if (!confirm("Supprimer ce signalement ?")) return;
+const pendingDelete = ref(null);
+
+const askDelete = (etat) => {
+  pendingDelete.value = etat;
+};
+
+const cancelDelete = () => {
+  pendingDelete.value = null;
+};
+
+const confirmDelete = async () => {
+  if (!pendingDelete.value) return;
+  const etat = pendingDelete.value;
+  pendingDelete.value = null;
   setLoader(true);
   await deleteEtat(etat);
   await refresh();
@@ -145,5 +158,59 @@ setLoader(false);
         </div>
       </div>
     </div>
+
+    <!-- Modal confirmation suppression -->
+    <AppModal v-if="pendingDelete" :closeModal="cancelDelete">
+      <template #title>
+        <div class="flex items-center gap-3">
+          <div class="size-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+            <Icon name="material-symbols:delete-outline" size="22" class="text-red-600" />
+          </div>
+          <div>
+            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Suppression</p>
+            <p class="text-base font-semibold text-slate-800 leading-tight">Supprimer ce signalement&nbsp;?</p>
+          </div>
+        </div>
+      </template>
+      <template #default>
+        <div class="px-4 flex flex-col gap-3">
+          <p class="text-sm text-slate-600">
+            Cette action est définitive. Le signalement et ses photos associées seront supprimés.
+          </p>
+
+          <div class="rounded-xl border border-slate-200 bg-slate-50/60 p-3 flex flex-col gap-2">
+            <div class="flex flex-wrap items-center gap-2 text-sm">
+              <Icon name="material-symbols:directions-car" size="16" class="text-sky-500 shrink-0" />
+              <span class="font-semibold text-slate-800 truncate">
+                {{ pendingDelete.vehicules?.marque }} {{ pendingDelete.vehicules?.model }}
+              </span>
+              <span v-if="pendingDelete.vehicules?.immat" class="font-mono text-[11px] font-bold px-2 py-0.5 bg-amber-50 border border-amber-200 text-amber-700 rounded">
+                {{ pendingDelete.vehicules.immat }}
+              </span>
+              <span class="ml-auto px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-amber-50 text-amber-700 border border-amber-200 shrink-0">
+                {{ labelOfType(pendingDelete.type) }}
+              </span>
+            </div>
+            <div class="flex items-center gap-1.5 text-xs text-slate-500">
+              <Icon name="material-symbols:person-outline" size="14" class="shrink-0" />
+              <span class="font-medium text-slate-600">{{ pendingDelete.profiles?.prenom }} {{ pendingDelete.profiles?.nom }}</span>
+            </div>
+            <p v-if="pendingDelete.commentaire" class="text-sm text-slate-700 whitespace-pre-line border-t border-slate-200 pt-2">
+              {{ pendingDelete.commentaire }}
+            </p>
+          </div>
+        </div>
+      </template>
+      <template #footer>
+        <div class="w-full flex justify-end gap-2">
+          <AppButtonValidated theme="cancel" type="button" class="w-32 text-sm" @click="cancelDelete">
+            <template #default>Annuler</template>
+          </AppButtonValidated>
+          <AppButtonValidated theme="delete" type="button" class="w-32 text-sm" @click="confirmDelete">
+            <template #default>Supprimer</template>
+          </AppButtonValidated>
+        </div>
+      </template>
+    </AppModal>
   </section>
 </template>
